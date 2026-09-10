@@ -56,7 +56,6 @@ DOCS_DIR.mkdir(exist_ok=True)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Lista de modelos con fallback automático si uno agota cuota por minuto
 FALLBACK_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-flash-latest"]
 
 logging.basicConfig(
@@ -161,18 +160,17 @@ def construir_system_prompt():
         return f"{BASE_SYSTEM_INSTRUCTION}\n\n--- MATERIAL OFICIAL DE ESTUDIO, CERTÁMENES Y APUNTES DE LA CÁTEDRA ---\n{docs_text}\n--- FIN DE APUNTES ---"
     return BASE_SYSTEM_INSTRUCTION
 
-# Estructura: user_id -> {"history": [...]}
+# Almacen de memoria conversacional: user_id -> lista de mensajes
 user_histories = {}
 
 def send_with_fallback(user_id: int, message_text: str) -> str:
-    """Envía mensaje al modelo con rotación automática si uno agota cuota temporal."""
     system_instruction = construir_system_prompt()
     if user_id not in user_histories:
         user_histories[user_id] = []
 
     history = user_histories[user_id]
-    
     last_error = None
+
     for model_name in FALLBACK_MODELS:
         try:
             model = genai.GenerativeModel(
@@ -181,25 +179,27 @@ def send_with_fallback(user_id: int, message_text: str) -> str:
             )
             chat = model.start_chat(history=history)
             response = chat.send_message(message_text)
-            # Guardar el historial exitoso
             user_histories[user_id] = chat.history
             return response.text
         except ResourceExhausted as rexc:
-            logger.warning(f"Modelo {model_name} agoto cuota temporal. Intentando fallback...")
+            logger.warning(f"Modelo {model_name} agoto cuota. Intentando fallback...")
             last_error = rexc
             continue
         except Exception as exc:
             if "429" in str(exc) or "quota" in str(exc).lower():
-                logger.warning(f"Modelo {model_name} retorno 429. Probando siguiente modelo...")
+                logger.warning(f"Modelo {model_name} retorno 429. Probando siguiente...")
                 last_error = exc
                 continue
             raise exc
 
     if last_error:
-        raise ResourceExhausted("Se alcanzó el límite temporal por minuto de la API gratuita. Espera unos 30 segundos.")
+        raise ResourceExhausted("Se alcanzó el límite temporal por minuto de la API. Espera unos 30 segundos.")
 
-def generate_photo_with_fallback(image: Image, caption: str) -> str:
+def generate_photo_with_fallback(user_id: int, image: Image, caption: str) -> str:
     system_instruction = construir_system_prompt()
+    if user_id not in user_histories:
+        user_histories[user_id] = []
+
     prompt = [
         f"El estudiante envió esta foto de un apunte o ejercicio con la indicación: '{caption}'. "
         "Resuélvelo con máximo detalle pedagógico siguiendo los criterios y notación del curso ADA de la UBB.",
@@ -212,6 +212,14 @@ def generate_photo_with_fallback(image: Image, caption: str) -> str:
                 system_instruction=system_instruction
             )
             res = model.generate_content(prompt)
+            # Guardar en el historial la indicación y la respuesta para que la conversación tenga contexto
+            chat = model.start_chat(history=user_histories[user_id])
+            # Registrar en memoria conversacional
+            try:
+                user_histories[user_id].append({"role": "user", "parts": [f"[Foto de ejercicio enviada]: {caption}"]})
+                user_histories[user_id].append({"role": "model", "parts": [res.text]})
+            except Exception:
+                pass
             return res.text
         except Exception as e:
             if "429" in str(e) or "quota" in str(e).lower():
@@ -254,7 +262,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def nuevo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     user_histories.pop(user_id, None)
-    await update.message.reply_text("🔄 Conversación reiniciada. ¿Qué ejercicio o tema de ADA quieres estudiar hoy?")
+    await update.message.reply_text("🔄 Memoria reiniciada. ¿Qué nuevo ejercicio o tema quieres ver?")
 
 async def certamenes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -300,12 +308,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error(f"Error procesando mensaje: {e}")
         await update.message.reply_text(
             f"⏳ <b>Límite temporal por minuto alcanzado</b>.\n\n"
-            "Google AI Studio impone un límite de peticiones por minuto en la cuenta gratuita. "
+            "Google AI Studio impone un límite de peticiones continuas en la cuenta gratuita. "
             "Por favor espera unos <b>30 segundos</b> y vuelve a enviar tu pregunta.",
             parse_mode=ParseMode.HTML
         )
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
     photos = update.message.photo
     caption = update.message.caption or "Analiza y resuelve este ejercicio paso a paso según los criterios de ADA de la UBB."
 
@@ -314,7 +323,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         photo_file = await photos[-1].get_file()
         photo_bytes = await photo_file.download_as_bytearray()
         image = Image.open(io.BytesIO(photo_bytes))
-        reply = generate_photo_with_fallback(image, caption)
+        reply = generate_photo_with_fallback(user_id, image, caption)
         await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error procesando foto: {e}")
@@ -377,7 +386,7 @@ def main():
     app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
 
-    print("[+] Bot ADA iniciado con sistema de contingencia y fallback de modelos.")
+    print("[+] Bot ADA iniciado con memoria contextual completa y fallback.")
     app.run_polling()
 
 if __name__ == "__main__":
