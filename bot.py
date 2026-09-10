@@ -22,7 +22,6 @@ from telegram.ext import (
     filters,
 )
 
-# Compatibilidad con Render Web Service (Free Tier $0)
 class HealthCheckHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -77,8 +76,8 @@ Tienes acceso completo a:
 Tus especialidades clave:
 1. Notación asintótica estricta: Demostraciones formales de cota superior (O), cota inferior (Omega) y cota ajustada (Theta).
 2. Ecuaciones de recurrencia:
-   - Teorema Maestro (indicando condiciones, comparación entre n^(log_b(a)) y f(n), y los 3 casos formales).
-   - Método del Árbol de Recursión (costos por nivel, profundidad, suma total).
+   - Teorema Maestro: Utiliza el método estándar de las diapositivas de la UBB del profesor Gilberto Gutiérrez (comparar 'a' con 'b^d', donde f(n) = n^d).
+   - Método del Árbol de Recursión (costos por nivel, número de hojas, profundidad, suma geométrica total).
    - Método de Sustitución e Inducción Matemática (Hacia Atrás/Backward o Hacia Adelante/Forward).
 3. Paradigmas de diseño:
    - Divide y Vencerás (Divide and Conquer).
@@ -89,60 +88,55 @@ Tus especialidades clave:
    - Demostración de corrección formal mediante Invariantes de Bucle.
 
 ============================================================
-REGLAS OBLIGATORIAS DE FORMATO PARA TELEGRAM:
-Telegram tiene problemas para mostrar Markdown con fórmulas matemáticas.
-Por lo tanto, sigue estas instrucciones estrictas:
-1. NO USES sintaxis LaTeX ($$, $, \\big, \\frac, etc.).
-2. Usa etiquetas HTML limpias para dar formato a tus respuestas:
-   - <b>Texto en negrita</b> para títulos, pasos importantes o conceptos destacados.
-   - <code>fórmula o variable</code> para variables, parámetros o fórmulas cortas (ej: <code>T(n) = 8·T(n/2) + √n</code>, <code>a = 8</code>, <code>b = 2</code>).
-   - <pre>bloque de cálculo</pre> para desarrollos matemáticos paso a paso o pseudocódigo.
-3. Usa viñetas con el símbolo '•' en vez de asteriscos '*' o guiones '-'.
-4. Usa caracteres legibles: · (multiplicación), √ (raíz), ², ³, ⁿ, ᵏ (superíndices), Θ, Ω, O.
+REGLAS ESTRICTAS DE FORMATO Y PRESENTACIÓN MATEMÁTICA:
+1. NO USES sintaxis LaTeX ($$, $, \\frac, \\big, \\cdot, \\epsilon).
+2. NO USES etiquetas HTML directamente (no escribas <b> ni <code> ni <pre>).
+3. Usa Markdown estándar limpio:
+   - Usa **negrita** para títulos y pasos destacados: **Paso 1: Identificar los parámetros**, **Resultado:**.
+   - Usa comillas invertidas `codigo` para variables, valores y fórmulas: `a = 8`, `b = 2`, `T(n) = 8·T(n/2) + √n`.
+   - Usa bloques de código ``` para desarrollos matemáticos o pseudocódigo.
+   - Usa viñetas con guión o asterisco: * elemento o - elemento.
+4. NOTACIÓN MATEMÁTICA CLARA Y DIRECTA:
+   - Cuando apliques el Teorema Maestro, calcula el valor numérico del exponente de inmediato en vez de dejar fórmulas abstractas con letras como n^(log_b(a)).
+   - Ejemplo claro:
+     * Exponente de las hojas: log₂(8) = 3  =>  n³
+     * Comparación: Como f(n) = √n = n^0.5 y las hojas son n³, 8 > 2^0.5, las hojas dominan el costo.
+     * Complejidad final: Θ(n³)
+   - No compliques innecesariamente con épsilons abstractos 'n^(3 - ε)' a menos que te lo pidan explícitamente. Ve a la explicación conceptual y al grano que busca el profesor en la corrección.
 ============================================================
 """
 
 def formatear_para_telegram(texto: str) -> str:
-    """Convierte Markdown y fórmulas residuales en HTML compatible con Telegram."""
-    # 1. Extraer bloques de código ya existentes ```...``` o <pre>...</pre>
+    """Convierte Markdown estándar de Gemini en HTML limpio y validado para Telegram."""
+    
+    # 1. Proteger bloques de código ```...```
     bloques = []
     def guardar_bloque(m):
         contenido = m.group(1).strip()
         bloques.append(f"<pre>{html.escape(contenido)}</pre>")
         return f"___BLOQUE_{len(bloques)-1}___"
-    
     texto = re.sub(r'```(?:[a-zA-Z0-9_-]+)?\n?(.*?)```', guardar_bloque, texto, flags=re.DOTALL)
-    texto = re.sub(r'<pre>(.*?)</pre>', guardar_bloque, texto, flags=re.DOTALL)
 
-    # 2. Extraer inline code `...` o <code>...</code>
+    # 2. Proteger inline code `...`
     inlines = []
     def guardar_inline(m):
         c = m.group(1).strip()
         inlines.append(f"<code>{html.escape(c)}</code>")
         return f"___INLINE_{len(inlines)-1}___"
-    
     texto = re.sub(r'`([^`\n]+)`', guardar_inline, texto)
-    texto = re.sub(r'<code>(.*?)</code>', guardar_inline, texto)
 
-    # 3. Convertir fórmulas LaTeX residuales $$...$$ o $...$
-    def guardar_latex_block(m):
-        c = m.group(1).strip()
-        c = c.replace(r'\big(', '(').replace(r'\big)', ')')
-        c = c.replace(r'\cdot', '·').replace(r'\times', '×')
-        bloques.append(f"<pre>{html.escape(c)}</pre>")
-        return f"___BLOQUE_{len(bloques)-1}___"
-    texto = re.sub(r'\$\$(.*?)\$\$', guardar_latex_block, texto, flags=re.DOTALL)
+    # 3. Limpiar cualquier LaTeX accidental $$...$$ o $...$
+    texto = re.sub(r'\$\$(.*?)\$\$', lambda m: f"<code>{m.group(1).strip()}</code>", texto, flags=re.DOTALL)
+    texto = re.sub(r'\$([^\$\n]+?)\$', lambda m: f"<code>{m.group(1).strip()}</code>", texto)
 
-    def guardar_latex_inline(m):
-        c = m.group(1).strip()
-        c = c.replace(r'\big(', '(').replace(r'\big)', ')')
-        c = c.replace(r'\cdot', '·').replace(r'\times', '×')
-        inlines.append(f"<code>{html.escape(c)}</code>")
-        return f"___INLINE_{len(inlines)-1}___"
-    texto = re.sub(r'\$([^\$\n]+?)\$', guardar_latex_inline, texto)
-
-    # 4. Escapar HTML del resto del texto
+    # 4. Escapar caracteres HTML del resto del texto
     texto = html.escape(texto)
+
+    # Si el modelo puso <b> o <code> en texto plano, asegurarse de que no queden como &lt;b&gt;
+    texto = texto.replace("&lt;b&gt;", "<b>").replace("&lt;/b&gt;", "</b>")
+    texto = texto.replace("&lt;i&gt;", "<i>").replace("&lt;/i&gt;", "</i>")
+    texto = texto.replace("&lt;code&gt;", "<code>").replace("&lt;/code&gt;", "</code>")
+    texto = texto.replace("&lt;pre&gt;", "<pre>").replace("&lt;/pre&gt;", "</pre>")
 
     # 5. Convertir encabezados #, ##, ### a <b>...</b>
     texto = re.sub(r'^[#]+\s*(.+)$', r'<b>\1</b>', texto, flags=re.MULTILINE)
@@ -150,13 +144,13 @@ def formatear_para_telegram(texto: str) -> str:
     # 6. Convertir **negrita** a <b>negrita</b>
     texto = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', texto)
 
-    # 7. Convertir listas de asterisco (* elemento) a viñeta (• elemento)
-    texto = re.sub(r'^\*\s+', r'• ', texto, flags=re.MULTILINE)
+    # 7. Convertir viñetas (* o -) al inicio de línea en '• '
+    texto = re.sub(r'^[*-]\s+', r'• ', texto, flags=re.MULTILINE)
 
-    # 8. Convertir *negrita* restante (no viñeta) a <b>negrita</b>
+    # 8. Convertir *cursiva o negrita suelta*
     texto = re.sub(r'(?<![\*\w])\*([^\*\n]+?)\*(?![\*\w])', r'<b>\1</b>', texto)
 
-    # 9. Restaurar bloques y códigos intactos
+    # 9. Restaurar bloques y códigos protegidos
     for i, cod in enumerate(inlines):
         texto = texto.replace(f"___INLINE_{i}___", cod)
     for i, blk in enumerate(bloques):
@@ -192,7 +186,6 @@ def get_or_create_chat(user_id: int):
     return user_chats[user_id]
 
 async def split_and_send(update: Update, text: str):
-    # Formatear a HTML limpio y robusto
     text_html = formatear_para_telegram(text)
     max_len = 4000
     for i in range(0, len(text_html), max_len):
@@ -200,8 +193,7 @@ async def split_and_send(update: Update, text: str):
         try:
             await update.message.reply_text(chunk, parse_mode=ParseMode.HTML)
         except Exception as e:
-            logger.warning(f"Fallo envio en HTML ({e}), enviando en texto plano limpio.")
-            # Si Telegram tuviera algún problema con un tag, eliminar tags y enviar texto 100% limpio
+            logger.warning(f"Envio HTML con error ({e}), enviando texto plano.")
             texto_plano = re.sub(r'<[^>]+>', '', chunk)
             await update.message.reply_text(texto_plano)
 
