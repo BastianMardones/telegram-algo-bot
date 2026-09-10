@@ -2,6 +2,7 @@
 import os
 import io
 import re
+import html
 import sys
 import logging
 import threading
@@ -88,49 +89,79 @@ Tus especialidades clave:
    - Demostración de corrección formal mediante Invariantes de Bucle.
 
 ============================================================
-REGLAS OBLIGATORIAS DE FORMATO PARA TELEGRAM (¡MUY IMPORTANTE!):
-Telegram NO soporta LaTeX ni encabezados '#' de Markdown. Si usas LaTeX o '#', el texto se ve feo y roto.
-
-Sigue estas reglas al redactar tus respuestas:
-1. NUNCA uses símbolos de LaTeX como $$, $, \\big, \\frac, \\sum, \\cdot, \\theta, \\in.
-2. Escribe las fórmulas matemáticas con caracteres claros o bloques de código monoespaciado.
-   - En vez de: $$f(n) = 2f(n-1) + 1$$, escribe:
-     `f(n) = 2·f(n-1) + 1` o simplemente f(n) = 2·f(n-1) + 1
-   - Para potencias usa superíndices reales Unicode (², ³, ⁿ, ᵏ) o el circunflejo: 2ⁿ, 2^k, n².
-   - Para complejidades usa: O(n log n), Θ(n²), Ω(2ⁿ).
-3. NUNCA uses encabezados tipo '###' o '####' porque Telegram los muestra como texto plano con numerales.
-   - En su lugar, usa negritas limpias y emojis para estructurar:
-     *📌 Método: Sustitución Hacia Atrás (Backward)*
-     *Paso 1: Aplicar la sustitución de forma iterativa*
-4. Si vas a mostrar una deducción paso a paso o una tabla, colócala dentro de un bloque de código:
-```text
-Paso 1: f(n) = 2*f(n-1) + 1
-Paso 2: f(n) = 2*(2*f(n-2) + 1) + 1 = 4*f(n-2) + 3
-Paso 3: f(n) = 8*f(n-3) + 7
-Paso k: f(n) = 2^k * f(n-k) + (2^k - 1)
-```
-Esto garantiza que la respuesta se lea perfectamente limpia y clara en la app de Telegram móvil y desktop.
+REGLAS OBLIGATORIAS DE FORMATO PARA TELEGRAM:
+Telegram tiene problemas para mostrar Markdown con fórmulas matemáticas.
+Por lo tanto, sigue estas instrucciones estrictas:
+1. NO USES sintaxis LaTeX ($$, $, \\big, \\frac, etc.).
+2. Usa etiquetas HTML limpias para dar formato a tus respuestas:
+   - <b>Texto en negrita</b> para títulos, pasos importantes o conceptos destacados.
+   - <code>fórmula o variable</code> para variables, parámetros o fórmulas cortas (ej: <code>T(n) = 8·T(n/2) + √n</code>, <code>a = 8</code>, <code>b = 2</code>).
+   - <pre>bloque de cálculo</pre> para desarrollos matemáticos paso a paso o pseudocódigo.
+3. Usa viñetas con el símbolo '•' en vez de asteriscos '*' o guiones '-'.
+4. Usa caracteres legibles: · (multiplicación), √ (raíz), ², ³, ⁿ, ᵏ (superíndices), Θ, Ω, O.
 ============================================================
 """
 
-def limpiar_formato_telegram(texto: str) -> str:
-    """Limpia automáticamente cualquier residuo de LaTeX o encabezados Markdown que el LLM pudiera generar."""
-    texto = re.sub(r'^[#]+\s*(.+)$', r'*\1*', texto, flags=re.MULTILINE)
-    texto = texto.replace(r'\big(', '(').replace(r'\big)', ')')
-    texto = texto.replace(r'\Big(', '(').replace(r'\Big)', ')')
-    texto = texto.replace(r'\cdot', '·').replace(r'\times', '×')
-    texto = texto.replace(r'\leq', '≤').replace(r'\geq', '≥').replace(r'\neq', '≠')
-    texto = texto.replace(r'\Theta', 'Θ').replace(r'\Omega', 'Ω')
-    texto = texto.replace(r'\sum', 'Σ')
+def formatear_para_telegram(texto: str) -> str:
+    """Convierte Markdown y fórmulas residuales en HTML compatible con Telegram."""
+    # 1. Extraer bloques de código ya existentes ```...``` o <pre>...</pre>
+    bloques = []
+    def guardar_bloque(m):
+        contenido = m.group(1).strip()
+        bloques.append(f"<pre>{html.escape(contenido)}</pre>")
+        return f"___BLOQUE_{len(bloques)-1}___"
     
-    # Convertir $$formula$$ en bloques de código o texto limpio
-    def replace_double_dollar(match):
-        expr = match.group(1).strip()
-        return f"\n```\n{expr}\n```\n"
-    texto = re.sub(r'\$\$(.*?)\$\$', replace_double_dollar, texto, flags=re.DOTALL)
+    texto = re.sub(r'```(?:[a-zA-Z0-9_-]+)?\n?(.*?)```', guardar_bloque, texto, flags=re.DOTALL)
+    texto = re.sub(r'<pre>(.*?)</pre>', guardar_bloque, texto, flags=re.DOTALL)
+
+    # 2. Extraer inline code `...` o <code>...</code>
+    inlines = []
+    def guardar_inline(m):
+        c = m.group(1).strip()
+        inlines.append(f"<code>{html.escape(c)}</code>")
+        return f"___INLINE_{len(inlines)-1}___"
     
-    # Convertir $formula$ en `formula`
-    texto = re.sub(r'\$([^\$\n]+?)\$', r'`\1`', texto)
+    texto = re.sub(r'`([^`\n]+)`', guardar_inline, texto)
+    texto = re.sub(r'<code>(.*?)</code>', guardar_inline, texto)
+
+    # 3. Convertir fórmulas LaTeX residuales $$...$$ o $...$
+    def guardar_latex_block(m):
+        c = m.group(1).strip()
+        c = c.replace(r'\big(', '(').replace(r'\big)', ')')
+        c = c.replace(r'\cdot', '·').replace(r'\times', '×')
+        bloques.append(f"<pre>{html.escape(c)}</pre>")
+        return f"___BLOQUE_{len(bloques)-1}___"
+    texto = re.sub(r'\$\$(.*?)\$\$', guardar_latex_block, texto, flags=re.DOTALL)
+
+    def guardar_latex_inline(m):
+        c = m.group(1).strip()
+        c = c.replace(r'\big(', '(').replace(r'\big)', ')')
+        c = c.replace(r'\cdot', '·').replace(r'\times', '×')
+        inlines.append(f"<code>{html.escape(c)}</code>")
+        return f"___INLINE_{len(inlines)-1}___"
+    texto = re.sub(r'\$([^\$\n]+?)\$', guardar_latex_inline, texto)
+
+    # 4. Escapar HTML del resto del texto
+    texto = html.escape(texto)
+
+    # 5. Convertir encabezados #, ##, ### a <b>...</b>
+    texto = re.sub(r'^[#]+\s*(.+)$', r'<b>\1</b>', texto, flags=re.MULTILINE)
+
+    # 6. Convertir **negrita** a <b>negrita</b>
+    texto = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', texto)
+
+    # 7. Convertir listas de asterisco (* elemento) a viñeta (• elemento)
+    texto = re.sub(r'^\*\s+', r'• ', texto, flags=re.MULTILINE)
+
+    # 8. Convertir *negrita* restante (no viñeta) a <b>negrita</b>
+    texto = re.sub(r'(?<![\*\w])\*([^\*\n]+?)\*(?![\*\w])', r'<b>\1</b>', texto)
+
+    # 9. Restaurar bloques y códigos intactos
+    for i, cod in enumerate(inlines):
+        texto = texto.replace(f"___INLINE_{i}___", cod)
+    for i, blk in enumerate(bloques):
+        texto = texto.replace(f"___BLOQUE_{i}___", blk)
+
     return texto
 
 def obtener_conocimiento():
@@ -161,34 +192,38 @@ def get_or_create_chat(user_id: int):
     return user_chats[user_id]
 
 async def split_and_send(update: Update, text: str):
-    text_limpio = limpiar_formato_telegram(text)
+    # Formatear a HTML limpio y robusto
+    text_html = formatear_para_telegram(text)
     max_len = 4000
-    for i in range(0, len(text_limpio), max_len):
-        chunk = text_limpio[i:i + max_len]
+    for i in range(0, len(text_html), max_len):
+        chunk = text_html[i:i + max_len]
         try:
-            await update.message.reply_text(chunk, parse_mode=ParseMode.MARKDOWN)
-        except Exception:
-            await update.message.reply_text(chunk)
+            await update.message.reply_text(chunk, parse_mode=ParseMode.HTML)
+        except Exception as e:
+            logger.warning(f"Fallo envio en HTML ({e}), enviando en texto plano limpio.")
+            # Si Telegram tuviera algún problema con un tag, eliminar tags y enviar texto 100% limpio
+            texto_plano = re.sub(r'<[^>]+>', '', chunk)
+            await update.message.reply_text(texto_plano)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     user_chats.pop(user_id, None)
     
     welcome_text = (
-        "👋 ¡Hola! Soy tu tutor para el curso de *Análisis y Diseño de Algoritmos (ADA)* de la *Universidad del Bío-Bío*.\n\n"
-        "📚 *Material de cátedra cargado:*\n"
-        "• ✅ Diapositivas oficiales del curso (*ada2.pdf*)\n"
+        "👋 ¡Hola! Soy tu tutor para el curso de <b>Análisis y Diseño de Algoritmos (ADA)</b> de la <b>Universidad del Bío-Bío</b>.\n\n"
+        "📚 <b>Material de cátedra cargado:</b>\n"
+        "• ✅ Diapositivas oficiales del curso (<code>ada2.pdf</code>)\n"
         "• ✅ Certámenes anteriores transcritos (Certamen 1, Certamen 2, Tests)\n"
         "• ✅ Prácticas y tareas oficiales (Programación Dinámica, Divide y Vencerás, etc.)\n\n"
-        "💡 *¿Cómo puedo ayudarte a estudiar?*\n"
+        "💡 <b>¿Cómo puedo ayudarte a estudiar?</b>\n"
         "• Envíame cualquier ejercicio de la guía o tus dudas teóricas.\n"
-        "• 📷 *¡Fotos!* Mándame fotos de tus apuntes o pizarrones y los analizaré con rigor.\n"
-        "• 🎯 `/practicar [tema]` - Te pondré un ejercicio de certamen real para que intentes resolverlo.\n"
-        "• 📄 `/certamenes` - Ver problemas tipo certamen de la cátedra.\n"
-        "• 🔄 `/nuevo` - Reiniciar conversación para un nuevo tema o ejercicio.\n"
+        "• 📷 <b>¡Fotos!</b> Mándame fotos de tus apuntes o pizarrones y los analizaré con rigor.\n"
+        "• 🎯 <code>/practicar [tema]</code> - Te pondré un ejercicio de certamen real para que intentes resolverlo.\n"
+        "• 📄 <code>/certamenes</code> - Ver problemas tipo certamen de la cátedra.\n"
+        "• 🔄 <code>/nuevo</code> - Reiniciar conversación para un nuevo tema o ejercicio.\n"
         "• 📎 Puedes seguir enviando PDFs o fotos por aquí y los incorporaré automáticamente."
     )
-    await update.message.reply_text(welcome_text, parse_mode=ParseMode.MARKDOWN)
+    await update.message.reply_text(welcome_text, parse_mode=ParseMode.HTML)
 
 async def nuevo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -278,7 +313,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ext = Path(filename).suffix.lower()
     
     if ext not in valid_exts:
-        await update.message.reply_text(f"⚠️ El archivo `{filename}` no es compatible (.pdf, .txt o .md).")
+        await update.message.reply_text(f"⚠️ El archivo <code>{filename}</code> no es compatible (.pdf, .txt o .md).", parse_mode=ParseMode.HTML)
         return
 
     await update.effective_chat.send_action(ChatAction.TYPING)
@@ -301,9 +336,9 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         user_chats.clear()
         await update.message.reply_text(
-            f"✅ *¡Documento `{filename}` indexado con éxito!*\n"
+            f"✅ <b>¡Documento <code>{filename}</code> indexado con éxito!</b>\n"
             "Ya está incorporado en la base de conocimientos del bot para responderte.",
-            parse_mode=ParseMode.MARKDOWN
+            parse_mode=ParseMode.HTML
         )
     except Exception as e:
         logger.error(f"Error guardando documento: {e}")
@@ -325,7 +360,7 @@ def main():
     app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
 
-    print("[+] Bot ADA iniciado con formateo limpio para Telegram.")
+    print("[+] Bot ADA iniciado con motor HTML de alta fidelidad.")
     app.run_polling()
 
 if __name__ == "__main__":
