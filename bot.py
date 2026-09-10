@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 from PIL import Image
 from pypdf import PdfReader
 import google.generativeai as genai
+from google.api_core.exceptions import ResourceExhausted
 from telegram import Update
 from telegram.constants import ChatAction, ParseMode
 from telegram.ext import (
@@ -54,7 +55,9 @@ DOCS_DIR.mkdir(exist_ok=True)
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
+
+# Lista de modelos con fallback automático si uno agota cuota por minuto
+FALLBACK_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-flash-latest"]
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -107,9 +110,6 @@ REGLAS ESTRICTAS DE FORMATO Y PRESENTACIÓN MATEMÁTICA:
 """
 
 def formatear_para_telegram(texto: str) -> str:
-    """Convierte Markdown estándar de Gemini en HTML limpio y validado para Telegram."""
-    
-    # 1. Proteger bloques de código ```...```
     bloques = []
     def guardar_bloque(m):
         contenido = m.group(1).strip()
@@ -117,7 +117,6 @@ def formatear_para_telegram(texto: str) -> str:
         return f"___BLOQUE_{len(bloques)-1}___"
     texto = re.sub(r'```(?:[a-zA-Z0-9_-]+)?\n?(.*?)```', guardar_bloque, texto, flags=re.DOTALL)
 
-    # 2. Proteger inline code `...`
     inlines = []
     def guardar_inline(m):
         c = m.group(1).strip()
@@ -125,32 +124,21 @@ def formatear_para_telegram(texto: str) -> str:
         return f"___INLINE_{len(inlines)-1}___"
     texto = re.sub(r'`([^`\n]+)`', guardar_inline, texto)
 
-    # 3. Limpiar cualquier LaTeX accidental $$...$$ o $...$
     texto = re.sub(r'\$\$(.*?)\$\$', lambda m: f"<code>{m.group(1).strip()}</code>", texto, flags=re.DOTALL)
     texto = re.sub(r'\$([^\$\n]+?)\$', lambda m: f"<code>{m.group(1).strip()}</code>", texto)
 
-    # 4. Escapar caracteres HTML del resto del texto
     texto = html.escape(texto)
 
-    # Si el modelo puso <b> o <code> en texto plano, asegurarse de que no queden como &lt;b&gt;
     texto = texto.replace("&lt;b&gt;", "<b>").replace("&lt;/b&gt;", "</b>")
     texto = texto.replace("&lt;i&gt;", "<i>").replace("&lt;/i&gt;", "</i>")
     texto = texto.replace("&lt;code&gt;", "<code>").replace("&lt;/code&gt;", "</code>")
     texto = texto.replace("&lt;pre&gt;", "<pre>").replace("&lt;/pre&gt;", "</pre>")
 
-    # 5. Convertir encabezados #, ##, ### a <b>...</b>
     texto = re.sub(r'^[#]+\s*(.+)$', r'<b>\1</b>', texto, flags=re.MULTILINE)
-
-    # 6. Convertir **negrita** a <b>negrita</b>
     texto = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', texto)
-
-    # 7. Convertir viñetas (* o -) al inicio de línea en '• '
     texto = re.sub(r'^[*-]\s+', r'• ', texto, flags=re.MULTILINE)
-
-    # 8. Convertir *cursiva o negrita suelta*
     texto = re.sub(r'(?<![\*\w])\*([^\*\n]+?)\*(?![\*\w])', r'<b>\1</b>', texto)
 
-    # 9. Restaurar bloques y códigos protegidos
     for i, cod in enumerate(inlines):
         texto = texto.replace(f"___INLINE_{i}___", cod)
     for i, blk in enumerate(bloques):
@@ -173,17 +161,63 @@ def construir_system_prompt():
         return f"{BASE_SYSTEM_INSTRUCTION}\n\n--- MATERIAL OFICIAL DE ESTUDIO, CERTÁMENES Y APUNTES DE LA CÁTEDRA ---\n{docs_text}\n--- FIN DE APUNTES ---"
     return BASE_SYSTEM_INSTRUCTION
 
-user_chats = {}
+# Estructura: user_id -> {"history": [...]}
+user_histories = {}
 
-def get_or_create_chat(user_id: int):
-    if user_id not in user_chats:
-        system_instruction = construir_system_prompt()
-        model = genai.GenerativeModel(
-            model_name=MODEL_NAME,
-            system_instruction=system_instruction
-        )
-        user_chats[user_id] = model.start_chat(history=[])
-    return user_chats[user_id]
+def send_with_fallback(user_id: int, message_text: str) -> str:
+    """Envía mensaje al modelo con rotación automática si uno agota cuota temporal."""
+    system_instruction = construir_system_prompt()
+    if user_id not in user_histories:
+        user_histories[user_id] = []
+
+    history = user_histories[user_id]
+    
+    last_error = None
+    for model_name in FALLBACK_MODELS:
+        try:
+            model = genai.GenerativeModel(
+                model_name=model_name,
+                system_instruction=system_instruction
+            )
+            chat = model.start_chat(history=history)
+            response = chat.send_message(message_text)
+            # Guardar el historial exitoso
+            user_histories[user_id] = chat.history
+            return response.text
+        except ResourceExhausted as rexc:
+            logger.warning(f"Modelo {model_name} agoto cuota temporal. Intentando fallback...")
+            last_error = rexc
+            continue
+        except Exception as exc:
+            if "429" in str(exc) or "quota" in str(exc).lower():
+                logger.warning(f"Modelo {model_name} retorno 429. Probando siguiente modelo...")
+                last_error = exc
+                continue
+            raise exc
+
+    if last_error:
+        raise ResourceExhausted("Se alcanzó el límite temporal por minuto de la API gratuita. Espera unos 30 segundos.")
+
+def generate_photo_with_fallback(image: Image, caption: str) -> str:
+    system_instruction = construir_system_prompt()
+    prompt = [
+        f"El estudiante envió esta foto de un apunte o ejercicio con la indicación: '{caption}'. "
+        "Resuélvelo con máximo detalle pedagógico siguiendo los criterios y notación del curso ADA de la UBB.",
+        image
+    ]
+    for model_name in FALLBACK_MODELS:
+        try:
+            model = genai.GenerativeModel(
+                model_name=model_name,
+                system_instruction=system_instruction
+            )
+            res = model.generate_content(prompt)
+            return res.text
+        except Exception as e:
+            if "429" in str(e) or "quota" in str(e).lower():
+                continue
+            raise e
+    raise ResourceExhausted("Límite temporal alcanzado en fotos. Espera 30 segundos.")
 
 async def split_and_send(update: Update, text: str):
     text_html = formatear_para_telegram(text)
@@ -199,7 +233,7 @@ async def split_and_send(update: Update, text: str):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    user_chats.pop(user_id, None)
+    user_histories.pop(user_id, None)
     
     welcome_text = (
         "👋 ¡Hola! Soy tu tutor para el curso de <b>Análisis y Diseño de Algoritmos (ADA)</b> de la <b>Universidad del Bío-Bío</b>.\n\n"
@@ -219,12 +253,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def nuevo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    user_chats.pop(user_id, None)
+    user_histories.pop(user_id, None)
     await update.message.reply_text("🔄 Conversación reiniciada. ¿Qué ejercicio o tema de ADA quieres estudiar hoy?")
 
 async def certamenes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    chat = get_or_create_chat(user_id)
     prompt = (
         "Menciónale al estudiante qué tipo de problemas típicos entraron en los Certámenes 1 y 2 anteriores del profesor "
         "Gilberto Gutiérrez (por ejemplo mySort, análisis de recursión, Divide y Vencerás o Programación Dinámica) "
@@ -232,44 +265,45 @@ async def certamenes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.effective_chat.send_action(ChatAction.TYPING)
     try:
-        response = chat.send_message(prompt)
-        await split_and_send(update, response.text)
+        reply = send_with_fallback(user_id, prompt)
+        await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error en /certamenes: {e}")
-        await update.message.reply_text(f"❌ Error: {e}")
+        await update.message.reply_text(f"⏳ {e}")
 
 async def practicar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     topic = " ".join(context.args) if context.args else "Certamen de la UBB"
-    chat = get_or_create_chat(user_id)
-    
     prompt = (
         f"El estudiante quiere practicar para su examen sobre el tema o certamen: '{topic}'. "
         "Plantea un problema real o adaptado de los certámenes o diapositivas de la UBB. "
         "Explica el enunciado con total claridad y pídele que proponga su estrategia, algoritmo y complejidad. "
         "No des la respuesta todavía, sé socrático."
     )
-    
     await update.effective_chat.send_action(ChatAction.TYPING)
     try:
-        response = chat.send_message(prompt)
-        await split_and_send(update, response.text)
+        reply = send_with_fallback(user_id, prompt)
+        await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error en /practicar: {e}")
-        await update.message.reply_text(f"❌ Error: {e}")
+        await update.message.reply_text(f"⏳ {e}")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     user_text = update.message.text
-    chat = get_or_create_chat(user_id)
 
     await update.effective_chat.send_action(ChatAction.TYPING)
     try:
-        response = chat.send_message(user_text)
-        await split_and_send(update, response.text)
+        reply = send_with_fallback(user_id, user_text)
+        await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error procesando mensaje: {e}")
-        await update.message.reply_text(f"❌ Error: {e}")
+        await update.message.reply_text(
+            f"⏳ <b>Límite temporal por minuto alcanzado</b>.\n\n"
+            "Google AI Studio impone un límite de peticiones por minuto en la cuenta gratuita. "
+            "Por favor espera unos <b>30 segundos</b> y vuelve a enviar tu pregunta.",
+            parse_mode=ParseMode.HTML
+        )
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     photos = update.message.photo
@@ -280,23 +314,14 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         photo_file = await photos[-1].get_file()
         photo_bytes = await photo_file.download_as_bytearray()
         image = Image.open(io.BytesIO(photo_bytes))
-
-        system_instruction = construir_system_prompt()
-        model = genai.GenerativeModel(
-            model_name=MODEL_NAME,
-            system_instruction=system_instruction
-        )
-        prompt = [
-            f"El estudiante envió esta foto de un apunte o ejercicio con la indicación: '{caption}'. "
-            "Resuélvelo con máximo detalle pedagógico siguiendo los criterios y notación del curso ADA de la UBB.",
-            image
-        ]
-        
-        response = model.generate_content(prompt)
-        await split_and_send(update, response.text)
+        reply = generate_photo_with_fallback(image, caption)
+        await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error procesando foto: {e}")
-        await update.message.reply_text(f"❌ Error al procesar la imagen: {e}")
+        await update.message.reply_text(
+            "⏳ <b>Límite temporal alcanzado</b> al procesar la imagen. Espera 30 segundos y vuelve a enviarla.",
+            parse_mode=ParseMode.HTML
+        )
 
 async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
     doc = update.message.document
@@ -326,7 +351,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
             with open(CACHE_FILE, "a", encoding="utf-8") as c:
                 c.write(f"\n=== DOCUMENTO EXTRA: {filename} ===\n{contenido_extra}\n")
 
-        user_chats.clear()
+        user_histories.clear()
         await update.message.reply_text(
             f"✅ <b>¡Documento <code>{filename}</code> indexado con éxito!</b>\n"
             "Ya está incorporado en la base de conocimientos del bot para responderte.",
@@ -352,7 +377,7 @@ def main():
     app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
 
-    print("[+] Bot ADA iniciado con motor HTML de alta fidelidad.")
+    print("[+] Bot ADA iniciado con sistema de contingencia y fallback de modelos.")
     app.run_polling()
 
 if __name__ == "__main__":
