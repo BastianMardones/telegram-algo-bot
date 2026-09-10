@@ -3,6 +3,8 @@ import os
 import io
 import sys
 import logging
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 from dotenv import load_dotenv
 from PIL import Image
@@ -17,6 +19,23 @@ from telegram.ext import (
     ContextTypes,
     filters,
 )
+
+# Compatibilidad con Render Web Service (Free Tier )
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot ADA is running successfully!")
+
+    def log_message(self, format, *args):
+        pass  # Silenciar logs http para no ensuciar la terminal
+
+def run_health_check_server():
+    port = int(os.getenv("PORT", 8080))
+    server = HTTPServer(("0.0.0.0", port), HealthCheckHandler)
+    server.serve_forever()
+
+threading.Thread(target=run_health_check_server, daemon=True).start()
 
 if sys.platform == "win32":
     try:
@@ -229,7 +248,6 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
         doc_file = await doc.get_file()
         await doc_file.download_to_drive(dest_path)
         
-        # Actualizar cache agregando el nuevo archivo
         contenido_extra = ""
         if ext == ".pdf":
             r = PdfReader(str(dest_path))
@@ -268,7 +286,7 @@ def main():
     app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
 
-    print("[+] Bot ADA con material oficial de UBB iniciado correctamente.")
+    print("[+] Bot ADA iniciado (con Web Service Free integrado).")
     app.run_polling()
 
 if __name__ == "__main__":
