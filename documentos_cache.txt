@@ -1,0 +1,4565 @@
+=== APUNTES / DOCUMENTO: examenes_anteriores_transcritos.txt ===
+
+
+=== EVALUACION / CERTAMEN: certamen1.jpeg ===
+Aquí tienes la transcripción exacta y estructurada de la hoja del certamen que se observa en la imagen.
+
+---
+
+# **Certamen #1**
+### **Análisis y Diseño de Algoritmos/ Ingeniería Civil Informática**
+**Departamento Ciencias de la Computación y Tecnologías de la Información**
+
+**Universidad del Bío-Bío**
+
+**Profesor:** Gilberto Gutiérrez R.
+
+**Primavera 2025**
+
+---
+
+### **Problema 1, 2.5 puntos**
+Dado el siguiente algortimo (mysort) para ordenar un arreglo de enteros de tamaño $m$.
+
+```java
+class mySort{
+    public static void main(String[] args) {
+        int  []A = { 6,10,2,25,30,40,1};
+        mysort(A,0);
+        ...
+    }
+
+// Ordena calculando cada vez el mínimo
+public static void mysort(int []A, int n) {
+    if(n < A.length-1){
+        int k = Min(A,n);
+        if( n < k) Intercambia(A,n,k);
+        mysort(A,n+1);
+    }
+}
+
+// Obtiene el menor elemento de A[n..A.length]
+public static int Min(int []A, int n) {
+    int k = n;
+    for (int j= n; j < A.length ; j++)
+        if (A[j] < A[k] ) k=j;
+    return k;
+}
+
+// Función que Intercambia A[i] con A[k]
+public static void Intercambia(int []A, int i, int k) {
+    int t = A[i];
+    A[i] = A[k];
+    A[k] = t;
+```
+
+---
+*Página 1*
+
+---
+
+### **Texto traslúcido / Reverso de la página (Preguntas visibles al reverso)**
+*(Nota: El texto que se trasluce en el lado derecho de la hoja corresponde a las preguntas/continuación del certamen impresas al reverso):*
+
+* **a)** Muestre la traza de ejecución para el arreglo `A` de ejemplo...
+* **b)** Obtenga la función de complejidad $T(m)$ del algoritmo...
+* **c)** Calcule la complejidad del algoritmo...
+* **1.** Diseñe un algoritmo (pseudo-código) de complejidad $O(n \log n)$...
+* **Problema 2** ...
+  * **a)** Demuestre por inducción que...
+  * **b)** Escriba el algoritmo recursivo para...
+  * **c)** Obtenga la complejidad del algoritmo...
+
+
+=== EVALUACION / CERTAMEN: certamen1parte2.jpeg ===
+Aquí tienes la transcripción exacta y estructurada de todo el contenido del certamen/evaluación mostrado en la imagen:
+
+---
+
+```java
+    }
+}// Fin Clase MySort
+```
+
+1. En función del tamaño de la entrada $m$ del arreglo $A$ plantee la ecuación de recurrencia que mida la cantidad de comparaciones que realiza `mysort` en el peor de los casos.
+
+2. Resuelva la ecuación de recurrencia anterior y obtenga la complejidad del `mysort`.
+
+3. Nuevamente en función de $m$, plantee la ecuación de recurrencia que mida la cantidad de intercambios (llamadas a la función `Intercambia()`) que realiza `mysort` en el peor de los casos.
+
+4. Resuelva la ecuación de recurrencia anterior e indique la complejidad de `mysort` considernado los intercambios.
+
+5. Teniendo en cuenta el algoritmo `SortBasico()` visto en clases y que la operación relevante es el intercambio entre dos elementos del arreglo (llamadas a la función `Intercambia()`) ¿Cuàl de los algoritmos es mejor, `SortBasico` o `mysort`?.
+
+---
+
+### **Problema 2, 1.5 puntos**
+
+Asuma dos arreglos de enteros $A$ y $B$ de tamaños $n$ y $m$ respectivamente con $m > n$. Tanto en $A$ como en $B$ no existen elementos repetidos y tampoco se encuentran ordenados. Suponga que desea encontrar el conjunto $C = A - B = \{x \in A \wedge x \notin B\}$. Asuma que la operación relevante en este problema es la comparación entre números enteros. Es claro que es posible calcular $C$ mediante un algoritmo de complejidad $O(n \cdot m)$.
+
+1. Diseño un algoritmo (pseudo-código) de complejidad menor que $O(n \cdot m)$ para encontrar $C$.
+2. Demuestre que la complejidad de este último algoritmo es menor que $O(n \cdot m)$.
+
+---
+
+### **Problema 3, 2 puntos**
+
+Asuma que se necesita computar la siguiente función:
+
+$$F(n, m) = \begin{cases} 
+n, & \text{si } m = 0, \\ 
+m, & \text{si } n = 0, \\ 
+\max\{F(n - 1, m - 1), F(n - 1, m) + F(n, m - 1)\} & \text{si } n, m > 0. 
+\end{cases}$$
+
+Un algoritmo ($Alg1$) recursivo para calcular $F(n, m)$ es directo.
+
+1. Escriba el algoritmo recursivo $Alg1$.
+2. Obtenga la complejidad del algoritmo $Alg1$.
+3. Usando programación dinámica, diseñe un algoritmo $Alg2$ más eficiente que $Alg1$. Debe desmostrar que $Alg2$ es más eficiente que $Alg1$.
+
+---
+
+<div align="center"><b>2</b></div>
+
+
+=== EVALUACION / CERTAMEN: certamen2.jpeg ===
+A continuación se presenta la transcripción exacta y estructurada de todo el contenido del certamen exhibido en la imagen:
+
+---
+
+# **Certamen #2**
+**Análisis y Diseño de Algoritmos / Ingeniería Civil Informática**  
+**Departamento Ciencias de la Computación y Tecnologías de la Información**  
+**Universidad del Bío-Bío**  
+
+**Profesor:** Gilberto Gutiérrez R.  
+**Primavera 2025**
+
+---
+
+### **Problema 1, 2 puntos**
+
+Asuma $M[0..n-1, 0..n-1]$ una matriz binaria (1's y 0's) de $n \times n$ representa un laberinto. La siguiente matriz es un ejemplo de un laberinto.
+
+$$\begin{bmatrix}
+1 & 1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 0 \\
+1 & 0 & 1 & 1 & 1 \\
+1 & 1 & 1 & 0 & 1
+\end{bmatrix}$$
+
+En general partiendo, de un punto dado, podemos pasar a puntos adyacentes de la misma fila o de la misma columna. Si $M[i,j]$ es 1 se puede pasar por la celda $(i,j)$; si $M[i,j]$ es falso no se puede pasar por la celda $(i,j)$. Escriba un algoritmo de Bactracking que verifique si existe un camino desde la celda $(0,0)$ hasta la celda $(n-1, n-1)$.
+
+---
+
+### **Pregunta 2, 1.0 puntos** 
+Responda brevemente (2 líneas):
+
+1. ¿Qué significa que la cota inferior del problema de ordenamiento sea $\Omega(n \log_2 n)$?
+2. Explique por que las cotas juegan un rol esencial en los algoritmos de ramificación y poda.
+
+---
+
+### **Problema 3, 3 puntos**
+
+Dado un grafo no dirigido $G = (V, A)$, con $V$ el conjunto de vértices y $A$ el conjunto de aristas. Un conjunto dominanate $D \subseteq V$ es un conjunto de vertices tal que todo vértice de $V$ es: (i) Un elemento de $D$ o (ii) es adyacente (está conectado por una arista) a al menos un miembro del conjunto $D$ ($v$ tiene un vecino en $D$). . Por ejemplo en el grafo de la Figura 1, $D = \{2, 4\}$ es un conjunto dominante de $G$. Se conoce como el problema del conjunto dominante ($cd$) a: Dado un grafo no dirigido $G$ y un entero $K > 0$ ¿Existe un conjunto dominante $D$ en el grafo $G$ tal que $|D| \le K$?
+
+---
+
+#### **Pregunta 3.1 (1 punto):** 
+Demuestre que el problema del conjunto dominante ($cd$) está en $NP$.
+
+El problema $cd$ es NP-Completo. Para demostrar que lo es usaremos el problema *vertex cover* ($vc$), visto en clases, el cual ya sabemos es NP-Completo. Es decir, demostraremos $vc \le cd$.
+
+---
+*Página 1*
+
+
+=== EVALUACION / CERTAMEN: certamen2parte2.jpeg ===
+A continuación se presenta la transcripción exacta y estructurada de todo el texto, fórmulas, algoritmos y preguntas que aparecen en la fotografía:
+
+---
+
+### **[Figuras y Descripción de Grafos]**
+
+#### **Figura 1**
+* **Grafo $G$:** Grafo no dirigido con 4 vértices: $V = \{1, 2, 3, 4\}$ formando un ciclo (aristas: $(1,2)$, $(2,3)$, $(3,4)$, $(4,1)$).
+* **Leyenda:** 
+  > **Figura 1:** Grafo $G$ no dirigido que tiene un vertex cover
+
+#### **Figura 2**
+* **Grafo $G'$:** Grafo no dirigido obtenido agregando a $G$ los vértices $v_{12}$, $v_{23}$ y $v_{43}$.
+  * $v_{12}$ está conectado a $1$ y $2$.
+  * $v_{23}$ está conectado a $2$ y $3$.
+  * $v_{43}$ está conectado a $4$ y $3$.
+* **Leyenda:** 
+  > **Figura 2:** Grafo no dirigido $G'$ obtenido mediante la trasformación del grafo de la Figura 1 y que tiene un conjunto dominante $\{2, 4\}$
+
+---
+
+### **[Texto Principal / Reducción]**
+
+Asumiendo que el grafo con vertex cover es $G = \langle V, A \rangle$ (por ejemplo el grafo de la Figura 1), la reducción de $vc$ a $cd$ es la siguiente: Sea $G' = \langle V', A' \rangle$ el grafo resultante de la transformación (por ejemplo el grafo de la Figura 2).
+
+1. $V' = V \cup V_v$ donde el conjunto $V_v$ se forma de la siguiente manera: Por cada arista $e = (u,v) \in A$, se crea un nuevo vértice $v_{uv}$.
+
+2. Para las aristas ($A'$) se conservan las aristas de $A$ y se agregan las siguientes: Para cada arista $(u,v) \in A$, añadimos las aristas $(u, v_{uv})$ y $(v, v_{uv})$. Ver grafo de la Figura 2.
+
+La Figura 2 muestra el grafo obtenido a partir de la trasnformación del grafo de la Figura 1.
+
+---
+
+### **[Texto Lateral / Notas]**
+
+...un ejemplo, que si el grafo $G'$ tiene un $cd$, el grafo $G$ tiene un $vc$.
+
+*Notar que los ejemplos previos no son suficiente para demostrar formalmente que $vc \le cd$ y que finalmente $cd$ es NP-Completo. La demostración formal de $w \in vc \iff f(w) \in cd$ es un poco más compleja.*
+
+---
+
+### **[Preguntas y Enunciados]**
+
+**Pregunta 3.2 (1.0 punto):** Demuestre que la transformación de $vc$ en $cd$ se puede realizar en tiempo polinomial.
+
+---
+
+Observe si el grafo $G$ tiene un vertex cover (el conjunto $D = \{2, 4\}$, por ejemplo) entonces el grafo $G'$ tendrá un $cd$ y el grafo de la Figura 2 tiene un conjunto dominante $D' = D$.
+
+---
+
+**Pregunta 3.1 (1.0 punto)** Usando los grafos de la Figura 1 y 2 muestre, mediante
+
+
+=== EVALUACION / CERTAMEN: test2.jpeg ===
+Aquí tienes la transcripción exacta y estructurada del certamen/evaluación:
+
+---
+
+# Test 2
+## Análisis y diseño de Algoritmos
+
+**Gilberto Gutiérrez**  
+**Primavera 2025**
+
+---
+
+### **1. (4 Puntos)**
+Sea $M_{n \times n}$ una matriz cuadrada de dimensión $n = 2^k, k = 1, 2, \dots$. Se define, $M^T_{n \times n}$ la traspuesta de $M$, como $m^T_{ij} = m_{ji}, 1 \le i, j \le n$. El algoritmo tradicional toma tiempo $O(n^2)$. Una forma alternativa de obtener $M^T$ se explica por medio del siguiente ejemplo. Sea
+
+$$M = \begin{pmatrix} 
+1 & 2 & \vdots & 3 & 4 \\ 
+5 & 6 & \vdots & 7 & 8 \\ 
+\dots & \dots & \dots & \dots & \dots \\ 
+9 & 10 & \vdots & 11 & 12 \\ 
+13 & 14 & \vdots & 15 & 16 
+\end{pmatrix}$$
+
+entonces la traspuesta $M'$ de $M$ es la siguiente:
+
+$$M^T = \begin{pmatrix} 
+1 & 5 & \vdots & 9 & 13 \\ 
+2 & 6 & \vdots & 10 & 14 \\ 
+\dots & \dots & \dots & \dots & \dots \\ 
+3 & 7 & \vdots & 11 & 15 \\ 
+4 & 8 & \vdots & 12 & 16 
+\end{pmatrix}$$
+
+Observe que $M^T$ se puede obtener de la siguiente forma:
+
+* **a)** Para cada submatriz de $2 \times 2$ (caso base) intercambiamos los elementos de la diagonal secundaria o no principal.
+* **b)** Para matrices de $n \times n$, $n > 2$ intercambiamos las submatrices de la diagonal no principal.
+
+#### **Responda lo siguiente:**
+
+* **a) (2 puntos)** Basándose en el ejemplo anterior, diseñe un algoritmo de dividir para reinar que permita obtener $M^T$ para cualquier $n$ potencia de 2. En su algoritmo debe explicar claramente el o los casos bases, la fases de división del problema en subproblemas más chicos y la de combinación de las soluciones de los subproblemas para obtener las solución del problema completo. Use pseudo-código para especificar su algoritmo.
+* **b) (1 punto)** Escriba la ecuación de recurrencia de su algoritmo que mida o cuenta la cantidad de intercambios que necesita realizar el algoritmo en el peor de los casos.
+* **c) (1 punto)** Usando el teorema maestro, visto en clases, decida si este nuevo algoritmo para obtener la traspuesta es mejor que el tradicional.
+
+---
+
+### **2. (1 Punto)**
+Usando el algoritmo visto en clase práctica, encuentre la distancia editada de los strings $u = \text{abcab}$ y $v = \text{bbcb}$.
+
+---
+
+### **3. (1 Punto)**
+Indique en que caso aplicar la técnica de diseño “Dividir para Reinar” puede generar un algoritmo ineficiente. Puede explicar mediante un ejemplo.
+
+---
+*Página 1*
+
+
+=== EVALUACION / CERTAMEN: test3.jpeg ===
+Aquí tienes la transcripción exacta y estructurada del certamen/evaluación:
+
+---
+
+# Test # 3
+## Análisis y Diseño de Algoritmos$^*$
+
+**Gilberto Gutiérrez**  
+**Primavera 2025**
+
+---
+
+**Problema 1, 3.5 puntos** Dados un conjunto de entero $A$ de tamaño $n$.
+
+1. **(2 pts)** Escriba un algoritmo (pseudo código o java) backtracking para verificar si existe un conjunto $B \subseteq A$ y $B \neq \emptyset$ tal que la suma de los elementos de $B$ sea igual a $K$.
+
+2. **(1 pto)** Dibuje el árbol implícito que generaría su algoritmo al considerar $A = \{-1, 3, -7, 8, 10\}$ y $M = 4$.
+
+3. **(1 pto)** Escriba ahora un algoritmo (pseudo código o java) backtracking para determinar el tamaño del menor conjunto $B \subseteq A$ y que la suma de sus elementos sea igual $M$.
+
+---
+
+**Problema 2, 1 puntos** Explique en que se parecen y en que se diferencian los algoritmos backtracking y los de ramificación y poda.
+
+---
+
+**Problema 3, 1.5 puntos** Aplique el algoritmo de ramificación y poda (visto en clases) para asignar de manera óptima (asignación con el menor costo para ejecutar las actividades) las actividades $\{1, 2, 3\}$ a los agentes $\{a, b, c\}$ y cuyos costos de ejecución se indican en la matriz siguiente:
+
+| | 1 | 2 | 3 |
+|---|---|---|---|
+| **a** | 3 | 8 | 3 |
+| **b** | 2 | 6 | 1 |
+| **c** | 4 | 7 | 4 |
+
+Indique claramente las cotas (inferiores y superiores) que utiliza el algoritmo.
+
+---
+
+$^*$Universidad del Bío-Bío  
+Departamento de Ciencias de la Computación y TI
+
+<div align="center">1</div>
+
+
+=== EVALUACION / CERTAMEN: parte1.png ===
+Aquí tienes la transcripción exacta y estructurada de todo el texto visible en la imagen:
+
+---
+
+# Test 1 (PAUTA)
+## Análisis y Diseño de algoritmos
+
+**Gilberto Gutiérrez**  
+**Alexander France**
+
+**Primavera 2020**
+
+---
+
+1. (2 punto) Demuestre que la función $t(n) = 2n^2 + 10n + 3$ es $\Theta(n^2)$.
+
+---
+
+2. (4 Puntos). Sea $x$ un entero y $A$ un arreglo de enteros de tamaño $n$ el cual se encuentra ordenado de menor a mayor. El problema de búsqueda consiste en verificar si $x \in A$. En clases, y para este escenario, revisamos la búsqueda binaria ($BB(A, li, ls, x)$, con $li$ y $ls$ el límite inferior y superior respectivamente donde continuar la búsqueda dentro de $A$) para resolver el problema de búsqueda. A grandes rasgos, el algoritmo divide $A$ en dos subarreglos, $A1$ y $A2$ de aproximadamente la misma cantidad de elementos y recursivamente continua la búsqueda por $A1$ o $A2$ si es que $x$ es diferente al elemento (pivote) que se encuentra en la mitad del arreglo $A$. Le recuerdo que, en el peor de los casos, este algoritmo realiza $t(n) = \log_2 n + 1$ comparaciones para decidir si $x \in A$.
+
+---
+
+**Página 1**
+
+
+=== EVALUACION / CERTAMEN: parte 2.png ===
+Aquí tienes la transcripción exacta del texto, problemas, enunciados y fórmulas matemáticas que se observan en la imagen:
+
+***
+
+Asuma un algoritmo que en lugar de dividir en 2 ($A1$ y $A2$) el arreglo lo divida en tres subarreglos ($A1, A2$ y $A3$). Llamemos a este algoritmo $BT(A, li, ls, n)$.
+
+**(a)** Considerando la comparación (al igual que en $BB(A, li, ls, x)$) entre $x$ y elementos de $A$ como la operación relevante, plantee la ecuación de recurrencia para $BT(A, li, ls, n)$ en el peor de los casos. (1 punto).
+
+**(b)** Resuelva la ecuación de recurrencia. (2.0 punto)
+
+**(c)** Considerando el peor caso, ¿Cuál de los algoritmos es mejor $BB(A, li, ls, n)$ o $BT(A, li, ls, n)$?. **Hint.** Cambio a base $c$ de un logaritmo en base $b$: $\log_b a = \frac{\log_c a}{\log_c b}$. Por ejemplo, si tenemos $\log_4 8$ y queremos cambiar a base 2, entonces $\log_4 8 = \frac{\log_2 8}{\log_2 4} = \frac{3}{2}$. (1.0 punto)
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: act0.pdf ===
+Pr´ actica 1
+Evaluaci´ on Experimental de Algoritmos de Ordenaci´ on
+An´ alisis y Dise˜ no de Algoritmos / Ingenier ´ ıa Civil Inform´ atica
+Departamento Ciencias de la Computaci´ on y
+Tecnolog ´ ıas de la Informaci´ on
+Universidad del B ´ ıo-B ´ ıo
+Profesor: Gilberto Guti´ errez
+Primavera 2025
+En esta actividad se le pide que evalue emp ´ ıricamente (mediante experimentos) tres algoritmos de
+ordenamiento (Sort). El programa ASort tiene implementado los siguientes tres algoritmos de ordenamiento
+de n´ umeros enteros:SortBasico, InsertSort y HeapSort. En esta actividad no nos interesa como funciona
+cada algoritmo; lo iremos descubriendo durante el desarrollo del curso y nos explicaremos por que algunos
+son m´ as eficientes (se demoran menos) que otros. Realice las siguientes actividades:
+1. Compile el programa ASort.java
+2. Ejecute el programa (java ASort n) para cada valor de n (ver Tabla 1) y anote el tiempo (milisegundos)
+que le toma a cada algoritmo ordenar los n elementos. Procure que su computador est´ e ejecutando el
+m ´ ınimo de tareas. Por ejemplo, desconectelo de la red (internet). Si prefiere ingrese los tiempos en una
+planilla electr´ onica (Excel). Si a un algoritmo le toma demasiado tiempo (lleva ejecut´ andose 2 horas o
+m´ as), detenga el programa y omita el tiempo para dicho algoritmo.
+3. Con los datos de la tabla, confeccione un gr´ afico donde en el eje x se indican los distintos valores de n
+y en el eje y el tiempo. Una curva por cada algoritmo.
+Algoritmo de Sort
+n B´ asico Insert Heap
+100
+500
+1000
+5000
+10000
+50000
+100000
+200000
+500000
+1000000
+4. ¿ De acuerdo a los experimentos y considerando solamente el tiempo de ejecuci´ on, cual de los algoritmos
+es mejor?
+5. Revise la implementaci´ on de los algoritmosSortBasico e InsertSort. ¿ Por qu´ e cree que el algoritmo
+InsertSort es mejor que el algoritmo SortBasico?
+1
+Sobre la entrega: Esta actividad NO es evaluada y pueden realizarla en grupo de 3 o menos estudiantes.
+Deben subir a la plataforma: a) La gr´ afica con el desempe˜ no (tiempos de ejecuci´ on) de los algoritmos, b)
+la Tabla 1 (completada) y c) las respuesta de las actividades (o preguntas) 4 y 5. Les animo a realizar la
+actividad (es sencilla) ya que nos ser´ a muy ´ util en el curso, pues repetidamente la usaremos como ejemplo
+para reforzar algunos conceptos.
+2
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: act12026.pdf ===
+Practica 1
+An´ alisis y Dise˜ no de Algoritmos / Ingenier ´ ıa Civil Inform´ atica
+Departamento Ciencias de la Computaci´ on y
+Tecnolog ´ ıas de la Informaci´ on
+Universidad del B ´ ıo-B ´ ıo
+Profesores: Gilberto Guti´ errez
+Primavera 2026
+1. Cotas superior/inferior de funciones.
+Para cada una de las funciones encuentre su cota superior ( O(g1(n))) y la cota inferior (Ω( g2(n))).
+En cada caso debe encontrar c, n0 y g1(n) y g2(n).
+(a) t(n) = 2 n2 + 5
+(b) t(n) = 50 n2 + 4n + 3n3
+(c) t(n) = 8 n3 + 2n lg n
+(d) t(n) = n(n− 1)
+2 + n√ n
+2. Asuma que la operaci´ on de asignaci´ onA[i − 1] = A[i] (l ´ ınea 7) del algoritmoInsertSort (visto en clases)
+es la operaci´ on relevante. Obtenga, para el peor de los casos, la f unci´ on (en t´ erminos del tama˜ no de la
+entrada n) que representa la cantidad de operaciones relevantes. Tambi´ e n obtenga la complejidad del
+algoritmo considerando dicha operaci´ on relevante.
+3. Dado un arreglo de enteros, se necesita veriﬁcar si en el arreg lo existen n´ umeros repetidos. En clases
+revisamos un algoritmo cuadr´ atico (O(n2)) para este problema. Asuma ahora que tiene un algoritmo
+que permite ordenar un arreglo de tama˜ non en tiempo O(n log2 n); escriba un algoritmo de complejidad
+menor que cuadr´ atica para realizar la veriﬁcaci´ on. Demuestre que su algoritmo es de complejidad menor
+que O(n2).
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: act22025.pdf ===
+Practica 2
+An´ alisis y Dise˜ no de Algoritmos / Ingenier ´ ıa Civil Inform´ atica
+Departamento Ciencias de la Computaci´ on y
+Tecnolog ´ ıas de la Informaci´ on
+Universidad del B ´ ıo-B ´ ıo
+Profesores: Gilberto Guti´ errez
+Primavera 2025
+1. Cotas superior de funciones.
+Para cada una de las funciones encuentre su cota superior, es dec ir, O(g(n)). En cada caso debe
+encontrar c, n0 y g(n).
+(a) t(n) = 2 n + 5
+(b) t(n) = 50 n2 + 4n
+(c) t(n) = 8 n3 + 2n lg n
+(d) t(n) = n(n− 1)
+2 + n2√ n
+2. Analice el algoritmo InsertSort (visto en clases) y obtenga la cantidad de comparaciones, en funci´ on
+del tama˜ no de la entrada (n), que realiza el algoritmo en el peor de los casos.
+3. Suponga que el algoritmo MergeSort (que estudiaremos m´ as adelante) en el peor de los casos, ordena un
+conjunto de objetos realizando t(n) = 64 n log2 n comparaciones, donde n es el tama˜ no de la entrada.
+¿Para que valores de n InsertSort es mejor que MergeSort, en el peor de los casos?. Hint. Puede
+graﬁcar las funciones de InsertSort y MergeSort para ciertos valores de n.
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: ada2.pdf ===
+Análisis y Diseño de Algoritmos
+Dr. Gilberto Gutiérrez R.
+Universidad del Bío-Bío
+Departamento de Ciencias de la Computación y TI
+Primavera 2025
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 1 / 232
+Indice I
+1 Análisis de Algoritmos
+Motivación
+Conceptos Fundamentales
+Análisis de Algoritmos no recursivos
+Análisis de Algoritmos recursivos
+2 Técnicas de Diseño de Algoritmos
+Dividir para Reinar
+Programación Dinámica
+Algortimos Voráces
+Backtracking
+Ramificación y Poda
+3 Complejidad Computacional
+Introducción
+Teoría de la Información
+Introducción a NP-Completitud
+Problemas NP-Completos
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 2 / 232
+Indice II
+4 Algoritmos Probabilísticos
+Algoritmos Numéricos Probabilísticos
+Algoritmos de Monte Carlo
+Algoritmos de Las Vegas
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 3 / 232
+Motivación
+Problema
+(Ordenamiento)
+A1
+A2
+An
+...
+Preguntas
+1. ¿A1 es mejor queA2?
+2. ¿Cuál es el mejor algoritmo?
+3. ¿En qué escenariosA2 es
+mejor que A1?
+4. ¿Habrá un algoritmoAn+1
+mejor que los que se conocen?
+5. ¿Cuál es la cota inferior del
+problema?
+6. ¿...?
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 4 / 232
+Motivación
+Problema
+(Ordenamiento)
+A1
+A2
+An
+...
+Preguntas
+1. ¿A1 es mejor queA2?
+2. ¿Cuál es el mejor algoritmo?
+3. ¿En qué escenariosA2 es
+mejor que A1?
+4. ¿Habrá un algoritmoAn+1
+mejor que los que se conocen?
+5. ¿Cuál es la cota inferior del
+problema?
+6. ¿...?
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 4 / 232
+Motivación
+Problema
+(Ordenamiento)
+A1
+A2
+An
+...
+Preguntas
+1. ¿A1 es mejor queA2?
+2. ¿Cuál es el mejor algoritmo?
+3. ¿En qué escenariosA2 es
+mejor que A1?
+4. ¿Habrá un algoritmoAn+1
+mejor que los que se conocen?
+5. ¿Cuál es la cota inferior del
+problema?
+6. ¿...?
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 4 / 232
+Motivación
+Problema
+(Ordenamiento)
+A1
+A2
+An
+...
+Preguntas
+1. ¿A1 es mejor queA2?
+2. ¿Cuál es el mejor algoritmo?
+3. ¿En qué escenariosA2 es
+mejor que A1?
+4. ¿Habrá un algoritmoAn+1
+mejor que los que se conocen?
+5. ¿Cuál es la cota inferior del
+problema?
+6. ¿...?
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 4 / 232
+Motivación
+Problema
+(Ordenamiento)
+A1
+A2
+An
+...
+Preguntas
+1. ¿A1 es mejor queA2?
+2. ¿Cuál es el mejor algoritmo?
+3. ¿En qué escenariosA2 es
+mejor que A1?
+4. ¿Habrá un algoritmoAn+1
+mejor que los que se conocen?
+5. ¿Cuál es la cota inferior del
+problema?
+6. ¿...?
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 4 / 232
+Motivación
+Problema
+(Ordenamiento)
+A1
+A2
+An
+...
+Preguntas
+1. ¿A1 es mejor queA2?
+2. ¿Cuál es el mejor algoritmo?
+3. ¿En qué escenariosA2 es
+mejor que A1?
+4. ¿Habrá un algoritmoAn+1
+mejor que los que se conocen?
+5. ¿Cuál es la cota inferior del
+problema?
+6. ¿...?
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 4 / 232
+Motivación
+Ej. Dado un arregloA de tamaño n, ordenar los elementos deA de
+menor a mayor
+Algorithm 1SortBasico(A, n)
+1: Input: A, n
+2: Output: A ordenado de menor a mayor
+3: for i = 1 to n−1 do
+4: for j = i +1 to n do
+5: if a[i]> a[j] then
+6: Intercambia(A,i,j)
+7: end if
+8: end for
+9: end for
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 5 / 232
+Motivación
+Algorithm 2InsertSort(A, n)
+1: Input: A, n
+2: Output: A ordenado de menor a mayor
+3: for j = 1 to n do
+4: key = a[j]
+5: i = j−1
+6: while i≥ 0 and a[i]> key do
+7: a[i +1] = a[i]
+8: i = i−1
+9: end while
+10: a[i +1] = key
+11: end for
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 6 / 232
+Motivación
+Algorithm 3HeapSort(A, n)
+1: Input: A, n
+2: Output: A ordenado de menor a mayor
+3: BuildHeap(A)
+4: for i = n−1 to 0do
+5: Intercambia(A,0, i)
+6: Heapify(A,0, i−1)
+7: end for
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 7 / 232
+Motivación
+Algorithm 4BuildHeap(A, n)
+1: Input: A, n
+2: Output: Un heap enA
+3: for i = n/2; i≥ 0; i−− do
+4: Heapify(A, i, n−1)
+5: end for
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 8 / 232
+Motivación
+Algorithm 5Heapify(A, i, j)
+1: Input: A, i, j
+2: Output: Heapify
+3: if ((2 ∗ i +1) ≤ j) then
+4: if ((2 ∗ i +2) ≤ j) then
+5: if (a[2 ∗ i +2] ≥ a[2 ∗ i +1]) then
+6: k = 2 ∗ i +2
+7: else
+8: k = 2 ∗ i +1
+9: end if
+10: else
+11: k = 2 ∗ i +1
+12: end if
+13: if a[i]< a[k] then
+14: Intercambia( A, i, k)
+15: Heapify( A, k, j)
+16: end if
+17: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 9 / 232
+¿Que medimos?
+Recursos consumidos por el algoritmo
+Tiempo
+Memoria (Almacenamiento)
+Análisis del algoritmo (consumo de recursos)
+Empírico
+Teórico
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 10 / 232
+¿Que medimos?
+Recursos consumidos por el algoritmo
+Tiempo
+Memoria (Almacenamiento)
+Análisis del algoritmo (consumo de recursos)
+Empírico
+Teórico
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 10 / 232
+¿Que medimos?
+Recursos consumidos por el algoritmo
+Tiempo
+Memoria (Almacenamiento)
+Análisis del algoritmo (consumo de recursos)
+Empírico
+Teórico
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 10 / 232
+¿Que medimos?
+Recursos consumidos por el algoritmo
+Tiempo
+Memoria (Almacenamiento)
+Análisis del algoritmo (consumo de recursos)
+Empírico
+Teórico
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 10 / 232
+¿Que medimos?
+Recursos consumidos por el algoritmo
+Tiempo
+Memoria (Almacenamiento)
+Análisis del algoritmo (consumo de recursos)
+Empírico
+Teórico
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 10 / 232
+Medidas de la eficiencia
+Unidades medidas para el tiempo de ejecución
+Factores que interfieren en el tiempo de ejecución: velocidad del
+computador, calidad de la implementación del algoritmo (programa),
+compilador, etc.
+Usar una métrica que no dependa de ninguno de esos factores.
+Posible mértrica, contar el número de veces que cada operación se
+ejecuta. Esto es muy difícil y muchas veces innecesario.
+Mejor alternativa es identificar la operación más importante del
+algoritmo (operación relevante / básica ).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 11 / 232
+Medidas de la eficiencia
+La operación relevante
+Es aquella que contribuye con la mayor parte del tiempo total de
+ejecución.
+La operación relevante, en la cual se basa el análisis, de alguna forma
+está relacionada con el tipo de problema que se intenta resolver.
+El propósito es calcular el número de veces que se ejecuta la
+operación relevante.
+El marco establecido para el análisis de la eficiencia de un algoritmo
+sugiere medirlo contando el número de veces que se ejecuta la
+operación relevante con entradas de tamañon.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 12 / 232
+Medidas de la eficiencia
+Midiendo el tiempo de ejecución
+Sea Cop el tiempo de ejecución de la operación relevante de un
+algoritmo sobre un computador.
+Sea C(n) el número de veces que la operación relevante se ejecuta.
+El tiempo de ejecución estimado T(n) de un programa que
+implementa el algoritmo es:
+T (n)≈ Cop· C(n)
+Cop y C(n) son valores aproximados.
+Sin embargo a nosotros nos interesa conocer C(n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 13 / 232
+Medidas de la eficiencia
+Órdenes de crecimiento de las funciones
+Valores de varias funciones importantes usadas en el análisis de
+algoritmos
+n log2n n nlog 2n n 2 n3 2n n!
+10 3.3 10 1 3.3x101 102 103 103 3.6x106
+102 6.6 10 2 6.6x102 104 106 1.3x1030 9.3x10157
+103 10 10 3 1.1x104 106 109
+104 13 10 4 1.3x105 108 1012
+105 17 10 5 1.7x106 1010 1015
+106 20 10 6 2.0x107 1012 1018
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 14 / 232
+Medidas de la eficiencia
+Órdenes de crecimiento
+Es importante conocer el orden de crecimiento de una función para
+valores grandes den.
+En el caso de las funciones 2n y n!, en ambas sus valores crecen de
+forma astronómica a medida que el valor den crece.
+Por ejemplo, si un computador moderno es capaz de ejecutar 1012
+operaciones (1 billón aproximadamente) por segundo, entonces podrá
+demorar 4×1010 años en ejecutar 2100 operaciones
+(2100≈ 1,2676506×1030 operaciones).
+Sin embargo, 100! toma aun mucho más tiempo que 4,5 mil millones
+de años (100! = 9,332622×10157,≈ 2,959355×10138 años).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 15 / 232
+Análisis de la eficiencia de los algoritmos
+Peor caso, mejor caso y caso promedio
+Algorithm 1SequentialSearch(int A[], intk)
+1: Input: A: arreglo de tamañon; k: clave a buscar.
+2: Output: retorna posición de i en A
+3: i = 0;
+4: while (i < n) and (A[i]̸= k)do
+5: i = i +1
+6: end while
+7: if i < n then
+8: return i;
+9: else
+10: return -1
+11: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 16 / 232
+Análisis de la eficiencia de los algoritmos
+Análisis para el peor caso
+El peor caso se da cuando el algoritmo se ejecuta por el tiempo más
+largo de entre todas las posibles entradas de tamañon.
+Aquí hablamos de la peor entrada posible para el algoritmo.
+En el ejemplo de la búsqueda secuencial, el peor caso se da cuando el
+elemento no existe en el arreglo o cuando éste es el último.
+En este caso el número de comparaciones es mayor.Cworst(n) = n.
+Cworst(n) = max
+|A|=n
+T (A); A :entrada; T:tiempo.
+Esto nos permite encontrar una cota superior para el tiempo de
+ejecución el cual no excederá aCworst(n), para cualquier entrada de
+tamaño n.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 17 / 232
+Análisis de la eficiencia de los algoritmos
+Análisis para el mejor caso
+El mejor caso se da cuando el algoritmo se ejecuta por el tiempo más
+pequeño de entre todas las posibles entradas de tamañon.
+Aquí hablamos de la mejor entrada posible para el algoritmo.
+En el ejemplo de la búsqueda secuencial, el mejor caso se da cuando
+el elemento buscado es el primero en el arreglo.
+En este caso el número de comparaciones es menor.Cbest (n) = 1.
+Cbest (n) = min
+|A|=n
+T (A); A :entrada; T:tiempo.
+Esto nos permite encontrar una cota inferior para el tiempo de
+ejecución el cual no es menor aCbest (n), para cualquier entrada de
+tamaño n.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 18 / 232
+Análisis de la eficiencia de los algoritmos
+Análisis para el caso promedio
+Ni el peor caso y tampoco el mejor caso entregan la información
+necesaria sobre el comportamiento real del algoritmo.
+El análisis del caso promedio es recomendado cuando un algoritmo
+tiene diferentes tiempos de ejecución para el mismo tamaño de la
+entrada.
+Se deben construir algunos supuestos sobre las posibles entradas de
+tamaño n.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 19 / 232
+Análisis de la eficiencia de los algoritmos
+Análisis para el caso promedio
+En el caso de la búqueda secuencial tenemos dos supuestos estándar:
+La probabilidad de una búsqueda exitosa es igual ap(0 ⩽ p ⩽ 1).
+La probabilidad de éxito del primer acierto en lai-ésima posición del
+arreglo es la misma para todoi.
+En el caso de la búsqueda exitosa la probabilidad del primer acierto es
+p
+n, mientras que en la búsqueda no exitosa la probabilidad es(1− p).
+Cavg(n) = [1 p
+n +2 p
+n +... + i p
+n +... + n p
+n ] + n(1− p)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 20 / 232
+Análisis de la eficiencia de los algoritmos
+Análisis para el caso promedio
+El número promedio de comparaciones está dado porCavg(n)
+Cavg(n) =
+[
+1 p
+n +2 p
+n +··· + i p
+n +··· + n p
+n
+]
++ n(1− p)
+= p
+n [1 +2 +··· + i +··· + n] + n(1− p)
+= p
+n [∑n
+i=1 i] + n(1− p)
+= p(n+1)
+2 + n(1− p)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 21 / 232
+Análisis de la eficiencia de los algoritmos
+Análisis para el caso promedio
+Los dos casos están dados por:
+p =
+
+
+
+1 búsqueda exitosa, número de comparaciones: (n+1)
+2
+0 búsqueda no exitosa, número de comparaciones: n
+El estudio del caso promedio es mucho más difícil que el peor y el
+mejor de los casos.
+Distribución de la probabilidad de las entradas posibles se asume
+como el valor esperado del conteo de la operación relevante:
+Caso promedio=
+∑
+|A|≤n
+Pr(A)T (A)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 22 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Orden de crecimiento
+El ámbito del análisis de la eficiencia se concentra en el orden de
+crecimiento del conteo de la operación relevante del algoritmo.
+Para comparar y “rankear” tales órdenes de crecimiento, en ciencias
+de la computación se usan tres notaciones:
+O (o grande).
+Ω (omega grande).
+Θ (theta grande).
+Informalmente, O(g(n)) es el conjunto de todas las funciones con un
+orden de crecimiento más bajo o el mismo queg(n)
+Por ejemplo: n∈ O(n2);100n +5∈ O(n2); n3 /∈ O(n2)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 23 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+O grande
+Definición: una función f (n) es O(g(n)), si:
+∃c > 0, n0> 0, tal que∀n≥ n0, f (n)≤ cg(n); [f (n)⪯ g(n)]
+En este caso podemos decir que:f (n) es O(g(n)); o f (n) = O(g(n));
+o f (n)∈ O(g(n)).
+Decimos entonces quef (n) está acotado por arriba (cota superior)
+por una constante múltiplo deg(n),∀ n grande.
+Por ejemplo: seaf (n) = 100n +5
+100n +5≤ 100n + n (∀ n≥ 5)
+100n +5≤ 101n, entonces las constantesc y n0 son: c = 101, n0 = 5
+o, 100n +5≤ 100n +5n, (∀ n≥ 1), donde c = 105, n0 = 1.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 24 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+O grande
+Curvas de las funcionesf (n)≤ cg(n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 25 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Ω grande
+Definición: una función f (n) es Ω(g(n)), si:
+∃c > 0, n0> 0, tal que∀n≥ n0, f (n)≥ cg(n); [f (n)⪰ g(n)]
+En este caso podemos decir que:f (n) es Ω(g(n)); o f (n) = Ω(g(n));
+o f (n)∈ Ω(g(n)).
+Decimos entonces quef (n) está acotado por abajo (cota inferior) por
+una constante múltiplo deg(n),∀ n grande.
+Por ejemplo: n3∈ Ω(n2), n3≥ Ω(n2),∀ n≥ 0, con c = 1,n0 = 0.
+Ω también corresponde a la complejidad del problema (ej. el
+problema de ordenamiento esΩ(n log 2n)).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 26 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Ω grande
+Curvas de las funcionesf (n)≥ cg(n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 27 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Θ grande
+Definición: una función f (n) es Θ(g(n)), si esO(g(n)) y Ω(g(n)).
+La función f (n) está acotada por arriba y por abajo por alguna
+constante positiva múltiplo deg(n),∀n grande.
+Es decir, si existen algunas constantes positivasc1, c2 y n0, tal que:
+c2g(n)≤ f (n)≤ c1g(n),∀n≥ n0
+Por ejemplo, el algoritmo de sorting MergeSort esΘ(n log 2n).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 28 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Θ grande
+Curvas de las funcionesc2g(n)≤ f (n)≤ c1g(n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 29 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Θ grande
+Probar que f (n) = 1
+2 n(n−1) es Θ(n2).
+f (n) = 1
+2 n2− 1
+2 n≤ 1
+2 n2
+∀ n≥ 0
+c1 = 1
+2
+f (n) = 1
+2 n2− 1
+2 n≥ 1
+2 n2− 1
+2 n2
+f (n)≥ 1
+4 n2
+∀ n≥ 2
+c2 = 1
+4
+c1 = 1
+2, c2 = 1
+4, n0 = 2
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 30 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Regla del máximo
+Regla del máximo: Sean f, g:N→ R dos funciones abitrarias de los
+números naturales en los reales.
+La regla del máximo dice que siT (n) = t1(n) + t2(n), siendo
+t1 = O(f (n)) y t2(n) = O(g(n)),
+T (n) = O(f (n) + g(n)) = O(max(f (n), g(n)))
+Por ejemplo: O(n2 + n3 + nlogn) = O(max(n2, n3, nlogn)) = O(n3)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 31 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Algunas propiedades deO
+Sean f1(n), f2(n), g1(n) y g2(n) funciones positivas deN→ R
+1 Si f1(n) = O(g1(n)) y g1(n) = O(g2(n)), entonces f1(n) = O(g2(n))
+2 Si f1(n) = O(g1(n)) y f2(n) = O(g2(n)), entonces
+f1(n)f2(n) = O(g1(n)g2(n))
+3 f2(n)O(g1(n)) = O(f2(n)g1(n))
+4 Si f1(n) = O(g1(n)) y f2(n) = O(g2(n)), entonces
+f1(n) + f2(n) = O(g1(n) + g2(n))
+5 Si c̸= 0, c un real entonces O(g1(n)) = O(cg1(n))
+6 Si f1(n) = O(g1(n)), entonces cf1(n) = O(g1(n)), con c un número
+real
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 32 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Ordenes de magnitud más comunes (en orden creciente)
+Notación Descripción
+O(1) Orden Constante
+O(log2log2n) Orden sublogarítmico
+O(log2n) Orden logarítmico
+O(√n) Orden sublineal
+O(n) Orden lineal
+O(n log 2n) Orden lineal logarítmico
+O(n2) Orden cuadrático
+O(n3) Orden cúbico
+O(c n), n> 1 y c una cte Orden exponencial
+O(n!) Orden factorial
+... ...
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 33 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+o chica yω (omega chica)
+Definición: una función f (n) es o(g(n)) (o chica de g(n)), si:
+f (n)< cg(n); [ f (n)≺ g(n)], f (n) es menor estricto deg(n).
+Definición: una función f (n) es ω(g(n)) (omega chica deg(n)), si:
+f (n)> cg(n); [ f (n)≻ g(n)], f (n) es mayor estricto deg(n).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 34 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Usando límite para comparar órdenes de crecimiento
+¿Cómo comparar el orden de crecimiento entre dos funciones?
+Calculando el límite de la razón de ambas funciones. Sea f,g:N→ R,
+entonces podemos distinguir tres casos importantes:
+Regla de L’Hopital: f (n)
+g(n) = limn→∞
+f′(n)
+g′(n)
+(1) limn→∞
+f (n)
+g(n) = 0⇒ f (n) = o(g(n)), y f (n) /∈ Θ(g(n)).
+(2) limn→∞
+f (n)
+g(n) =∞⇒ f (n) =ω(g(n)), y f (n) /∈ Θ(g(n)).
+(3) limn→∞
+f (n)
+g(n) = c∈ R⇒ f (n) = Θ(g(n)).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 35 / 232
+Notación Asintóticas y Clases de Eficiencia Básicas
+Usando límite para comparar órdenes de crecimiento
+Ejercicios. Comparar los órdenes de crecimiento de las siguientes
+funciones:
+(1) (f (n) = 1
+2 n(n−1)), g(n) = n2.
+(2) f (n) = log2n, g(n) =√n.
+(3) f (n) = n!, g(n) = 2n.
+De acuerdo con la fórmula de Stirling:n! =
+√
+2πn ( n
+e )n
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 36 / 232
+Algoritmos no recursivos
+Búsqueda del mayor elemento de una lista
+Ejemplo: búsqueda del mayor elemento de una lista de tamañon.
+Algorithm 7maxElement(int A[],int n)
+1: Input: A, arreglo de tamaño n;n, tamaño del arregloA.
+2: Output: retorna el máximo valor enA.
+3: int maxval = A[0]
+4: for (i = 1; i < n; i++)do
+5: if (A[i] > maxval)then
+6: maxval = A[i];
+7: end if
+8: end for
+9: return maxval;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 37 / 232
+Búsqueda del mayor elemento de una lista
+Análisis previo
+Tamaño de la entrada: n.
+¿Necesita el algoritmo de espacio de almacenamiento adicional? ¡NO!
+Operación básica: la comparación.
+Se debe notar que el número de comparaciones es igual al tamaño del
+arreglo menos 1.
+No existe necesidad de distiguir entre el peor, mejor y caso promedio.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 38 / 232
+Búsqueda del mayor elemento de una lista
+Análisis matemático
+Sea T(n) el número de veces que se ejecuta la comparación.
+T(n) =
+n−1∑
+i=1
+1 = n−1 = Θ(n).
+Demostración:
+limn→∞
+n−1
+n = limn→∞
+n(1− 1
+n )
+n = limn→∞(1−01
+n ) = 1
+Como 1∈ R⇒ f (n) = n−1∈ Θ(n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 39 / 232
+Problema de la unicidad de los elementos
+El algoritmo
+Chequear si todos los elementos de un arreglo dado de tamañon son
+distintos.
+Algorithm 8UniqueElements(int A[],int n)
+1: Input: A, arreglo de tamaño n;n
+2: Output: retorna true si los elementos son distintos,false en caso
+contrario.
+3: for (i = 0; i < n-1; i++)do
+4: for (j = i+1; j < n; j++)do
+5: if (A[i] == A[j])then
+6: return false;
+7: end if
+8: end for
+9: end for
+10: return true;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 40 / 232
+Problema de la unicidad de los elementos
+Análisis previo
+Tamaño de la entrada: n.
+¿Necesita el algoritmo de espacio de almacenamiento adicional? ¡NO!
+Operación básica: la comparación.
+Se debe notar que el número de comparaciones no solo depende den
+sino que también si existen elementos iguales en el arreglo, y si
+existen, en cual posición, ¿en la segunda posición encontramos el
+primer elemento repetido, en la i-ésima posición, en la posiciónn?
+Realizaremos sólo análisis para el peor caso.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 41 / 232
+Problema de la unicidad de los elementos
+Análisis previo
+Por definición, la entrada para el peor caso es un arreglo para el cual
+el número de comparaciones de elementos esCworst(n) es el más
+grande entre todos los arreglos de tamañon.
+Si revisamos con atención el loop más interno, éste nos muestra que
+existen dos tipos de entrada para el peor caso: (a) cuando no existen
+elementos repetidos; (b) cuando sólo los dos últimos elementos son
+iguales.
+Se realiza una comparación por cada repetición del loop más interno,
+es decir, por cada valor de la variablej entre los límitesi +1 y n−1;
+éste se repite por cada valor dei (entre 0 yn−2) del loop más
+externo.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 42 / 232
+Problema de la unicidad de los elementos
+Análisis matemático
+Revisemos las siguientes reglas de sumatorias:
+n∑
+i=k
+1 = n− k +1, con k≤ n.
+n∑
+i=0
+i =
+n∑
+i=1
+i = 1 +2 +··· + n = n(n +1)
+2 ≈∈ Θ(n2).
+De acuerdo a este análisis previo, tenemos lo siguiente:
+T (n) =
+n−2∑
+i=0
+n−1∑
+j=i+1
+1 =
+n−2∑
+i=0
+[(n−1)− (i +1) +1] =
+n−2∑
+i=0
+(n−1− i)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 43 / 232
+Problema de la unicidad de los elementos
+Análisis matemático
+=
+n−2∑
+i=0
+(n−1)−
+n−2∑
+i=0
+i
+= (n−1)2− (n−2)(n−1)
+2 = n(n−1)
+2 ≈ 1
+2 n2
+T(n)∈ O(n2)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 44 / 232
+Producto de matrices
+El algoritmo
+Dadas dos matrices A y B de n×n, calcular la complejidad temporal
+del producto C = AB
+Algorithm 9MatrixMultiplication(int A[][], int B[][], int n)
+1: Input: A, B: matrices de tamaño n×n.
+2: Output: C: matriz resultante de tamaño n×n.
+3: for (i = 0; i < n; i++)do
+4: for (j = 0; j < n; j++)do
+5: C[i][j] = 0.0;
+6: for k = 0; k < n; k++do
+7: C[i][j] = C[i][j] + A[i][j]∗ B[i][j];
+8: end for
+9: end for
+10: end for
+11: return C;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 45 / 232
+Producto de matrices
+Análisis previo
+Tamaño de la entrada: 2n2.
+¿Necesita el algoritmo de espacio de almacenamiento adicional? ¡NO!
+Operación básica: el producto (línea 7).
+El conteo de la operación básica depende sálo del tamaño de las
+matrices de entrada, entonces no es necesario analizar por separado
+los tres casos.
+Existe sólo una multiplicación que se ejecuta en cada iteración del
+loop más interno (de 0 hastan−1).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 46 / 232
+Producto de matrices
+Análisis matemático
+Para el loop más interno, el número de multiplicaciones realizadas por
+cada par de valores de las variablesi y j:
+n−1∑
+k=0
+1 = n.
+El número total de multiplicacionesT (n) está dado por la siguiente
+expresión:
+T(n)=
+n−1∑
+i=0
+n−1∑
+j=0
+n−1∑
+k=0
+1.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 47 / 232
+Producto de matrices
+Análisis matemático
+T(n)=
+n−1∑
+i=0
+n−1∑
+j=0
+n−1∑
+k=0
+1 =
+n−1∑
+i=0
+n−1∑
+j=0
+n =
+n−1∑
+i=0
+n2 = n3
+T(n)= n3
+∴ T(n)∈ Θ(n3)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 48 / 232
+Plan general para analizar algoritmos no recursivos
+1 Identificar el parámetro que indica el tamaño de la entrada.
+2 Identificar la operación básica del algoritmo.
+3 Chequear si el número de veces que se ejecuta la operación básica
+depende sólo del tamaño de la entrada. Si también depende de
+alguna propiedad adicional, entonces analizar sólo el peor caso.
+4 Definir la expresión que refleje la suma del número de veces que la
+operación básica se ejecuta, a través de alguna sumatoria o una
+ecuación de recurrencia.
+5 Establecer la complejidad del algoritmo (orden de crecimiento).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 49 / 232
+Ordenamiento por conteo
+El algoritmo
+Por cada elemento de una lista contar el número total de elementos
+menores y registrar el resultado en una tabla. Los números de esta
+tabla indicarán las posiciones de los elementos en la lista ordenada.
+Ejemplo de ordenamiento por conteo
+A[7] 58 25 74 67 101 89 15
+count[7] 0 0 0 0 0 0 0
+i=0 count[7] 2 0 1 1 1 1 0
+i=1 count[7] 0 1 2 2 2 2 0
+i=2 count[7] 0 0 4 2 3 3 0
+i=3 count[7] 0 0 0 3 4 4 0
+i=4 count[7] 0 0 0 0 6 4 0
+i=5 count[7] 0 0 0 0 0 5 0
+count[7] 2 1 4 3 6 5 0
+F[7] count[7] 15 25 58 67 74 89 101
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 50 / 232
+Ordenamiento por conteo
+El algoritmo
+Algorithm 10CountingSort(int A[], int n)
+1: Input: A: arreglo de elementos enteros; n: tamaño del arreglo.
+2: Output: Arreglo A ordenado ascendentemente.
+3: for (i = 0; i < n; i++) do
+4: count[i] = 0;
+5: end for
+6: for (i=0; i < n-1; i++) do
+7: for (j=i+1; j < n; j++) do
+8: if (A[i] < A[j]) then
+9: count[j] = count[j] + 1;
+10: else
+11: count[i] = count[i] + 1;
+12: end if
+13: end for
+14: end for
+15: for (i=0; i<n; i++) do
+16: F[count[i]] = A[i];
+17: end for
+18: return F;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 51 / 232
+Ordenamiento por conteo
+Análisis previo
+Tamaño de la entrada: n (tamaño del arreglo)
+¿Necesita el algoritmo de espacio de almacenamiento adicional? Si,
+arreglos count[] y F.
+Operación básica: la comparación (línea 8).
+El conteo de la operación básica depende sólo del tamaño del arreglo.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 52 / 232
+Ordenamiento por conteo
+Análisis matemático
+¿Cuál es la eficiencia del algoritmo?. Como en alguno de los ejemplos
+anteriores vistos, este algoritmo debería ser cuadrático.
+T(n) =
+n−2∑
+i=0
+n−1∑
+j=i+1
+1 =
+n−2∑
+i=0
+[(n−1)− (i +1) +1] =
+n−2∑
+i=0
+(n−1− i)
+T(n) = n(n−1)
+2
+T(n) = Θ(n2)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 53 / 232
+Algoritmos recursivos
+Ecuaciones de recurrencia
+Se pueden considerar como técnicas avanzadas de conteo
+Definition
+Una sucesión es una funciónf : N→ A.
+Para indicar la imagenA se emplea an.
+Una sucesión se denota pora0, a1, a2,...
+A los elementosa0, a1, a2,... se les llama términos de la sucesión.
+an es el término general.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 54 / 232
+Ecuaciones de recurrencia
+Ejemplo
+0,1,1,2,3,5,8,13,...
+Ecuación de recurrencia: an = an−1 + an−2, si n> 1.
+Una expresión en la que el término general de la sucesión se escribe en
+función de algunos términos anteriores se llamaecuación de recurrencia.
+Una ecuación de recurrencia no determina de manera única una sucesión.
+Para ello es necesario conocer algunos términos de la sucesión, los que se
+denominan condiciones de borde, de frontera o condiciones iniciales.
+Por ejemplo, an = an−1 + an−2, si n> 1, a0 = 0 y a1 = 1.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 55 / 232
+Ecuaciones de recurrencia
+Ejemplo
+an = 2an−1, n≥ 1,
+si a0 = 1 tenemos una sucesión 1,2,4,8,16...
+si a0 = 3 tenemos una sucesión 6,12,24,48...
+Para obtener un término de la sucesión en forma recurrente, es necesario
+obtener todos los términos anteriores.Esto no es práctico. Por ejemplo
+a1000 en la serie de Fibonacci. Interesa obtener una expresión en la que el
+término general de la sucesión dependa solo de la posición que ocupa (n) y
+no de términos anteriores. A esta expresión se le llamasolución de la
+ecuación de recurrencia.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 56 / 232
+Ecuaciones de recurrencia
+Ejemplo
+an = 3an−1, n≥ 1, a0 = 5
+a0 = 5
+a1 = 3a0 = 3×5 = 15
+a2 = 3a1 = 3×3×5 = 45
+...
+an = 3n5
+En la solución general hay dependencia sólo den y no términos anteriores
+de la recurrencia.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 57 / 232
+Cálculo del factorial de un número entero n
+El algoritmo
+Sea F (n) = n!, para n≥ 0. Sabemos que:
+n! = 1... (n−1)n = (n−1)!n, por definición 0!=1.
+Podemos calcular F (n) = F (n−1)∗ n con el siguiente algoritmo:
+Algorithm 11F(int n)
+1: Input: n: entero≥ 0.
+2: Output: Factorial de n.
+3: if (n == 0) then
+4: return 1;
+5: else
+6: return F (n−1)∗ n;
+7: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 58 / 232
+Cálculo del factorial de un número entero n
+Análisis previo
+Tamaño de la entrada: número de bits den.
+¿Necesita el algoritmo de espacio de almacenamiento adicional? ¡SI!,
+¿cuál? memoria para la pila.
+Operación básica: la multiplicación.
+Para obtener la ecuación de recurrencia, denotaremos al número de
+multiplicaciones realizadas como T(n).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 59 / 232
+Cálculo del factorial de un número entero n
+Análisis matemático
+F (n) es calculada de acuerdo a la fórmulaF (n) = F (n−1)∗ n
+El número de multiplicaciones T(n) para calcularF (n) debe satisfacer
+la siguiente igualdad:
+T(n) = T(n-1) + 1 (n> 0).
+T(n-1) representa el costo del cálculo de F(n-1) y la constante 1
+representa el producto entre F(n-1) y n.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 60 / 232
+Cálculo del factorial de un número entero n
+Análisis matemático
+La ecuación de recurrencia necesita una condición inicial, la cual está
+dada por el caso base. Cuando n es igual 0, se realizan cero
+multiplicaciones (∴ T(0)=0).
+De esta forma ahora podemos plantear la ecuación de recurrencia
+completa:
+T(n) = T(n-1) + 1 (n> 0).
+T(0) = 0, condición inicial.
+T(n) nos da el número de multiplicaciones para calcular F(n).
+Para obtener la complejidad temporal del algoritmo, necesitamos
+resolver la ecuación de recurrencia. ¿Cómo se hace esto?
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 61 / 232
+Ejemplos de ecuaciones de recurrencia
+T(n) = T(n
+2) + n
+T(n) = 2T(n-1) + 1
+T(n) = 2T(n
+2) + n
+T(n) = T(n-1) + T(n-2), n≥ 2
+T(n) = T(√n) + 1
+T(n) = T(⌊n/2⌋) + 1
+T(n) = T(n-1) + 2
+T(n) = 64T(n
+4) + n3
+T(n) = 3T(n
+3) + log 2n
+T(n) = T(√n) + log log n
+T(n) = T(n
+4) + T(3n
+4 ) + 2n
+T(n) = 3T(n
+9) +√n
+T(n) = 7T(n
+2) + n2
+T(n) = 64T(n
+2) + 2n
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 62 / 232
+Métodos para resolver ecuaciones de recurrencia
+(1) Substitución forward.
+(2) Substitución backward.
+(3) Recurrencias telescópicas.
+(4) Recurrencias lineales homogéneas.
+(5) Cambio de variables.
+(6) Teorema maestro.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 63 / 232
+Métodos para resolver ecuaciones de recurrencia
+Substitución forward: Factorial recursivo
+Ecuación de recurrencia (factorial)T (n) = T (n−1) +1, T (0) = 0
+Usamos la misma ecuación para generar los primero términos para
+encontrar algún patrón:
+Se inicia desde la condición inicial.
+T(0) = 0
+T(1) = T(0) + 1 = 0 + 1 = 1
+T(2) = T(1) + 1 = 1 + 1 = 2
+T(3) = T(2) + 1 = 2 + 1 = 3
+...
+T(k) = T(k-1) + 1 = k (el patrón)
+T(n) = n⇒ Θ(n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 64 / 232
+Métodos para resolver ecuaciones de recurrencia
+Substitución backward: Factorial recursivo
+Resolveremos esta ecuación a través del método de substitución
+backward.
+T(n) = T(n-1) + 1, substituimos T(n-1) = T(n-2) + 1
+= [T(n-2) + 1] + 1 = T(n-2) + 2, substituimos T(n-2) = T(n-3) + 1
+= [T(n-3) + 1] + 2 = T(n-3) + 3, substituimos T(n-3) = T(n-4) + 1
+= [T(n-4) + 1] + 3 = T(n-4) + 4, etc
+Hasta aquí ya hemos hallado el patrón: T(n) = T(n-i) + i
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 65 / 232
+Métodos para resolver ecuaciones de recurrencia
+Substitución backward: Factorial recursivo
+Tomamos ahora la condicion inicial, T(0) = 0, debemos substituir i =
+n en la fórmula del patrón para obtener el último resultado de la
+substitución.
+T (n) = T (n−1) +1 =··· = T (n− i) + i = T (n− n) + n
+T (n) = T (0) + n = n
+T (n) = Θ(n)
+Se debe notar que la versión no recursiva de este problema también es
+Θ(n).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 66 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias telescópicas
+Las recurrencias telescópicas tienen la siguiente forma general:
+T (n) = an−1 + T (n−1)
+T (n) = an−1 + an−2 + T (n−2)(pqT (n−1) = an−2 + T (n−2))
+T (n) = an−1 + an−2 + an−3 + T (n−3)
+...
+T (n) = an−1 + an−2 + an−3 +··· + an−k +··· + a0 + T (0)
+T (n) = T (0) +
+n−1∑
+i=0
+ai
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 67 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias telescópicas
+En general, si:
+T (n) = f (n) + T (n−1)
+Tenemos:
+T (n) = C +
+n∑
+i=1
+f (i)
+Donde la constanteC está dada por la condición inicial de la ecuación
+de recurrencia.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 68 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias telescópicas
+En el caso del algoritmo recursivo para calcular el factorial de n:
+T (n) = T (n−1) +1, T (0) = 0
+T (n)− T (n−1) = 1
+T (n−1)− T (n−2) = 1
+T (n−2)− T (n−3) = 1
+...
+T (1)− T (0) = 1
+Sumando:
+(T (n)−T (n−1))+( T (n−1)−T (n−2))+( T (n−2)−T (n−3))+...
++(T (2)− T (1)) + (T (1)− T (0)) =
+n∑
+i=1
+1
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 69 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias telescópicas
+Entonces:
+T (n)− T (0) =
+n∑
+i=1
+1
+T (n) = T (0) +
+n∑
+i=1
+1
+T (n) = 0 +
+n∑
+i=1
+1 = n⇒ T (n) = n
+Resolver:
+(a) T (n) = T (n−1) + 1
+n, n> 0, T (0) = 1;
+(b) T (n) = T (n−1) + logn, n> 0, T (0) = 1;
+(c) T (n) = T (n−1) +2n, n> 0, T (0) = 1;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 70 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias telescópicas
+Sea T (n) = T (n−1) + 1
+n, n> 0, T (0) = 1
+T (n)− T (n−1) = 1
+n
+Luego:
+(T (n)−T (n−1))+( T (n−1)−T (n−2))+( T (n−2)−T (n−3))+...
++(T (2)− T (1)) + (T (1)− T (0)) =
+n∑
+i=1
+1
+i
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 71 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias telescópicas
+= T (n)− T (0) =
+n∑
+i=1
+1
+i
+= T (n) = T (0) +
+n∑
+i=1
+1
+i = 1 + Hn
+Donde Hn es el n-ésimo número armónico:
+n∑
+i=1
+1
+i = 1 + 1
+2 + 1
+3 + 1
+4 +··· + 1
+n = ln n + O(1)
+Entonces:
+T (n) = O(ln n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 72 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias lineales homogéneas
+Resolveremos ahora la ecuación del factorial a través de recurrencias
+lineales homogéneas.
+Dada la siguiente ecuación:
+ak Xn+k + ak−1Xn+(k−1) +··· + a1Xn+1 + a0Xn = 0 (∗)
+Las soluciones de esta ecuación son de la forma:Xn =λn
+Entonces de la ecuación(∗) tenemos:
+akλn+k + ak−1λn+(k−1) +··· + a1λn+1 + a0λn = 0
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 73 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias lineales homogéneas
+Sacamos factor comúnλn:
+λn(akλk + ak−1λk−1 +··· + a1λ + a0) = 0
+El polinomio: akλk + ak−1λk−1 +··· + a1λ + a0, se denomina
+polinomi característico.
+La solución a esta ecuación consiste en encontrar las raíces del
+polinomio característico:
+akλk + ak−1λk−1 +··· + a1λ + a0 = 0
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 74 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias lineales homogéneas
+Sean λ1, λ2, ..., λk, las raíces del polinomio característico. La
+solución general es de la forma:
+Xn = C1λn
+1 + C2λn
+2 +··· + Ckλn
+k
+Resolvemos el sistema de ecuaciones lineales:
+C1λ0
+1 + C2λ0
+2 + ... + Ckλ0
+k = X0
+C1λ1
+1 + C2λ1
+2 + ... + Ckλ1
+k = X1
+... ... ...
+C1λk−1
+1 + C2λk−1
+2 +··· + Ckλk−1
+k = Xk−1
+Los λi y los Xi son conocidos
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 75 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias lineales homogéneas
+Sean λ1 y λ2 las raíces de la ecuación característica:
+caso 1 Si λ1, λ2∈ R y λ1̸=λ2, entonces la solución general de la ecuación de la recurrencia se
+obtiene con la siguiente fórmula:
+T (n) = C1λn
+1 + C2λn
+2
+caso 2 Si λ1 =λ2, la solución general de la ecuación de la recurrencia se obtiene con la siguiente
+fórmula:
+T (n) = C1λn
+1 + C2nλn
+2
+caso 3 Si λ1,2 = u± iv
+T (n) =γn[C1cos(nθ) + C2sin(nθ)], donde γ =
+√
+u2 + v 2, θ = arctang( v
+u )
+C1 y C2 son constantes arbitrarias.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 76 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias lineales homogéneas
+Sea T(n) = T(n-1) + 1, T(0) = 0, también son válidas las siguientes
+expresiones:
+(1) T(n+1) = T(n) + 1
+(2) T(n+2) = T(n+1) + 1
+Restando las ecuaciones (2) - (1), obtenemos:
+T(n+2) - T(n+1) = 1
+T(n+1) - T(n) = 1
+T(n+2) - 2T(n+1) + T(n) = 0
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 77 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias lineales homogéneas
+Obtenemos la ecuación homogénea:
+λn+2−2λn+1 +λn = 0
+Sacando factor comúnλn:
+λn(λ2−2λ +1) = 0
+λ2−2λ +1 = 0 (resolver la ecuación característica)
+Corresponde a una ecuación cuadrática, dondeλ =λ1 =λ2 = 1.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 78 / 232
+Métodos para resolver ecuaciones de recurrencia
+Recurrencias lineales homogéneas
+De aquí obtenemos el siguiente sistema de ecuaciones lineales:
+T(n) = C1λn + C2nλn, comoλ = 1, reemplazamos en la ecuación:
+T(n) = C1 + C2n (∗∗)
+Sabemos que T(0) = 0, desde aquí obtenemos el siguiente sistema de
+ecuaciones lineales:
+T(0) = C1 + C20 = 0→ C1 = 0 (reemplazando en la ecuación(∗∗))
+T(1) = 1 (porque T(1) = T(0) + 1)
+T(1) = C1 + C2 = 1, entonces C2 = 1.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 79 / 232
+Métodos para resolver ecuaciones de recurrencia
+Cambio de variables
+En algunos casos la forma telescópica no se observa directamente.
+Utilizando cambio de variables podemos hacer notoria la forma
+anteriores y facilitar la resolución de la recurrencia.
+Por ejemplo:
+T(n) = 2T( n
+2 ) + n, T(n) = 1, n≤ 1
+Supongamos que n = 2k, entonces tenemos que:
+T(2k) = 2T(2k−1) + 2k
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 80 / 232
+Métodos para resolver ecuaciones de recurrencia
+Cambio de variables
+La forma telescópica aún no es notoria, pero veremos qué pasa si
+hacemos:
+T(2k) = y(k), tendremos:
+y(k) = 2y(k−1) +2k / dividiendo por 2k
+y(k)
+2k = 2y(k−1)
+2k + 2k
+2k = y(k−1)
+2k 2−1 +1 = y(k−1)
+2k−1 +1
+y(k)
+2k = y(k−1)
+2k−1 +1, haciendo r(k) = y(k)
+2k , obtenemos:
+r(k) = r(k-1) + 1, que es la ecuación telescópica buscada.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 81 / 232
+Métodos para resolver ecuaciones de recurrencia
+Cambio de variables
+Pero sabemos que:
+r(k) = r(k-1) + 1 = r(0) +
+k∑
+i=1
+1
+r(k) = 1 + k
+Recapitulando. Sabemos que:
+T (n) = T (2k) = y(k) = r(k)2k = (1 + k)2k = 2k + k2k
+Como n = 2k, entonces k =log2n
+T (n) = n + nlog2n⇒ T (n) = O(nlog2n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 82 / 232
+Métodos para resolver ecuaciones de recurrencia
+Cambio de variables
+Ejercicios:
+T(n) = 2T(n-1) + 1, T(0) = 1
+T(n) = 1 + T(√n), T(2) = 1
+T(n) =√nT(√n) + cn, T(2) = 1
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 83 / 232
+Métodos para resolver ecuaciones de recurrencia
+Teorema Maestro: Caso particular
+Sea T(n) una función eventualmente no decreciente que satisface la
+recurrencia:
+T(n) = aT(n
+b) + f(n), T(1) = c, n =bk, k = 1,2, ...
+donde a≥ 1, b≥ 2, c > 0. Sif (n)∈ Θ(nd), d≥ 0, entonces:
+T (n) =
+
+
+
+Θ(nd) si a< bd
+Θ(nd log n) si a = bd
+Θ(nlogb a) si a> bd
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 84 / 232
+Métodos para resolver ecuaciones de recurrencia
+Teorema Maestro: ejercicios
+(1) T (n) = 1 + T (√n)
+(2) T (n) = T (⌊ n
+2⌋) +1
+(3) T (n) = T ( n
+3 ) +1
+(4) T (n) = 2T ( n
+2 ) +1
+(5) T (n) = 64T ( n
+4 ) + n3
+(6) T (n) = 32T ( n
+2 ) + n4
+(7) T (n) = 2T ( n
+2 ) + cn
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 85 / 232
+Métodos para resolver ecuaciones de recurrencia
+Teorema Maestro: ejercicios
+(1) T (n) = 1 + T (√n)
+Usamos substitución: sea n = 2k, k = logn
+T (2k) = 1 + T (2
+k
+2 ), de aquí hacemos:y(k) = T (2k)
+y(k) = 1 + y( k
+2 ) = n0 + y( k
+2 ), a = 1, b = 2, d = 0.
+Ahora aplicamos Teorema Maestro: a =bd = b0 = 1
+y(k) = 1 + O(k 0logk) = 1 + O(logk) = 1 + O(loglogn)
+T (n) = 1 + O(loglogn)⇒ T (n) = O(loglogn)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 86 / 232
+Métodos para resolver ecuaciones de recurrencia
+Teorema Maestro: ejercicios
+(2) T (n) = T (⌊ n
+2⌋) +1
+No es necesario usar substitución, así que aplicamos directamente el
+Teorema Maestro
+a = 1, b = 2, d = 0⇒ a = b0
+T (n) = 1 + O(n0logn)
+T (n) = O(⌊log n⌋)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 87 / 232
+Métodos para resolver ecuaciones de recurrencia
+Teorema Maestro: ejercicios
+(3) T (n) = T ( n
+3 ) +1
+a = 1, b = 3, d = 0⇒ a = b0
+T (n) = 1 + O(n0logn)
+T (n) = O(log3n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 88 / 232
+Métodos para resolver ecuaciones de recurrencia
+Teorema Maestro: ejercicios
+(4) T (n) = 2T ( n
+2 ) +1
+a = 2, b = 2, d = 0⇒ a > b0
+T (n) = O(nlog22)
+T (n) = O(n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 89 / 232
+Métodos para resolver ecuaciones de recurrencia
+Teorema Maestro: ejercicios
+(5) T (n) = 64T ( n
+4 ) + n3
+a = 64, b = 4, d = 3⇒ a = b3
+T (n) = O(n3logn)
+(6) T (n) = 32T ( n
+2 ) + n4
+a = 32, b = 2, d = 4⇒ a > b4⇒ 32> 24
+T (n) = O(nlog232) = O(nlog225)
+T (n) = O(n5)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 90 / 232
+Métodos para resolver ecuaciones de recurrencia
+Teorema Maestro: ejercicios
+(7) T (n) = 2T ( n
+2 ) + cn (algoritmo Merge Sort)
+a = 2, b = 2, d = 1⇒ a = b1
+T (n) = O(nlogn)
+(8) T (n) = T ( n
+2 ) + c (Búsqueda binaria)
+a = 1, b = 2, d = 0⇒ a = b0⇒ 1 = 20
+T (n) = O(n0log2n)
+T (n) = O(logn)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 91 / 232
+Métodos para resolver ecuaciones de recurrencia
+Teorema Maestro: Caso General
+Sea T (n) una función eventualmente no decreciente que satisface la
+recurrencia:
+T (n) = aT ( n
+b ) + f (n) con a≥ 1 y b> 1
+T (n) =
+
+
+
+Θ(nlogb a) si f (n)< O(nc), con c < logba
+Θ(nc log k+1
+b n) si f (n) = Θ(nc log k
+b n)
+con c = logba y para algún k≥ 0
+Θ(f (n)) si f (n) = Ω(nc), con c > logba y
+∃k < 1, n0 > 0 : a· f ( n
+b )≤ k· f (n),∀n≥ n0
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 92 / 232
+Dividir para Reinar
+Una de las técnicas más importante y más utilizada para el diseño de
+algoritmos.
+Consiste en descomponer un problema de tamañon en problemas más
+pequeños, de modo que a partir de la solución de dichos problemas
+sea posible construir con facilidad una solución al problema original.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 93 / 232
+Esquema General
+1: DR(X )
+2: if X es suficientemente pequeñothen
+3: Retornar Ad-Hoc(X)
+4: else
+5: Descomponer X en subproblemas más pequeñosX1, X2,..., Xk
+6: for i = 1; i≤ k; i + + do
+7: Yi← DR(Xi)
+8: end for
+9: Combinar las solucionesYi para obtener una soluciónY para X
+10: return Y
+11: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 94 / 232
+Búsqueda Binaria
+Algoritmo
+Suponemos un arregloA ordenado de menor a mayor.
+1: BusquedaBinaria(A,li,ls,x)
+2: if li > ls then
+3: return -1{x no se encuentra en el arregloA}
+4: else
+5: Sea pivote = li+ls
+2
+6: if A[pivote] = x then
+7: return pivote
+8: else if x < A[pivote] then
+9: return BusquedaBinaria(A, li, pivote−1, x)
+10: else
+11: return BusquedaBinaria(A, pivote +1, ls, x)
+12: end if
+13: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 95 / 232
+Mínimo y Máximo de un conjunto
+Algoritmo
+1: MinMax(S)
+2: if ||S|| = 1then
+3: return (a,a){S = {a}}
+4: else if ||S|| = 2then
+5: return (min(a, b), max(a, b)) {S = {a, b}}
+6: else
+7: Dividir S en dos subconjuntosS1, S2
+8: (n1, m1) = MinMax(S1)
+9: (n2, m2) = MinMax(S2)
+10: return (min(n1, n2), max(m1, m2))
+11: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 96 / 232
+Sort por mezcla
+Algoritmo
+1: MergeSort(T [1... n])
+2: if n es suficientemente pequeñothen
+3: Ad− Hoc(T )
+4: else
+5: Sea U[1... 1 +⌊ n
+2⌋], V [1... 1 +⌊ n
+2⌋]
+6: U[1... 1 +⌊ n
+2⌋]← T [1... 1 +⌊ n
+2⌋]
+7: V [1... 1 +⌊ n
+2⌋]← T [1 +⌊ n
+2⌋... n]
+8: MergeSort(U[1... 1 +⌊ n
+2⌋])
+9: MergeSort(V [1... 1 +⌊ n
+2⌋])
+10: Merge(U, V, T )
+11: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 97 / 232
+Ejemplos
+Sort por mezcla (continuación)
+1: Merge(U[1... m +1], V [1... n +1], T [1... n + m]) {U[m +1] y
+V [n +1] se usan como centinelas para facilitar el algoritmo de mezcla}
+2: i← j← 1
+3: U[m +1]← V [n +1]←∞
+4: for k← 1 hasta m + n do
+5: if U[i]< V [j] then
+6: T [k]← U[i]
+7: i← i +1
+8: else
+9: T [k]← V [j]
+10: j← j +1
+11: end if
+12: end for
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 98 / 232
+Multiplicación de enteros grandes
+Sea u y v dos números enteros den bits cada uno.
+u = a2n/2 + b y v = c2n/2 + d
+uv = (a2n/2 + b)(c2n/2 + d) = ac2n + (ad + bc)2n/2 + bd
+ac, ad, bc y bd se multiplican recursivamente.
+T (n) = 4T (n/2) + cn, T (1) = 1
+El término cn incluye dos desplazamientos (las multiplicaciones por 2n y
+2n/2) y las 3 sumas de a lo más 2n bits. Usando Teorema maestro:
+a = 4, b = 2, d = 1 y por lo tantoT (n) = O(n2). Es posible expresar
+ad + bc como (a− b)(d− c) + ac + bd. Es posible escribir
+uv = ac2n + ((a− b)(d− c) + ac + bd )2n/2 + bd
+y ahora
+T (n) = 3T (n/2) + bn = O(n1.59)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 99 / 232
+Multiplicación de enteros grandes
+1: Mult(X, Y, n){X e Y enteros con signo ≤ 2n. n potencia de 2}
+2: s {contiene el signo de XY }
+3: m1, m2, m3 {contiene los 3 productos}
+4: A, B, C, D {contiene las mitades izquierda derecha de X e Y }
+5: s = Sign(X)∗ Sign(Y )
+6: X = abs(X)
+7: Y = abs(Y )
+8: if n = 1 then
+9: if X = 1 and Y = 1 then
+10: return s
+11: else
+12: return 0
+13: end if
+14: else
+15: A = n
+2 bits izquierdo de X
+16: B = n
+2 bits derechos de X
+17: C = n
+2 bits izquierdo de Y
+18: D = n
+2 bits derechos de Y
+19: m1 = Mult(A, C, n
+2 )
+20: m2 = Mult(A− B, D− C, n
+2 )
+21: m3 = Mult(B, D, n
+2 )
+22: return (s∗ (m1∗ 2n + (m1 + m2 + m3)∗ 2
+n
+2 + m3))
+23: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 100 / 232
+QuickSort
+Procedimiento QuickSort
+1: quicksort(T [i... j) {Ordena elementos del arregloT [i... j] de menor
+a mayor}
+2: if j− i es suficientemente pequeñothen
+3: InsertSort(T ([i... j))
+4: else
+5: l = pivote(T [i... j])
+6: quicksort(T [i... l−1])
+7: quicksort(T [l +1... j])
+8: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 101 / 232
+quickSort/Partición del arreglo (pivote)
+Ejemplo
+3 1 4 1 5 9 2 6 5 3 5 8 9
+El arreglo de particiona tomando p = 3
+3 1 4 1 5 9 2 6 5 3 5 8 9
+Se busca el primer elemento mayor que el pivote y el último no mayor que el pivote
+3 1 4 1 5 9 2 6 5 3 5 8 9
+Se intercambian los elementos
+3 1 3 1 5 9 2 6 5 4 5 8 9
+Se vuelve a explorar
+3 1 3 1 5 9 2 6 5 4 5 8 9
+Se intercambian
+3 1 3 1 2 9 5 6 5 4 5 8 9
+Se explora (los índices se cruzan)
+3 1 3 1 2 9 5 6 5 4 5 8 9
+Se intercambia el pivote con el elemento superrayado
+2 1 3 1 3 9 5 6 5 4 5 8 9
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 102 / 232
+QuickSort
+Procedimiento pivote (partición)
+1: Pivote(T [i... j]) { Intercambia los elementos del arreglo T [i... j] y retorna un valor l tal
+que, i≤ l, T [k]∀i≤ k < l, T [l] = p y T [k]> p∀l < k≤ j, y p es el valor inicial de T [i]}
+2: p← T [i]; k← i; l← j + 1
+3: repeat
+4: k← k + 1
+5: until T [k]> p or k≥ j
+6: repeat
+7: l← l− 1
+8: until T [l]≤ p
+9: while k < l do
+10: Intercambiar(T [k], T [l])
+11: repeat
+12: k← k + 1
+13: until T [k]> p
+14: repeat
+15: l← l− 1
+16: until T [l]≤ p
+17: end while
+18: Intercambiar(T [i], T [l])
+19: return l
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 103 / 232
+QuickSort
+Análisis QuickSort
+Peor caso
+Operación relevante: Comparaciones
+Sea r el tamaño de uno de los subarreglos generados por el procedimiento
+pivote (partición). El costo del algoritmo es:t(n) = t(r) + t(n− r) + n,
+es decir, el costo de ordenar un arreglo de tamañor, más el costo de
+ordenar un arreglo de tamañon− r y más las comparaciones necesarias
+para particionar el arreglo. El peor caso ocurre cuando el tamaño der es
+cero, y en este casot(n) = t(n−1) + n, t(1) = 0. El argumenton−1 se
+explica por que la posición del pivote es conocida (ver líneas 6 y 7 del
+algoritmo quicksort). Por lo tanto (usar telescópica)
+t(n) = O(n2)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 104 / 232
+QuickSort
+Análisis QuickSort
+Mejor caso
+El mejor caso sucede cuandor = n/2 (los dos subarreglos son del mismo
+tamaño aproximadamente) y por lo tanto
+T (n) = 2t(n/2) + n = O(nlog2n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 105 / 232
+QuickSort
+Análisis QuickSort
+Caso promedio
+Supuesto: Sea S1 uno de los subarreglos. Asumimos que cada uno de los
+tamaños (0,1,..., n−1) son igualmente probables. Es decir, queS1
+puede ser cualquiera de esos tamaños.
+Con este supuesto valor promedio det(|S1|) es 1
+n
+∑n−1
+j=0 t(j). Dado que
+tenemos que resolver dos subproblemas (ordenar dos subarreglos) en
+promedio del mismo tamaño.
+t(n) = 2
+n
+n−1∑
+j=0
+t(j) + cn (1)
+nt(n) = 2
+n−1∑
+j=0
+t(j) + cn2 (2)
+(n−1)t(n−1) = 2
+n−2∑
+j=0
+t(j) + c(n−1)2 (3)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 106 / 232
+QuickSort
+Análisis QuickSort
+Caso promedio (continuación)
+restando (2) - (3) tenemos:
+nt(n)− (n−1)t(n−1) = 2t(n−1) +2cn− c (4)
+nt(n) = (n +1)t(n−1) +2cn (5) div. por n(n+1)
+t(n)
+n +1 = t(n−1)
+n + 2c
+n +1 (6)
+t(n−1)
+n = t(n−2)
+n−1 + 2c
+n (7)
+t(n−2)
+n−1 = t(n−3)
+n−2 + 2c
+n−1 (8)
+...
+t(2)
+3 = t(1)
+2 + 2c
+3 (9)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 107 / 232
+QuickSort
+Análisis QuickSort
+Caso promedio (continuación)
+Sumando todas las ecuaciones de (6) a (9)
+t(n)
+n +1 = t(1)
+2 +2c
+n+1∑
+i=3
+1
+i
+La sumatoria es loge(n +1) +γ− 3
+2 con γ≈ 0.577. De esta forma
+t(n)
+n +1 = O(log2 n)
+es decir,
+t(n) = O(n log2 n)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 108 / 232
+Programación Dinámica
+Al igual que la técnica Dividir para Reinar, la Programación Dinámica
+(PD) resuelve problemas mediante la combinación de las soluciones
+de subproblemas.
+“Programación” se refiere en este contexto a un método de tabular y
+no a escribir código computacional.
+La PD es una técnica que se aplica especialmente en aquellos
+problemas donde los subproblemas se solapan, es decir, los
+subproblemas no son independientes.
+Un algoritmo de PD resuelve cada uno de los subproblemas más
+pequeños solo una vez y registra su respuesta en una tabla, evitando
+de esta forma repetir cálculos.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 109 / 232
+Técnicas de Diseño de Algoritmos
+Programación Dinámica
+Donde tiene mayor aplicación la Programación Dinámica es en la
+resolución de problemas de optimización.
+Para que un problema pueda ser abortado por esta técnica ha de
+cumplir dos condiciones:
+o La solución al problema debe ser alcanzada a través de una secuencia
+de decisiones, una en cada etapa.
+o Dicha secuencia de decisiones ha de cumplir el principio de óptimo.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 110 / 232
+Técnicas de Diseño de Algoritmos
+Programación Dinámica
+El diseño de un algoritmo de la PD consta de los siguientes pasos:
+(1) Planteamiento de la solución como una sucesión de decisiones y
+verificación de que ésta cumple el principio de óptimo.
+(2) Definición recursiva de la solución.
+(3) Cálculo del valor de la solución óptima mediante una tabla, donde se
+almacenan soluciones a problemas parciales para reutilizar los cálculos.
+(4) Construcción de la solución óptima haciendo uso de la información
+contenida en la tabla.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 111 / 232
+Serie de Fibonacci
+f (n) =
+{
+f (n−1) + f (n−2) si n> 1
+n si n≤ 1
+f(5)
+f(4)
+f(3)
+f(2)
+f(1) + f(0)
++ f(1)
++ f(2)
+f(1) + f(0)
++ f(3)
+f(2)
+f(1) + f(0)
++ f(1)
+Costo: t(n) = 1√
+5
+(
+1 +
+√
+5
+2
+)n
+− 1√
+5
+(
+1−
+√
+5
+2
+)n
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 112 / 232
+Técnicas de Diseño de Algoritmos
+Serie Fibonacci: algoritmo no recursivo
+Algorithm 12Fibonacci(n)
+1: Input: n: número entero.
+2: Output: el n-ésimo término de la serie de Fibonacci.
+3: vector_fibonacci[0] =0;
+4: vector_fibonacci[1] = 1;
+5: for i = 2; i < n; i + + do
+6: vector_fibonacci[i]= vector_fibonacci[i-1] + vector_fibonacci[i-2];
+7: end for
+Se construye una tabla (vector) para guardar los cálculos realizados
+sin que éstos se repitan y después reutilizarlos.
+Es fácil ver que este algoritmo es O(n).
+Su complejidad espacial también es O(n).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 113 / 232
+Técnicas de Diseño de Algoritmos
+Serie Fibonaci: segundo algoritmo no recursivo
+Existe otra forma mejorar este algoritmo debido a que sólo es
+necesario almacenar los dos últimos valores para calcular el nuevo
+término.
+Esto permite eliminar la tabla completa y usar sólo dos variables.
+Es fácil ver que este algoritmo también es O(n).
+También podemos ver que su complejidad espacial es O(1).
+Este algoritmo es el más eficiente de los tres.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 114 / 232
+Técnicas de Diseño de Algoritmos
+Serie Fibonaci: segundo algoritmo no recursivo
+Algorithm 13Fibonacci(n)
+1: Input: n: número entero.
+2: Output: el n-ésimo término de la serie de Fibonacci.
+3: fn_2 = 0;
+4: fn_1 = 1;
+5: if n == 0 then
+6: return fn_2;
+7: end if
+8: if n == 1 then
+9: return fn_1;
+10: end if
+11: for i = 2; i≤ n; i + + do
+12: fn = fn_1 + fn_2;
+13: aux = fn_1;
+14: fn_1 = fn;
+15: fn_2 = aux;
+16: end for
+17: return fn;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 115 / 232
+Técnicas de Diseño de Algoritmos
+En general, los algoritmos obtenidos mediante la aplicación de esta
+técnica consiguen tener complejidades (espacio y tiempo) bastante
+razonables.
+Se debe evitar complejidades espaciales demasiado elevadas cuando se
+trata de obtener complejidades temporales de orden polinómico
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 116 / 232
+Técnicas de Diseño de Algoritmos
+Cálculo de los Coeficientes Binomiales
+Para este problema se requiere de una tabla bidimensional.
+El algoritmo recursivo que calcula estos coeficientes es de complejidad
+exponencial debido a que también hay repetición de cálculos.
+(
+n
+m
+)
+=
+
+
+
+1 si m = 0 o m = n(
+n−1
+m−1
+)(
+n−1
+m
+)
+si 0< m< n
+0 en caso contrario
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 117 / 232
+Técnicas de Diseño de Algoritmos
+Cálculo de los Coeficientes Binomiales
+Algorithm 14C(int n, int m)
+1: Input: n,m: números enteros.
+2: Output: n sobre m.
+3: if m = 0 || m = n then
+4: return 1;
+5: else
+6: return C(n−1, m−1) + C(n−1, m)
+7: end if
+Sea T (k) el tiempo necesario en el peor caso para calcularC(n, m),
+donde k = n + m. La ecuación de recurrencia para el algoritmo
+recursivo es:
+T (k) = T (k−1) + T (k−2) ; k > 1, T (1) = 0;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 118 / 232
+Técnicas de Diseño de Algoritmos
+Cálculo de los Coeficientes Binomiales
+T (k) = T (k−1) + T (k−2) ; k > 1, T (1) = 0;
+Esta ecuación de recurrencia es similar a la de la serie de Fibonacci,
+por lo tanto este algoritmo también tiene complejidad exponencial.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 119 / 232
+Técnicas de Diseño de Algoritmos
+Cálculo de los Coeficientes Binomiales: solución no recursiva
+(6,2)
+(5,1)
+(4,0)
+1
++ (4,1)
+(3,0)
+1
++ (3,1)
+(2,0)
+1
++ (2,1)
+(1,0)
+1
++ (1,1)
+1
++ (5,2)
+(4,1)
+4
++ (4,2)
+(3,1)
+3
++ (3,2)
+(2,1)
+2
++ (2,2)
+1
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 120 / 232
+Técnicas de Diseño de Algoritmos
+Cálculo de los Coeficientes Binomiales: solución no recursiva
+0 1 2 3 ··· m-1 m
+0 1
+1 1 1
+2 1 2 1
+3 1 3 3 1
+... ... ... ... ...
+n-1 C(n-1,m-1) C(n-1,m)
+n C(n,m)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 121 / 232
+Técnicas de Diseño de Algoritmos
+Cálculo de los Coeficientes Binomiales: solución no recursiva
+Algorithm 15BC(int n, int m)
+1: Input: n,m: números enteros.
+2: Output: C[n+1, m+1].
+3: for ( i=0; i ≤ n; i++ ) do
+4: C[i,0] = 1;
+5: end for
+6: for ( i=1; i ≤ n; i++ ) do
+7: C[i,1] = i;
+8: end for
+9: for ( i=2; i ≤ m; i++ ) do
+10: C[i,i] = 1;
+11: end for
+12: for ( i=3; i ≤ n; i++ ) do
+13: for ( j=2; j ≤ i-1; j++) do
+14: if (j≤ m) then
+15: C[i,j] = C[i-1,j-1] + C[i-1,j];
+16: end if
+17: end for
+18: end for
+19: return C[n,m];
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 122 / 232
+Técnicas de Diseño de Algoritmos
+Cálculo de los Coeficientes Binomiales: solución no recursiva
+T (n) =
+n−1∑
+i=3
+i−2∑
+j=2
+1 =
+n−1∑
+i=3
+[(i−2)−2 +1] =
+n−1∑
+i=3
+(i−3)
+T (n) =
+n−1∑
+i=3
+i−
+n−1∑
+i=3
+3 =
+n−3∑
+i=1
+i−
+n−3∑
+i=1
+3
+T (n) = (n−3)(n−3 +1)
+2 −3(n−3)
+T (n) = n2−11n +24
+2
+T (n) = O(n2)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 123 / 232
+Subsecuencia Común más Larga
+Definición
+Dada una secuenciaX ={x1, x2,..., xn}, decimos que
+Z ={z1, z2,..., zk}, con k≤ n, es una subsecuencia deX si existe una
+secuencia creciente de índices{i1, i2,..., ik} de X tal que para todo
+j = 1,2,..., k se tiene quexij = zj
+Ejemplo
+Z ={ACA} es una subsecuencia deX ={AGCAT}, considerando la
+secuencia de índices deX{1,3,4}
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 124 / 232
+Subsecuencia Común más Larga
+Dadas dos secuenciasX e Y, decimos queZ es una subsecuencia común
+de X e Y si es subsecuencia deX y subsecuencia deY. Deseamos
+determinar la longitud de la subsecuencia común más larga(L) de X e Y.
+Ejemplo: X = AGCAT e Y = GAC, entonces L(5,3) = 2
+L(i, j) =
+
+
+
+0 si i = 0 o j = 0
+L(i−1, j−1) +1 si i̸= 0, j̸= 0 y xi = yj
+max{L(i, j−1), L(i−1, j)} si i̸= 0, j̸= 0 y xi̸= yj
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 125 / 232
+Técnicas de Diseño de Algoritmos
+Cálculo L solución recursiva
+Algorithm 16
+1: L(X, i, Y, j)
+2: if i = 0 or j = 0 then
+3: return 0
+4: else if Xi = Yj then
+5: return L(X, i− 1, Y, j− 1)+1
+6: else
+7: return max{L(X, i, Y, j− 1), L(X, i, Y, j)
+8: end if
+Complejidad
+Sea k = n + m con n =|X| y m =|Y| y t(k) el costo de resolverL(n, m).
+t(k) = 2t(k−1) + c, T (0) = 0
+t(k) = O(2k) = O(2n+m)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 126 / 232
+Cálculo L solución iterativa
+Tabla
+A G C A T
+0 0 0 0 0 0
+G 0 ←↑ 0 ↖ 1 1 1 1
+A 0 1 1 1 2 2
+C 0 1 1 2 2 2
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 127 / 232
+Cálculo de L solución iterativa
+Algorithm 17
+1: L(X, n, Y, m)
+2: Sea T [m + 1][n + 1]
+3: for i = 0 to m do
+4: T [i][0] = 0
+5: end for
+6: for i = 0 to n do
+7: T [0][i] = 0
+8: end for
+9: for i = 1 to m + 1 do
+10: for j = 1 to n + 1 do
+11: if Xi = Yj then
+12: T [i, j] = T [i− 1, j− 1] + 1
+13: else
+14: T [i, j] = max(T [i, j− 1], T [i− 1, j− 1])
+15: end if
+16: end for
+17: end for
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 128 / 232
+Cálculo de L solución iterativa
+Complejidad
+Almacenamiento: O(n· m)
+Tiempo: O(n· m)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 129 / 232
+Multiplicación encadenada de matrices
+Definición
+Dadas dos matricesAp×q y Bq×r el producto deAB se define como sigue
+Cp×r = AB =
+n∑
+k=1
+aik bkj,1≤ i≤ p,1≤ j≤ r
+1: for i = 1; i≤ p; i + + do
+2: for j = 1; j≤ r ; j + + do
+3: C[i, j] = 0
+4: for k = 1; k≤ q k + + do
+5: C[i, j] = C[i, j] + A[i, k]∗ B[k, j]
+6: end for
+7: end for
+8: end for
+Se necesitan pqr multiplicaciones de escalares
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 130 / 232
+Multiplicación encadenada de matrices
+Supongamos ahora que se desea calcular el producto de más de dos
+matrices. El producto matricial es asociativo, por lo tanto es posible
+calcular el producto matricial
+M = M1M2... Mn
+de muchas maneras diferentes, todas las cuales darán la misma respuesta:
+M = (... ((M1M2)M3)... Mn)
+M = (M1(M2(M3... (Mn−1Mn)... )))
+M = (... ((M1M2)(M3M4))... )
+y así sucesivamente. Recordar que la multiplicación de matrices no es
+conmutativa por lo que no es posible modificar el orden de las
+multiplicaciones matriciales.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 131 / 232
+Multiplicación encadenada de matrices
+Ejemplo
+Sean A13×5, B5×89, C89×3, D3×34 y queremos calcularABCD.
+Una asociación esM = ((AB)C)D, y cuesta (en multiplicaciones de
+escalares).
+AB 5.785 multiplicaciones
+(AB)C 3.471 multiplicaciones
+((AB)C)D 1.326 multiplicaciones
+Total 10.582 multiplicaciones
+Hay 5 formas diferentes de calcularABCD.
+Forma Multiplicaciones
+((AB)C)D 10.582
+(AB)(CD) 54.201
+(A(BC))D 2.856
+A((BC)D) 4.055
+A(B(CD)) 26.418
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 132 / 232
+Multiplicación encadenada de matrices
+Algoritmo sencillo
+1 Encontrar todas las formas posibles de asociación
+2 Contar el número de multiplicaciones de escalares
+3 Y quedarse con la de menor número de multiplicaciones
+Costo
+Sea T (n) el número de formas diferentes de poner paréntesis en un producto den
+matrices. Supongamos que decidimos hacer el primer corte entre las matrices
+i-ésima e (i +1)-ésima del producto en la forma siguiente:
+(M1M2... Mi)(Mi+1Mi+2... Mn)
+Ahora hay T (i) formas de poner los paréntesis en el término del lado izquierdo y
+T (n− i) en el término del lado derecho. Cualquier forma del primer grupo se
+puede combinar con cualquier forma del segundo grupo. De esta forma y para
+este valor concreto dei hay T (i)T (n− i) formas de poner los paréntesis.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 133 / 232
+Multiplicación encadenada de matrices
+Costo (continuación)
+Dado que i puede tomar cualquier valor entre 1 yn−1 obtenemos
+finalmente la recurrencia siguiente:
+T (n) =
+n−1∑
+i=1
+T (i)T (n− i)
+La tabla siguiente muestra algunos valores deT (n)a
+n 1 2 3 4 5 10 15
+T (n) 1 1 2 5 14 4.862 2.274.440
+T (n) = Ω( 4n
+n2 ) y se necesita tiempoΩ(n) para calcular la cantidad de
+multiplicaciones escalares. Por lo tanto se requiere tiempoΩ( 4n
+n ) lo que
+evidentemente no es práctico.
+aLos valores deT (n) se llaman números de Catalan
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 134 / 232
+Multiplicación encadenada de matrices
+Solución con PD
+Asumiendo que la mejor forma de hacer la multiplicación se logra haciendo
+el primer corte entre matricesi-ésima e (i +1)-ésima.
+Entonces los subproductosM1M2... Mi y Mi+1Mi+2... Mn también
+deben ser óptimos.
+mij,1≤ i≤ j≤ n almacena la solución óptima, es decir, cantidad de mul-
+tiplicaciones de escalares para Mi Mi+1... Mj. m1n es la
+solución del problema original.
+d[0..n] Vector para almacenar las dimensiones de las matrices.
+Las dimensiones de la matrizMi se encuentran en d[i−
+1] y d[i]. El número de multiplicaciones de escalares al
+multiplicar Mi Mi+1 se obtiene directamente ded[i−1]×
+d[i]× d[i +1]
+s La diagonal s = j− i contiene los elementos de mij.
+s = 0 diagonal principal, s = 1 contiene los elementos
+de mi, i +1, etc.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 135 / 232
+Multiplicación encadenada de matrices
+Solución con PD (continuación)
+1 s = 0 : mi,i = 0, i = 1,2,..., n
+2 s = 1 : mi,i+1 = di−1× di× di+1, i = 1,2..., n−1
+3 1< s < n :
+mi,i+s = mini≤k<i+s(mi+k + mk+1,i+s + di−1× dk× di+s),
+i = 1,2,..., n− s
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 136 / 232
+Multiplicación encadenada de matrices
+Ejemplo
+Sean A13×5, B5×89, C89×3 y D3×34 y queremos calcularABCD.
+D = [13,5,89,3,34]
+j = 1 2 3 4
+i = 1 0 5875 1530 2856 s = 3
+2 0 1335 1845 s = 2
+3 0 9078 s = 1
+4 0 s = 0
+s = 1 s = 2 s = 3
+m34 = 89× 3× 34 = 9078 m13 = min(m11 + m23 + 13× 5×
+3, m12 + m33 + 13× 89× 3) =
+min(1530, 92656) = 1530
+m14 = min(
+k=1
+  
+m11 + m24 + 13× 5× 34, m12 +
+m34 + 13× 89× 34, m13 + m44 + 13× 3× 34) =
+min(4055, 54201, 2856) = 2856
+m23 = 5× 89× 3 = 1335 m24 = min(m22 + m34 + 5× 89×
+34, m23 + m44 + 5× 5× 34) =
+min(24208, 1845) = 1845
+m12 = 13× 5× 89 = 5875
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 137 / 232
+Multiplicación encadenada de matrices
+Complejidad
+Temporal:
+Por cada s existen n− s elementos a ser calculado en la diagonals; por
+cada una de estas se debe elegir entres posibilidades dado por los
+diferentes valores dek.
+t(n) =
+n−1∑
+s=1
+(n− s)s = n
+n−1∑
+s=1
+s−
+n−1∑
+s=1
+s 2 = n2(n−1)
+2 − n(n−1)(2n−1)
+6
+t(n) = (n3− n)
+6 = Θ(n3)
+Almacenamiento:
+matriz m(O(n2)) más el arregloD (O(n)). Es decir O(n2)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 138 / 232
+El problema de dar cambio
+El problema
+Este es un problema típico cuando alguien realiza una compra y el
+dependiente necesita darle el cambio, pues la cantidad que ha entregado el
+cliente es mayor que la compra o cuando el cajero de un banco necesita
+pagar un cheque. Por ejemplo, supongamos quen = 15.785 es la cantidad
+a enterar (devolver o pagar) y que tenemos las siguientes denominaciones
+{20.000, 10.000, 5.000, 2.000, 1.000, 500, 100, 50, 10, 5}.
+Suponemos que las denominaciones son monedas (no hay billetes) y que
+tenemos una cantidad infinita de cada una de ellas. Debemos completar la
+cantidad n minimizando la cantidad de monedas.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 139 / 232
+El problema de dar cambio
+1: ConjuntoMonedas DevolverCambio(n){Da el cambio den unidades
+utilizando el menor número posible de monedas.C especifica un
+arreglo con las denominaciones}
+2: C ={20000,10000,5000,2000,1000,500,100,50,10,5,1}
+3: S←∅ {Conjunto que contendrá la solución}
+4: s← 0 {s es la suma de los elementos deS}
+5: while s̸= n do
+6: x← el mayor elemento deC tal que s + x≤ n
+7: if No existe ese elementothen
+8: return “no existe solución”
+9: end if
+10: S← S∪ {una moneda de valorx}
+11: s← s + x
+12: end while
+13: return S
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 140 / 232
+Características Generales
+Problema de optimización (mínima cantidad de monedas)
+Se dispone de un conjunto de candidatos (Monedas)
+Conforme avanza el algoritmo se mantienen dos conjuntos
+Conjunto de candidatos considerados y seleccionados
+Conjunto de candidatos considerados y rechazados
+Se consideran 4 funciones
+Verifica si un conjunto de candidatos es solución (ignorando si es
+ópitma). ¿Suman las monedas seleccionadas la cantidad que hay que
+pagar?
+Verifica si una solución es factible.s + x≤ n
+Función de selección. Elige el candidato más prometedor de los
+candidatos que no han sido seleccionados o rechazados.
+Función objetivo. Da el valor de la solución. Número de monedas. No
+aparece explícitamente en el algoritmo.
+La función de selección suele estar relacionada con la función objetivo.
+Nunca cambian de opinión.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 141 / 232
+Esquema general Algoritmos Voraces
+1: voraz(Conjunto C) {C Conjunto de candidatos}
+2: S←∅ {Conjunto que contendrá la solución}
+3: while C̸=∅ and not solucion (S) do
+4: x← seleccionar(C)
+5: C← C−{ x}
+6: if factible(S ∪{ x}) then
+7: S← S ∪{ x}
+8: end if
+9: end while
+10: if solucion(S) then
+11: return S
+12: else
+13: return “No hay solución”
+14: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 142 / 232
+El problema de la Mochila
+Nos dan n objetos y una mochila. Parai = 1,2,..., n, el objetoi tiene un
+peso positivo wi y un valor (económico). La mochila puede llevar un peso
+que no sobrepaseW. El objetivo es llenar la mochila de tal manera que se
+maximice el valor de los objetos transportados, respetando la limitación de
+capacidad impuesta. Suponga que es posible romper los objetos en trozos
+más pequeños de modo que podemos decidir llevar sólo una fracciónxi del
+objeto i, es decir, 0≤ xi≤ 1.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 143 / 232
+Solución problema de la Mochila
+La función objetivo que queremos optimizar es:
+maximizar
+∑n
+i=1 xi vi con la restricción
+∑n
+i=1 xi wi≤ W , donde vi > 0, wi > 0 y 0 ≤ xi≤ 1 para 1 ≤ i≤ n.
+1: Mochila(w[1... n], v[1... n], W)
+2: Sea x[1... n] {x es un vector para almacenar la fracción de cada objeto que va
+en la mochila}
+3: x[i]← 0 para todo 1≤ i≤ n
+4: peso← 0
+5: while peso < W do
+6: i← el mejor objeto restante
+7: if ((peso + w[i])≤ W ) then
+8: x[i]← 1
+9: peso← peso + w[i]
+10: else
+11: x[i]← (W− peso)/w[i]
+12: peso← W
+13: end if
+14: end while
+15: return x
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 144 / 232
+Funciones de selección para el problema de la mochila
+1 El objeto más valioso (Máxvi)
+2 El máx liviano (Mínwi)
+3 El objeto cuyo valor por unidad de peso sea el mayor (Máxvi
+wi
+)
+Ejemplo: n = 5, W = 100
+w 10 20 30 40 50
+v 20 30 66 40 60
+v
+w 2.0 1.5 2.2 1.0 1.2
+Resultados con cada una de las funciones de selección
+Seleccionar: xi Valor
+Máxvi 0 0 1 0.5 1 146
+Mínwi 1 1 1 1 0 156
+Máx vi
+wi
+1 1 1 0 0.8 164
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 145 / 232
+Introducción
+Puede aplicarse a muchos problemas (optimización)
+Problemas para los cuales no se puede construir la solución tal como
+ocurre con la programación dinámica o algoritmos voráces. Se deben
+explorar una a una todas las posibilidades factibles.
+Diferente a los algoritmos ávidos, los algoritmos Backtracking pueden
+cambiar una decisión.
+Exploración exhaustiva (en profundidad) de un grafo implícito
+(espacio de estados)
+Exito: Se llega a una hoja (fin, si solo buscamos una solución, se
+continuan buscando soluciones si se está optimizando)
+Fracaso: El algoritmo vuelve atrás eliminando los elementos añadidos a
+la solución
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 146 / 232
+El problema de las 8 reinas
+1: reinas(k, col, diag45, diag135)
+2: {sol[1... k] es k-prometedor
+col ={sol[i]|1≤ i≤ k}
+diag45 ={sol[i]− i +1|1≤ i≤ k} y
+diag135 ={sol[i] + i−1|1≤ i≤ k}}
+3: if k = 8 then
+4: Escribir sol {Un vector 8-prometedor es una solución}
+5: else
+6: for j← 1 to 8do
+7: if j /∈ col y j− k /∈ diag45 y j + k /∈ diag135 then
+8: sol[k +1]← j{sol[1... k +1] es (k +1)-prometedor}
+9: reinas(k +1, col∪ j, diag45∪{ j− k}, diag135∪{ j + k})
+10: end if
+11: end for
+12: end if
+Llamada:⇒ reinas(0,∅,∅,∅)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 147 / 232
+El problema de la mochila
+1: mochilaback(i, r){Calcula el valor de la mejor carga que se puede
+construir empleando elementos de los tiposi a n y cuyo peso total no
+sobrepase a r. Los arreglosw y v almacenan los pesos y valores
+respectivamente de cada tipo de objeto.}
+2: b← 0
+3: {se prueban por turno las clases de objetos admisibles}
+4: for k← i to n do
+5: if w[k]≤ r then
+6: b← max(b, v[k] + mochilaback(k, r− w[k]))
+7: end if
+8: end for
+9: return b
+Llamada:⇒ mochilava(1, W )
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 148 / 232
+El caso general
+1: vueltaatras(v[1... k)
+2: {v es un vectork-prometedor}
+3: if v es una soluciónthen
+4: Escribir v
+5: else
+6: for cada vector (k +1)-prometedor w tal que
+w[1... k] = v[1... k] do
+7: vueltaatras(w[1... k +1])
+8: end for
+9: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 149 / 232
+Introducción
+Al igual que Backtracking explora un grafo dirigido implícito.
+Puede aplicarse a problemas de optimización.
+Poda
+1 En cada nodo se calcula una cota para los posibles valores que
+cualquier solución puede alcanzar más adelante en el grafo.
+2 Si la cota muestra que cualquier solución debe ser necesariamente
+peor que la mejor solución encontrada, entonces se evita explorar esta
+parte del grafo.
+Ramificación
+1 Expansión de los nodos (estrategias)
+Anchura
+Profundidad
+Más prometedores (colas de prioridad)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 150 / 232
+Ramificación y Poda/Problema de Asignación
+Ejemplo
+Búsqueda exhaustiva: Agente ={a, b, c}, Actividad ={1,2,3}, cij costo
+de que el agentei ejecute la actividadj.
+1 2 3
+a 4 7 3
+b 2 6 1
+c 3 9 4
+Problema: Asignar las tareas a los agentes de tal manera de minimizar el
+costo total de ejecutar lasn tareas.
+Una posible asignación esa→ 1, b→ 2, c→ 3, costo = 4 +6 +4 = 14;
+pero la asignacióna→ 3, b→ 2, c→ 1, costo = 3 +6 +3 = 12 es mejor.
+La mejor asignación esa→ 2, b→ 3, c→ 1 y su costo es
+costo = 7 +1 +3 = 11.
+En general se necesitan considerarn! asignaciones.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 151 / 232
+Ramificación y Poda/Problema de Asignación
+1 2 3 4
+a 11 12 18 40
+b 14 15 13 22
+c 11 17 19 23
+d 17 14 20 28
+cota superior: a→ 1, b→ 2, c→ 3 y d→ 4 = 11 +15 +19 +28 = 73.
+La solución no puede costar más que 73
+cota inferior: Independiente de que agente ejecute la tarea 1, ésta costará
+11, la tarea 2 costará 12, la tarea 3 13 y la tarea 4 22, es decir
+11+12+13+22 = 58. Es decir la solución se encuentra en el rango
+[58... 73].
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 152 / 232
+Ramificación y Poda/Problema de Asignación
+rango de la solución: [58... 73]
+1 2 3 4
+a 11 12 18 40
+b 14 15 13 22
+c 11 17 19 23
+d 17 14 20 28
+a→1
+a→2
+a→3
+a→4
+60 = 11 + 14 + 13 + 22
+58 = 12 + 11 + 13 + 22
+65
+78*
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 153 / 232
+Ramificación y Poda/Problema de Asignación
+rango de la solución: [58... 73]
+1 2 3 4
+a 11 12 18 40
+b 14 15 13 22
+c 11 17 19 23
+d 17 14 20 28
+a→1
+a→2
+a→3
+a→4
+60
+65
+78*
+a→2,b→1
+a→2,b→3
+a→2,b→4
+68 = 14+12+19+23
+59
+64
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 154 / 232
+Ramificación y Poda/Problema de Asignación
+rango de la solución: [58... 73]
+1 2 3 4
+a 11 12 18 40
+b 14 15 13 22
+c 11 17 19 23
+d 17 14 20 28
+a→1
+a→2
+a→3
+a→4
+60
+58
+65*
+78*
+a→1,b→2
+a→1,b→3
+a→1,b→4
+68*
+61
+64*
+a→2,b→1
+a→2,b→3
+a→2,b→4
+68*
+59
+64*
+a→1,b→3,c→2,d→4
+a→1,b→3,c→4,d→2
+69*
+61
+a→2,b→3,c→1,d→4
+a→2,b→3,c→4,d→1
+64
+65*
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 155 / 232
+Ramificación y Poda/Problema de Asignación
+Algoritmo (problema de asignación)
+Asignacion(A, n)
+Sea sol = cotaSuperior(A, n) {Cota superior del problema}
+Sea ci la cota inferior de un nodo
+Sea P una cola de prioridad con entradas ⟨ci, nodo⟩ y organizada por el mínimo de ci.
+ci = cotaInferior(A, n, r) {Cota inferior del nodo raíz r (cota inferior del problema)}
+Insertar⟨ci, r⟩ en P
+while P̸=∅ do
+e = EliminarMin(P)
+if e.ci < sol then
+for cada hijo h de e.nodo do
+ci = cotaInferior(A, n, h)
+if h es un nodo hoja then
+if ci < sol then
+sol = ci
+end if
+else
+Insertar⟨ci, h⟩ en P
+end if
+end for
+end if
+end while
+return sol
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 156 / 232
+Complejidad Computacional
+Introducción
+Es una rama de la teoría o fundamentos de la computación que
+estudia de forma teórica el tiempo y el espacio de un problema que se
+considera computable y su complejidad inherente
+Considera globalmente todos los posibles algoritmos capaces de
+resolver un problema.
+Se busca establecer una cota inferior para el problema.
+Encontrar una funcióng(n) tan grande como sea posible para la cual
+se prueba que cualquier algoritmo capaz de resolver correctamente el
+problema para cualquier instancia debe necesariamente tomar tiempo
+Ω(g(n)).
+Aquí g(n) representa la cota inferior de la complejidad del problema.
+Si un algoritmo esΘ(g(n)) es un algoritmo eficiente para resolver el
+problema.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 157 / 232
+Teoría de la Información
+Límite inferior para el problema de ordenamiento
+Límite inferior para el problema de ordenamiento (usando comparaciones)
+Arbol de decisión para ordenar tres objetos1:2
+2:3
+<1,2,3>
+<=
+1:3
+<1,3,2>
+<=
+<3,1,2>
+>
+>
+<=
+1:3
+<2,1,3>
+<=
+2:3
+<2,3,1>
+<=
+<3,2,1>
+>
+>
+>
+Ejemplo: a1 = 6, a2 = 8, a3 = 5
+Sea h la altura del árbol de decisión. El peor caso ocurre cuando lasn!
+permutaciones se encuentran en el nivelh. Es decir n!≤ 2h y h≥ log2 n!.
+Usando la aproximación de Stirling paran! =
+√
+2πn( n
+e )n(1 + Θ( 1
+n )), tenemos que
+h = Ω(n log2 n).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 158 / 232
+Introducción a NP-Completitud
+Introducción
+Problemas decidibles. Que cuentan con al menos un algoritmo que lo
+resuelve.
+Problemas indecidibles. Que no se pueden resolver mediante un
+algoritmo.
+Hay problemas decidibles que no pueden ser resueltos de forma
+eficiente, debido a que el algoritmo que los resuelve tiene tiempo
+exponencial o mayor.
+Esto nos permite identificar dos grupos de problemas decidibles:
+problemas tratables y problemas intratables.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 159 / 232
+Introducción a NP-Completitud
+problemas tratables y problemas intratables
+Problemas tratables.
+(1) Existen algoritmos con tiempos razonables que los resuelven.
+(2) Cuentan con al menos una solución de tiempo polinomial.
+(3) Su tiempo de ejecución es conocido.
+Problemas intratables.
+(1) No existen algoritmos de tiempo razonable o eficiente que los resuelva.
+(2) Sólo se conocen algoritmos de tiempo exponencial.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 160 / 232
+clases P, NP y NP-completo
+Las clases P y NP-completo forman parte de la claseNP.
+Definiremos una clase de problemas “fáciles” y otro como “difíciles”
+que abstraiga del modelo de computación
+NP
+NP-completo
+P
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 161 / 232
+Las clases P y NP
+Definición 1. La clase P es el conjunto de todos los lenguajes que
+pueden decidirse en tiempo polinomial con algunaMTD (es decir,
+T (n) es algún polinomio enn). La clase NP es el conjunto de todos
+los lenguajes que pueden aceptarse en tiempo polinomial con alguna
+MTND.
+En cierto sentidoP representa la clase de problemas que se pueden
+resolver en tiempo razonable con las tecnologías conocidas y son
+abordables en la práctica.
+Hay muchos problemas difíciles que se resuelven fácilmente en una
+MTND mediante “adivinar” una solución y luego verificarla en tiempo
+polinomial.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 162 / 232
+¿Es P = NP?
+Es el problema abierto más importante en computación teórica en la
+actualidad, y ha resistido décadas de esfuerzos.
+Hasta ahora sólo existe seguridad queP⊆ NP.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 163 / 232
+Los problemas NP-completos son equivalentes
+Un paso fundamental hacia la solución del problema es la definición
+de la clase de problemasNP-completo.
+Los problemas NP-completos son los más difíciles dentro de la clase
+NP.
+Se conocen cientos de problemas NP-completos, y tras décadas de
+esfuerzo nadie ha logrado resolver uno de ellos en tiempo polinomial.
+De aquí la creencia generalizada de queP̸= NP.
+Todos los problemas NP-completos son equivalentes, en el sentido de
+que cualquiera de ellos reduce a cualquier otro.
+Para este tipo de problemas no se conocen soluciones de complejidad
+polinomial.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 164 / 232
+Reducción polinomial
+Para explicar lo que son estos problemas debemos comenzar con el
+concepto de reducción polinomial.
+Definición. Un lenguaje L′⊆ Σ∗
+0 reduce polinomialmente a otro
+lenguaje L⊆ Σ∗
+1 denotado por L′≤ L si existe una función
+f : Σ∗
+0→ Σ∗
+1 computable en tiempo polinomial en una MTD, tal que
+w∈ L′⇐⇒ f (w)∈ L.
+Definición. Un lenguaje L es NP-completo si:
+(1) L∈ NP,
+(2)∀ L′∈ NP, L′≤ L.
+Si sólo se cumple la segunda condición, entoncesL es NP-hard o
+NP-difícil.
+Lema 0. Si L′≤ L y L∈ P, entonces L′∈ P.
+Lema 1. Si L′′≤ L′ y L′≤ L, entonces L′′≤ L.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 165 / 232
+Reducción polinomial
+Lema 2. Si L es NP-Completo yL∈ P, entonces P = NP.
+Prueba: Sea L′∈ NP. Como L es NP-Completo, entonces L′≤ L, y
+si L∈ P, por el Lema 0L′∈ P.
+Si se pudiera resolver cualquier problema NP-completo en tiempo
+polinomial, entonces inmediatamente todos los problemas NP se
+resolverían en tiempo polinomial.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 166 / 232
+Reducción polinomial
+¿Cómo se puede establecer que un problema es NP-completo?
+Veamos el siguiente lema:
+Lema 3. Si L′ es NP-completo, L∈ NP, y L′≤ L, entonces L es
+NP-completo.
+Prueba: Como L′ es NP-completo, L′′≤ L′ para todo L′′∈ NP. Pero
+L′≤ L, entonces por transitividad (Lema 1)L′′≤ L.
+Si un problema es NP-completo, en la práctica no es esperable
+resolverlo eficientemente, por lo que se deberá recurrir a algoritmos
+aproximados, probabilísticos, o meras heurísticas para tratarlo.
+Necesitamos un primer problema NP-Completo.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 167 / 232
+Primer problema NP-Completo, SAT es NP-completo
+Una fórmula proposicional es satisfactible si existe al menos una
+combinación de los valores de verdad de sus variables que la hace
+verdadera.
+Por ejemplo, si tenemos la siguiente proposición lógica:
+P = p∨ (q∧ r), veremos si esta fórmula proposicional es satisfactible:
+p q r p (q∧ r) p∨ (q∧ r)
+0 0 0 0 0 0
+0 0 1 0 0 0
+0 1 0 0 0 0
+0 1 1 0 1 1
+1 0 0 1 0 1
+1 0 1 1 0 1
+1 1 0 1 0 1
+1 1 1 1 1 1
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 168 / 232
+SAT es NP-completo
+Considérese ahora la siguiente fórmula proposicional:
+P = (p∨¬ q∨ r)∧ (¬p∨ q∨¬ r)∧ (¬p∨¬ q∨ r)∧
+(p∨¬ q∨¬ r)∧ (¬p∨¬ q∨¬ r)∧ (p∨ q∨ r)
+¿Es satisfactible?
+Sí lo es, con las asignaciones p = 0, q = 0 y r = 1, o p = 1, q = 0 y r = 0.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 169 / 232
+SAT es NP-completo
+El problema decisión de satisfactibilidad booleana (conocido como
+SAT) fue el primer problema identificado como perteneciente a la
+clase de complejidad NP-completo.
+Stephen Cook demostró en 1971 (en su publicación: “The Complexity
+of Theorem-Proving Procedures”, conocido como el Teorema de
+Cook) que SAT es NP-completo.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 170 / 232
+Metodología general para establecer que un lenguaje L es
+NP-completo
+1. Mostrar que L∈ NP usando una MTND.
+2. Elegir un L′∈ NP-Completo para mostrar queL′≤ L. Esto puede
+requerir a veces un poco de intuición y experiencia, pero a veces
+puede ser muy evidente también.
+(a) Diseñar la transformación polinomialf (que es una función). Esto suele
+hacerse junto con la elección deL′, y es realmente la parte creativa del
+ejercicio.
+(b) Mostrar que f se puede calcular en tiempo determinístico polinomial.
+(c) Mostrar que w∈ L′⇐⇒ f (w)∈ L. Esto suele ser difícil, y
+normalmente va junto con el diseño def.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 171 / 232
+Jerarquía de complejidad NP-completitud
+SAT es el primer problema NP-Completo
+SAT
+SAT-FNC
+CLIQUE
+VC
+SC HC
+3-SAT
+COLOR
+EC
+KNAPSACK
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 172 / 232
+SAT-FNC es NP-completo
+Una fórmula proposicional está en Forma Normal Conjuntiva (FNC) si
+es una conjunción de disyunciones de literales. SAT-FNC es el
+lenguaje de las fórmulas satisfactibles que están en FNC.
+Prueba: Primero hay que mostrar que SAT-FNC está en NP. Una
+MTND puede adivinar los valores booleanos de los literales de una
+fórmula proposicional que está en FNC y comprobar en tiempo
+polinomial que la fórmula es satisfactible.
+SAT-FNC es un caso particular de SAT, así que es fácil demostrar que
+SAT≤ SAT− FNC
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 173 / 232
+3-SAT es NP-completo
+Definición. 3-SAT es el conjunto de fórmulas proposicionales
+satisfactibles en FNC, donde ninguna disyunción tiene más de 3
+literales.
+Por ejemplo: P = (p∨ q∨¬ r)∧ (̸= p∨ q∨ r)
+Para mostrar que 3-SAT es NP-completo, veremos que SAT-FNC≤
+3-SAT.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 174 / 232
+Prueba 3-SAT es NP-completo
+3-SAT∈ NP ya que 3-SAT es un caso particular de SAT y también de
+SAT-FNC.
+La reducción comienza de la siguiente forma. SeaF = F1∧ F2∧···∧ Fq la
+fórmula original en FNC.
+Transformaremos cadaFi con más de tres literales en una conjunción donde
+cada elemento tenga la disyunción de tres literales.
+Sea Fi = x1∨ x2∨···∨ xk, con xj literal (variable o variable negada).
+Introduciremos variables nuevasy1 a yk−3, y reeplazaremosFi por:
+F′
+i = (x1∨ x2∨ y1)∧ (¬y1∨ x3∨ y2)∧ (¬y2∨ x4∨ y3)∧...
+∧(¬yk−4∨ xk−2∨ yk−3)∧ (¬yk−3∨ xk−1∨ xk)
+Se puede demostrar queF′
+i se construye en tiempo polinomial a partir deFi.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 175 / 232
+Prueba (cont.) 3-SAT es NP-completo
+Por ejemplo. Sea cualquierFi = x1∨ x2∨ x3∨ x4∨ x5∨ x6∨ x7
+Donde k = 7, y las nuevas variablesyi, con 1≤ j≤ 4, y1, y2, y3, y4.
+Podemos transformar cualquierFi a una forma normal conjuntiva
+compuesta de disyunciones de tres literales cada una.
+F′
+i = (x1∨ x2∨ y1)∧ (¬y1∨ x3∨ y2)∧ (¬y2∨ x4∨ y3)∧
+(¬y3∨ x5∨ y4)∧ (¬y4∨ x6∨ x7)
+Nuevamente podemos afirmar queF′
+i se construye en tiempo
+polinomial a partir deFi.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 176 / 232
+Prueba (cont.) 3-SAT es NP-completo
+(→) Si F es satisfactible, existe una asignación de valores a las
+variables que hace verdadero cadaFi.
+Dentro de cadaFi, al menos uno de los literalesxj se hace verdadero
+con esta asignación.
+Conservemos esa asignación paraF′
+i, y veamos que se puede asignar
+valores a losyj que hagan verdadera aF′
+i. Digamos 3≤ j≤ k−2.
+Podemos asignar yj−2 = 1 y yj−1 = 0, pues (¬yj−2∨ xj∨ yj−1) se
+mantiene verdadero.
+El valor asignado ayj−2 hace verdadera la disyunción anterior,
+(¬yj−3∨ xj−1∨ yj−2), lo cual nos permite asignaryj−3 = 1 y seguir la
+cadena hacia atrás.
+Similarmente, el valor asignado ayj−1 hace verdadera la disyunción
+siguiente, (¬yj−1∨ xj+1∨ yj), lo que nos permite asignaryj.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 177 / 232
+Prueba (cont.) 3-SAT es NP-completo
+(←) Si F′ = F′
+1∧···∧ F′
+q es satisfactible, hay una asignación de
+variables de F′ que hace verdadera cadaF′
+i.
+Veremos que no es posible lograr eso si ninguna de lasxj se ha hecho
+verdadera
+Si todas lasxj se han hecho falsas, entoncesy1 debe ser verdadera.
+Pero entonces, para hacer verdadera a (¬y1∨ x3∨ y2) necesitamos
+que y2 sea verdadera, y así siguiendo, necesitaremos finalmente que
+yk−3 sea verdadera, con lo que la última disyunción,
+(¬yk−3∨ xk−1∨ xk) es falsa.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 178 / 232
+Clique es NP-completo
+CLIQUE
+Un k-clique en un grafo no dirigidoG = (V, E) es un subconjunto deV de
+tamaño k donde todos los vértices están conectados con todos. El lenguaje
+CLIQUE es el conjunto de pares (G, k) tal queG tiene un k-clique.
+Corresponde al problema de dado un grafo, determinar si tiene unk-clique.
+Aplicaciones
+Identificar cluster o comunidades en redes sociales (Facebook, twitter, etc.)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 179 / 232
+Ejemplo: Clique
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 180 / 232
+Prueba Clique es NP-completo
+CLIQUE∈ NP. Una MTND puede adivinar losk vértices y luego
+verificar en tiempo polinomial que forman unk-Clique.
+Para demostrar que CLIQUE es NP-Completo mostraremos que
+SAT-FNC≤ CLIQUE.
+Sea F = F1∧ F2∧···∧ Fq una fórmula en FNC y sea
+Fi = xi,1∨ xi,2∨···∨ xi,mi.
+Se construye G = (V, E) que tendrá unq-Clique si F es satisfactible.
+G tendrá un vértice por cada literal deF, formalmente
+V ={(i, j),1≤ i≤ q,1≤ j≤ mi}.
+Y tendrá aristas entre literales de distintas componentesFi y F′
+i que no
+sean uno la negación del otro, formalmente
+E ={((i, j), (i′, j′)), i̸= i′, xi,j no es equivalente¬xi ′,j ′}.
+Es claro queG se puede construir en tiempo polinomial.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 181 / 232
+Prueba (cont.) Clique es NP-completo
+(→) Si F es satisfactible, podemos asignar valores a variables de
+modo que al menos unxi,v(i) es verdadero en cada componente deF.
+Estos q literales no pueden ser uno la negación del otro (todos son
+verdaderos a la vez). Como todos los literales están en distintas
+componentes y ninguno es la negación del otro, los nodos
+correspondientes están todos conectados enG, formando unq-Clique.
+(←) Si G tiene un q-Clique, los literales asociados a losq nodos
+participantes deben estar todos en distintas componentes y no ser
+ninguno la negación del otro. Esto significa que se pueden hacer
+verdaderos todos a la vez, y por lo tanto tendremos un literal en cada
+Fi con lo queF puede hacerse verdadera.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 182 / 232
+Ejemplo 2: Clique
+F = (x1∨¬ x2)∧ (x2∨ x3∨ x4)∧ (x4∨¬ x1)
+x1
+(1,1)
+x2
+(2,1)
+x4 (3,1)
+¬x2
+(1,2)
+x3 (2,2)
+¬x1 (3,2)
+x4 (2,3)
+Un grafo con unk-clique (k = 3)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 183 / 232
+Problemas NP-Completos
+Vertex Cover
+Un recubrimiento de vértices (vertex cover) de tamañok de un grafo no
+dirigido G = (V, E) es un subconjunto dek nodos de V tal que para toda
+arista (u, v)∈ E, al menos uno entreu y v están en el subconjunto
+elegido. El lenguaje vc se define como los pares(G, k) tal que G tiene un
+recubrimiento de vértices de tamañok.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 184 / 232
+Problemas NP-Completos
+Vertex Cover esNP-Completo I
+1 vc∈ NP. Dado los k vértices, es fácil verificar en tiempo polinomial
+que por cada arista, alguno de sus vértices es alguno de losk vértices
+elegidos.
+2 Para probar quevc es NP-Completo, demostramos que
+CLIQUE≤ vc.
+1 2
+3 4
+5
+6
+Un grafo con unq-clique (q = 4)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 185 / 232
+Problemas NP-Completos
+Vertex Cover esNP-Completo II
+1 2
+3 4
+5
+6
+Un grafo conk =|V|− q = 2 vertex cover
+Sea E′ el complemento de las aristas deE. Entonces V′ es un clique en
+G = (V, E) ssi V− V′ es un recubrimiento de vértices enG′ = (V, E′).
+Es decir un grafoG = (V, E) dado tendrá unq-clique ssi G′ = (V, E′)
+tiene un recubrimiento de vértices de tamaño|V|− q.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 186 / 232
+Problemas NP-Completos
+Vertex Cover esNP-Completo III
+3 (⇒) Sea V′ un clique enG. Sus nodos están todos conectados con
+todos. Si complementamos las aristas deG para formarG′, ahora
+esos nodos no están conectados ninguno con ninguno. Eso significa
+que los demás vértices,V− V′, cubren todas las aristas deG′, pues
+toda arista tiene al menos uno de sus extremos enV− V′ (es decir
+fuera de V′).
+4 (⇐) Sea V− V′ un recubrimiento de vértices enG′. Entonces
+ninguna arista puede tener ambos extremos enV′, es decir, conectar
+dos nodos deV′. Al complementar las aristas para formarG, ahora
+todos los nodos deV′ están conectados entre sí, formando un clique.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 187 / 232
+Problemas NP-Completos
+Set Cover
+Dados conjuntos S1, S2,..., Sn, un recubrimiento de conjuntos (set cover)
+de tamaño k es un grupo dek conjuntos Si1, Si2,..., Sik, tal que⋃
+1≤j≤k
+Sij =⋃
+1≤i≤n Si. El lenguaje sc es el de los pares (S = S1, S2,..., Sn, k)
+tal que S tiene un recubrimiento de conjuntos de tamañok.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 188 / 232
+Problemas NP-Completos
+Set Cover esNP-Completo I
+1 sc∈ NP. Dado losk conjuntos es fácil unirlos y verificar que la unión
+es igual a la unión de todos los conjuntos.
+2 Para mostrar que esNP-Completo demostramos vc≤ sc. La
+reducción es muy simple. Sea un grafoG = (V, E). Asociaremos a
+cada vértice v∈ V un conjunto Sv conteniendo las aristas que tocan
+v, formalmente Sv ={(u, v)∈ E}. Evidentemente esto puede
+hacerse en tiempo polinomial.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 189 / 232
+Problemas NP-Completos
+Set Cover esNP-Completo II
+1
+S1 ={(1,5),(1,6)}
+2
+S2 ={(2,6)}
+3
+S3 ={(3,5),(3,6)}
+4
+S4 = (4,5)
+5
+S5 ={(1,5),(3,5),(4,5),(6,5)}
+6
+S6 ={(1,6),(3,6),(2,6),(5,6)}
+Un grafo conk = 2 vertex cover, conS1, S2, S3, S4, S5 y S6
+Es fácil ver que:
+3 (⇒) si {v1, v2,..., vk} es un recubrimiento de vértices deG entonces
+Sv1, Sv2,..., Svk es un recubrimiento de conjuntos deS.
+4 (⇐) si Sv1, Sv2,..., Svk es un recubrimiento de conjuntos deS,
+entonces{v1, v2,..., vk} es un recubrimiento de vértices deG.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 190 / 232
+Algoritmos Probabilísticos
+Introducción
+Cuando un algoritmo se enfrenta a una decisión, a veces es preferible
+seguir un curso de acción aleatorio en lugar de invertir demasiado
+tiempo en determinar cuál de las alternativas es la mejor.
+Este tipo de situaciones se debe a que el tiempo para determinar la
+opción es prohibitivo.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 191 / 232
+Algoritmos Probabilísticos
+Características de los algoritmos probabilísticos
+La característica fundamental de los algoritmos probabilísticos es que
+un mismo algoritmo se puede comportar de forma distinta entregando
+soluciones diferentes cuando se aplica dos o más veces sobre la misma
+entrada.
+Un algoritmo probabilístico puede no terminar o fallar pero siempre
+que eso ocurra con una probabilidad muy pequeña. Si ocurre, se
+aborta el algoritmo y su ejecución se repite con los mismos datos.
+El análisis de los algoritmos probabilísticos es en general muy difícil.
+La ejecución de un algoritmo probabilístico puede variar según el azar
+pero puede tomar mucho menos tiempo que la ejecución de un
+algoritmo determinista.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 192 / 232
+Algoritmos Probabilísticos
+Características de los algoritmos probabilísticos
+Un algoritmo determinista siempre termina y entrega la misma salida
+ante la misma entrada.
+Un algoritmo determinista siempre encuentra la misma solución con
+los mismos datos de entrada.
+A un algoritmo determinista no se le permite que calcule una solución
+incorrecta para ningún dato. Si eso ocurre entonces existe algún error
+de programación.
+El análisis de la eficiencia de un algoritmo determinista es, a veces,
+difícil.
+La ejecución de un algoritmo determinista puede tomar demasiado
+tiempo.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 193 / 232
+Algoritmos Probabilísticos
+Clasificación de los algoritmos probabilísticos
+Algoritmo numéricos probabilísticosproporcionan una solución
+aproximada.
+Algoritmos de Monte Carloproporcionan una respuesta exacta con
+una alta probabilidad.
+Algoritmos Las Vegasnunca dan una solución incorrecta.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 194 / 232
+Algoritmos Probabilísticos
+Clasificación de los algoritmos probabilísticos
+Cómo se comportan los distintos tipos de algoritmos ante un mismo
+problema.
+¿Cuándo descubrió América Cristobal Colón? (Brassard,
+Fundamentos de los Algoritmos)
+Algoritmos numéricos.
+“Entre 1490 y 1500”, “Entre 1485 y 1495”, “Entre 1491 y 1501”,
+“Entre 1480 y 1490”, “Entre 1489 y 1499”.
+Tenemos una probabilidad de error del 20%.
+Si se da más tiempo a la ejecución se podría reducir esa probabilidad.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 195 / 232
+Algoritmos Probabilísticos
+Clasificación de los algoritmos probabilísticos
+Cómo se comportan los distintos tipos de algoritmos ante un mismo
+problema.
+¿Cuándo descubrió América Cristobal Colón?
+Algoritmos de Monte Carlo ejecutado diez veces.
+1492, 1492, 1492, 1491, 1492, 1492, 357 A.C., 1492, 1492, 1492.
+Nuevamente un 20% de error.
+Las respuestas incorrectas pueden ser próximas a la correcta o
+completamente desviadas.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 196 / 232
+Algoritmos Probabilísticos
+Clasificación de los algoritmos probabilísticos
+Cómo se comportan los distintos tipos de algoritmos ante un mismo
+problema.
+¿Cuándo descubrió América Cristobal Colón?
+Algoritmos Las Vegas ejecutado diez veces.
+1492, 1492, ¡Perdón!, 1492, 1492, 1492, 1492, 1492, ¡Perdón!, 1492.
+El algoritmo puede fallar pero nunca da una respuesta incorrecta.
+El algoritmo falla con una probabilidad del 20
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 197 / 232
+Algoritmos Probabilísticos
+Algoritmos Numéricos Probabilísticos
+Proporcionan una solución aproximada con un cierto intervalo de
+confianza.
+A mayor tiempo de ejecución, mejor es la aproximación
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 198 / 232
+Algoritmos Probabilísticos
+Algoritmos Numéricos Probabilísticos: Estimación aproximada de Pi (π)
+Tiramos n dardos sobre un cuadrado y contamos el número k de los
+que caen en un círculo inscrito en el cuadrado.
+r
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 199 / 232
+Algoritmos Probabilísticos
+Algoritmos Numéricos Probabilísticos: Estimación aproximada de Pi (π)
+El círculo inscrito es de radior y el lado del cuadrado es 2r.
+Calculamos la razónR entre los dardos que caen dentro del círculo y
+los que caen dentro del cuadrado, que es equivalente a la razón entre
+el área del círculo y el área del cuadrado.
+R = k
+n = πr 2
+(2r)2 = π
+4
+R = π
+4⇒π = 4R
+π≈ 4 k
+n
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 200 / 232
+Algoritmos Probabilísticos
+Algoritmos Numéricos Probabilísticos: Estimación aproximada de Pi (π)
+De la figura tenemos que k=15 y n=19.
+π≈ 4 k
+n = 415
+19 = 3,157894737
+Es obvio que el valor que entrega es aproximado.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 201 / 232
+Algoritmos Probabilísticos
+Algoritmos Numéricos Probabilísticos: Estimación aproximada de Pi (π)
+Algorithm 18Pi(int n)
+1: Input: n, número total de dardos a lanzar.
+2: Output: valor aproximado deπ.
+3: k = 0;
+4: for (i = 0; i < n; i + +) do
+5: x = uniforme(0,1);
+6: y = uniforme(0,1);
+7: r = x∗ x + y∗ y;
+8: if (r≤ 1.0) then
+9: k + +;
+10: end if
+11: end for
+12: return 4∗ k/n;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 202 / 232
+Algoritmos Probabilísticos
+Algoritmos Numéricos Probabilísticos: Integración numérica
+Dada una funciónf : [a, b]→ R, continua, entonces el área bajo la
+curva y = f (x), definida por:
+∫b
+a
+f (x) dx
+Algorithm 19IntegralDeterm(int n, double a, double b)
+1: Input: n, cantidad de particiones
+2: Output: integral aproximado de f(x) en el intervalo [a, b].
+3: suma = 0;
+4: delta = (b - a)/n;
+5: x = a + delta/2.0;
+6: for (k = 0; k < n; k + +) do
+7: suma += f(x);
+8: x += delta;
+9: end for
+10: return suma∗delta;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 203 / 232
+Algoritmos Probabilísticos
+Algoritmos Numéricos Probabilísticos: Integración numérica
+Dada una funciónf : [0,1]→ [0,1], continua, entonces el área bajo la
+curva y = f (x), definida por:
+∫1
+0
+f (x) dx
+Algorithm 20Integral(int n)
+1: Input: n, número total de dardos a lanzar.
+2: Output: integral aproximada de f(x).
+3: k = 0;
+4: for (i = 0; i < n; i + +) do
+5: x = uniforme(0,1);
+6: y = uniforme(0,1);
+7: if (y≤ f(x) ) then
+8: k++;
+9: end if
+10: end for
+11: return k/n;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 204 / 232
+Algoritmos Probabilísticos
+Algoritmos Numéricos Probabilísticos: Integración numérica
+Dada una funciónf : [0,1]→ [0,1], continua, entonces el área bajo la
+curva y = f (x), definida por:
+∫1
+0
+f (x) dx
+Algorithm 21Integral(int n)
+1: Input: n, número total de dardos a lanzar.
+2: Output: integral aproximada de f(x).
+3: suma = 0;
+4: for (i = 0; i < n; i + +) do
+5: x = uniforme(0,1);
+6: suma += f(x);
+7: end for
+8: return suma/n;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 205 / 232
+Algoritmos Probabilísticos
+Algoritmos Numéricos Probabilísticos: Integración numérica
+Algorithm 22uniforme(double a, double b)
+1: return a + (b-a)uniforme(0,1);
+Algorithm 23Integral(int n, double a, double b)
+1: Input: n, número total de dardos a lanzar.
+2: Output: integral aproximado de f(x) en el intervalo [a, b].
+3: suma = 0;
+4: for (i=0; i<n; i++) do
+5: x = uniforme(a, b);
+6: suma += f(x);
+7: end for
+8: return (b-a) * suma/n;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 206 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo
+Hay problemas para los que no se conocen soluciones deterministas ni
+tampoco existe un algoritmo Las Vegas que nos permita resolver el
+problema en un tiempo razonable.
+Algoritmos que pueden entregar resultados incorrectos con una
+probabilidad acotada.
+Podemos disminuir esta probabilidad de error repitiendo la ejecución
+el algoritmo para asegurar la obtención de una respuesta correcta.
+Por lo tanto, la probabilidad de éxito es mayor cuando se dispone de
+más tiempo.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 207 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo
+Toman decisiones probabilísticas como ayuda para llegar de forma
+más rápida hacia una solución correcta.
+Los algoritmos MC ocasionalmente cometen un error, pero
+encuentran la solución correcta con una alta probabilidad, sea cual
+sea el caso considerado.
+Un algoritmo Monte Carlo se dice eficiente si su tiempo de ejecución
+en el peor caso es polinomial para cualquier entrada.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 208 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo
+Sea p un número real, 0< p< 1, decimos que un algoritmo MC es
+p-correcto, si éste devuelve una respuesta correcta con probabilidad≥
+p.
+Algorithm 24AMC(x)
+1: MC(x, exito);
+2: if (exito == true)then
+3: return true;
+4: else
+5: return false;
+6: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 209 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo
+Búsqueda de un buen estudiante.
+Quiero un alumno con nota≥ 5.0
+Si tomamos k estudiantes al azar,P(error) = 1
+2k
+E(T (n))≈ 1
+p(<5.0)k
+Algorithm 25BuscarBuenEstudiante(x)
+1: Elegir k alumnos al azar;
+2: return Máximo entre los k alumnos; (El resultado que retorne no
+siempre será correcto)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 210 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Buscar un buen estudiante
+La idea de este problema es encontrar un buen estudiante, vale decir,
+un estudiante mejor que el del medio.
+Una solución obvia es ordenar el conjunto y sacar el máximo
+(O(nlogn)), con este, estamos seguros que es mejor que el del medio.
+Otra solución es buscar el máximo ((O(n))).
+Qué pasa si tomamos un alumno al azar, ¿cuál es la probabilidad de
+que sea mejor que el del medio?. Claramente es de 1/2.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 211 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Buscar un buen estudiante
+Si ahora tomo dos alumnos al azar, ¿cuál es la probabilidad de que al
+menos uno de ellos sea mejor que el del medio?
+Qué pasa si lo vemos al revés, ¿cuál es la probabilidad de que los dos
+sean menores que el del medio?
+Con esta probabilidad podemos calcular la primera.
+P(al menos uno de los dos sea mejor que el del medio ) = 1− P(los
+dos son peores que el del medio ).
+P(los dos son peores que el del medio ) = 1
+2∗ 1
+2
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 212 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Buscar un buen estudiante
+Luego, P(al menos uno de los dos sea mejor que el del medio ) =
+1− ( 1
+2)2.
+Si tomamos un conjunto de tamaño k, tenemos que la probabilidad de
+que los k sean más malos que el del medio es(1/2)k , luego la
+probabilidad de que uno de ellos sea mejor que el del medio es:
+P(k) = 1−
+(1
+2
+)k
+Si k = 2, P(2) = 0,75, mientras que sik = 10, P(10) = 0,999023, y
+con k = 20, P(20) = 0,999999046, que es suficientemente buena para
+casi cualquier fin práctico.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 213 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Verificación de la multiplicación de matrices
+Consideramos tres matricesn× n, A, B y C.
+Se desea verificar si la matrizC es igual al producto deA y B, es
+decir C = AB.
+¿Cómo se puede verificar esto? La idea evidente es multiplicarA por
+B y comparar el resultado conC.
+Si empleamos el tradicional algoritmo de multiplicación de matrices,
+esto nos daO(n3).
+¿Se puede hacer esto mejor si estamos dispuestos a admitir una
+pequeña probabilidad de error?
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 214 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Verificación de la multiplicación de matrices
+Sea X un vector binario de longitud n, tal queXi = 0 o Xi = 1.
+Multiplicar XAB y XC es Θ(n2).
+Algorithm 26testProdMat(A, B, C, n)
+1: Input: A, B, C, matrices den× n.
+2: Output: respuesta correcta con una probabilidad =1
+2.
+3: for (j=0; j<n; j++) do
+4: Xj = uniforme(0..1); /* uniforme(0..1) devuelve 0 o 1*/
+5: end for
+6: if ((XA)B == XC) then
+7: return true;
+8: else
+9: return false;
+10: end if
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 215 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Verificación de la multiplicación de matrices
+Este algoritmo devuelve una respuesta correcta con una probabilidad
+de 1
+2.
+Esto significa que este algoritmo es (1/2)-correcto.
+Por lo tanto no es p-correcto para p <1
+2.
+Cuando el algoritmo retornafalse estamos seguros que la respuesta es
+correcta.
+Sin embargo cuando retornatrue no estamos seguros si la respuesta
+es correcta.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 216 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Verificación de la multiplicación de matrices
+Consideremos las siguientes matrices 3×3:
+A =
+
+
+1 2 3
+4 5 6
+7 8 9
+
+ B =
+
+
+3 1 4
+1 5 9
+2 6 5
+
+ C =
+
+
+11 29 37
+29 65 91
+47 99 45
+
+
+Supongamos que ejecutamos la función y ésta selecciona X = (1,1,0).
+Si multiplicamos XA = (5,7,9), (XA)B = (40,94,128), además XC =
+(40,94,128)
+Con esta selección de X la función devuelve true, ya que XAB = XC.
+Otra llamada a la función podría seleccionar X=(0,1,1), devuelve
+false,⇒ XAB̸= XC.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 217 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Verificación de la multiplicación de matrices
+¿Cómo podemos mejorar la probabilidad de acierto en la ejecución de
+la función?
+Para lograr esto, se sugiere entonces ejecutar varias veces la función
+(digamos k veces), donde k está en función de la probabilidad de
+error.
+Algorithm 27RepeatTestProdMat(A, B, C, n, k)
+1: Input: A, B, C, matrices den× n; k, número de iteraciones
+2: Output: respuesta correcta con una probabilidad >1
+2.
+3: for (i=0; i<k; i++) do
+4: if (testProdMat(A,B,C,n) == false) then
+5: return false;
+6: end if
+7: end for
+8: return true;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 218 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Verificación de la multiplicación de matrices
+Nos interesa la probabilidad de error de este nuevo algoritmo.
+Si realmente AB=C, entonces toda llamada a testProdMat devuelve
+necesariamente el valor verdadero y RepeatTestProdMat también
+devuelve verdadero después dek ejecuciones, por lo tanto la
+probabilidad de error es muy baja.
+Por otro lado, si C̸=AB, la probabilidad de que una llamada a
+testProdMat devuelva verdadero es como máximo1
+2.
+Por lo tanto, la probabilidad de quek llamadas consecutivas
+devuelvan un valor erróneo es1
+2k como máximo.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 219 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Verificación de la multiplicación de matrices
+Podemos concluir que este nuevo algoritmo es (1− 1
+2k)-correcto.
+Cuando k=10, esto es mejor que 99,9%-correcto.
+Repetir 20 veces, la probabilidad de error es una entre un millón.
+Este decrecimiento rápido de la probabilidad de error es típico de los
+algoritmos de Monte Carlo que resuelven problemas de decisión
+(entregan verdadero o falso, si o no).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 220 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Verificación de la multiplicación de matrices
+De forma alternativa, se puede dar a los algoritmos de Monte Carlo
+una cota superior explícita para la probabilidad de error admisible.
+Dado ε, la probabilidad máxima de error.
+Claramente el algoritmo requiere un tiempo que está enO(n2 log 1
+ε ).
+Algorithm 28testProdMatEpsilon(A, B, C, n,ε)
+1: Input: A, B, C, matrices den× n; ε, probabilidad máxima de error
+2: Output: respuesta correcta con una probabilidad >1
+2.
+3: k =⌈log 1
+ε⌉
+4: return RepeatTestProdMat(A,B,C,n,k);
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 221 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Verificación de la multiplicación de matrices
+Es O(n2 log 1
+ε ) porque el producto de los vectores y las matrices se
+realiza en tiempon2, y este producto se ejecutak veces, y sabemos
+que k =⌈log 1
+ε⌉.
+E(T (n)) = O
+(
+n2 log 1
+ε
+)
+Esta solución podría resultar de utilidad si fuera necesario verificar
+productos matriciales para matrices muy grandes.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 222 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Vector Mayoritario
+Sea A[n], un arreglo de enteros, se dice que un arreglo es mayoritario
+si éste tiene un elemento mayoritario, es decir, un elemento x tal que
+su ocurrencia es > n/2.
+Por ejemplo:
+A[14] = {7, 7, 1, 7, 2, 1, 7, 7, 6, 7, 7, 3, 7, 1}; es mayoritario.
+B[14] = {0, 1, 1, 3, 2, 1, 7, 7, 7, 7, 7, 7, 7, 7}; es mayoritario.
+C[14] = {0, 1, 1, 3, 2, 1, 4, 6, 7, 9, 4, 5, 4, 8}; no es mayoritario.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 223 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Vector Mayoritario
+Algorithm 29MayoritarioMC(int[] A, int n)
+1: Input: A, matriz de enteros; n tamaño de A
+2: Output: verdadero si A es mayoritario.
+3: i = uniforme(0..n);
+4: k = 0;
+5: x = A[i];
+6: for (j=0; j<n; j++) do
+7: if (A[j] == x) then
+8: k++;
+9: end if
+10: end for
+11: return k > n/2;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 224 / 232
+Algoritmos Probabilísticos
+Algoritmos de Monte Carlo: Vector Mayoritario
+Iteramos k veces para disminuir la probabilidad de error.
+En el peor de los casos, este algoritmo esO(n log 1
+ε ).
+Algorithm 30RepeatMayoritarioMC(int[] A, int n, floatε)
+1: Input: A, matriz de enteros; n tamaño de A
+2: Output: verdadero si A es mayoritario.
+3: k =⌈log 1
+ε⌉
+4: for (i=0; i<k; i++) do
+5: if (MayoritarioMC(A, n)) then
+6: return true;
+7: end if
+8: end for
+9: return false;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 225 / 232
+Algoritmos Probabilísticos
+Algoritmos de Las Vegas
+A diferencia de los algoritmos de Monte Carlo, nunca proporcionan
+respuestas incorrectas, es decir, nunca se equivocan.
+No garantizan terminar en un tiempo prudente.
+Se emplean para resolver problemas para los que no se conoce ningún
+algoritmo determinista eficiente.
+La probabilidad de éxito es mayor cuando se dispone de más tiempo
+para ejecutar el algoritmo.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 226 / 232
+Algoritmos Probabilísticos
+Algoritmos de Las Vegas
+Toman decisiones al azar para encontrar soluciones en menos tiempo
+que un algoritmo determinista.
+Itera hasta que se devuelva un resultado correcto.
+El siguiente algoritmo muestra la forma general de los algoritmos de
+Las Vegas.
+Algorithm 38RepeatALV(x)
+1: repeat
+2: ALV(x, y, exito)
+3: until exito == true;
+4: return y;
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 227 / 232
+Algoritmos Probabilísticos
+Algoritmos de Las Vegas
+Puesto que cada llamada a ALV(x) tiene una probabilidad de éxito
+p(x), el número esperado de pasadas por el ciclo es 1/p(x).
+Sea T(x) el tiempo esperado antes de que RepeatALV(x) tenga éxito.
+Para hacer un análisis correcto se debe considerar el tiempo esperado
+tomado por ALV(x) en caso de éxito y en caso de fracaso.
+Sea S(x) el tiempo esperado en caso de éxito y F(x) el tiempo
+esperado en caso de fracaso.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 228 / 232
+Algoritmos Probabilísticos
+Algoritmos de Las Vegas
+Con probabilidad p(x), la primera llamada a ALV(x) tiene éxito
+después de un tiempo esperado S(x).
+Con probabilidad 1-p(x), la primera llamada a ALV(x) fracasa después
+de un tiempo esperado F(x).
+Después se retorna al punto de partida, y seguimos estando a un
+tiempo esperado T(x) del éxito. Para este caso, el tiempo esperado
+total es F(x) + T(x).
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 229 / 232
+Algoritmos Probabilísticos
+Algoritmos de Las Vegas
+Entonces T(x) (la ecuación de recurrencia) está dado por:
+T (x) = p(x)S(x) + (1− p(x))(F (x) + T (x))
+T (x) = S(x) + 1− p(x)
+p(x) F (x)
+Por lo tanto, si la probabilidad de éxito es grande, el tiempo esperado
+para encontrar una respuesta correcta es bajo.
+Por otro lado, si la probabilidad de éxito es muy baja (p→ 0),
+entonces el tiempo esperado para encontrar una respuesta correcta
+puede ser muy prolongado.
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 230 / 232
+Algoritmos Probabilísticos
+Algoritmos de Las Vegas
+Búsqueda de un buen alumno.
+Quiero un alumno con nota≥ 5.0
+E(T (n))≈ 1
+p(≥ 5.0)
+Algorithm 39RepeatALV(x)
+1: repeat
+2: Elegir un alumno al azar;
+3: until nota≥5.0
+4: return alumno; (El resultado que retorne siempre será correcto)
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 231 / 232
+Algoritmos Probabilísticos
+Algoritmos de Las Vegas: Vector Mayoritario
+Solución tipo Las Vegas. Si la probabilidad de encontrar un elemento
+mayoritario es muy baja, puede ser entonces que este algoritmo nunca
+responda.
+Algorithm 40LVMayoritario(int[] A, int n)
+1: Input: A, matriz de enteros; n tamaño de A.
+2: Output: verdadero si A es mayoritario.
+3: while (1) do
+4: if (MayoritarioMC(A, n)) then
+5: return true;
+6: end if
+7: end while
+Dr. Gilberto Gutiérrez R. (Universidad del Bío-Bío Departamento de Ciencias de la Computación y TI)Análisis y Diseño de Algoritmos Primavera 2025 232 / 232
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: lab62023p.pdf ===
+An´ alisis y Dise˜ no de Algoritmos
+Pr´ actica / Ayudant ´ ıa
+Prof. Gilberto Guti´ errez
+Primavera 2025
+Problema 1 Asuma un conjunto de enteros C
+de tama˜ non (positivos y negativos). Para los sigu-
+ientes problemas, indique si pertenece a P , a N P,
+a ambos ´ o a ninguno. En cada caso debe justiﬁcar.
+1. P 1: Ordenar de menor a mayor los elementos
+de C.
+2. P 2: Encontrar B ⊆ C con |B| = 4 tal que la
+suma de sus elementos sea igual a un M dado.
+3. P3: Encontrar B ⊆ C con |B| = 4 tal que la
+suma de sus elementos sea m´ axima.
+4. P4: Encontrar B ⊆ C tal que la suma de sus
+elementos sea igual a M dado
+5. P5: Encontrar B ⊆ C tal que la suma de sus
+elementos sea m´ axima.
+6. P6: Encontrar B ⊆ C tal que tal que la
+suma de sus elementos sea igual a M y |B|
+sea m ´ ınimo.
+Problema 2 Sean L, L1, L2, L3 y L4 cinco prob-
+lemas tal que L ∈ P , L1, L3 ∈ N P, L2 ∈ N P-
+Completo y que L4 /∈ N P . Responda verdadero o
+falso. Justiﬁque las aﬁrmaciones falsas.
+1. Si L2 ≤ L1, entonces L1 ∈ N P-Completo
+2. Si L3 ≤ L, entonces L3 ∈ P
+3. Si L1 /∈ P entonces P ̸= N P
+4. Si L2 ≤ L, entonces P = N P
+5. Si L1 ≤ L, entonces P = N P
+6. Si L4 ≤ L2, entonces L4 ∈ N P-Hard
+Problema 3 Para el problema Vertex Cover (vc),
+visto en clases y que se desmostr´ o es NP-Completo.
+1. Demuestre que vc es N P.
+2. Indique qu´ e problema L′ ∈ NP-Completo se
+utiliz´ o en la demsotraci´ on.
+3. Explique la transformaci´ on de L′ en vc
+4. Explique la demostraci´ on que permite asegurar
+que L′ y vc son equivalentes en complejidad.
+1
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: prac32025.pdf ===
+An´ alisis y Dise˜ no de Algoritmos
+Pr´ actica / Ayudant ´ ıa
+Prof. Gilberto Guti´ errez
+Primavera 2025
+Problema 1 Sean n y m dos n´ umeros enteros,
+con n ≥ m y m potencia de 2, es decir, m = 2 k
+para alg´ unk = 0,1,2, . . .. Suponga que se requiere
+implementar la operaci´ on de multiplicaci´ onn ∗ m
+por medio de sumas sucesivas. Un algoritmo simple
+consiste en realizar O(m) sumas.
+Mediante la t´ ecnica de Dividir para Reinar:
+1. Dise˜ ne un algoritmo que realice (peor caso)
+O(log2 m) sumas para obtener n ∗ m.
+2. Plantee la ecuaci´ on de recurrencia de su al-
+goritmo que obtiene la cantidad de sumas re-
+alizadas en el peor de los casos. Considere
+que es posible dividir un n´ umero por dos, de-
+splazando (shift) un bit a la derecha.
+3. Resuelva la ecuaci´ on de recurrencia y de-
+muestre que su algoritmo es O(log2 m)
+Problema 2 Considere el algoritmo de orde-
+namiento MergeSort (visto en clases) el cual divide
+el arreglo original en dos subarreglos, ordena cada
+subarreglo de manera recursiva y luego los mezcla.
+Suponga un nuevo algoritmo, llamado Merge3Sort
+que divide el arreglo en tres subarreglos, ordena re-
+cursivamente cada uno de ellos y luego los mezcla
+para obtener el arreglo ordenado. Para mezclar los
+tres subarreglos, existen b´ asicamente dos opciones:
+• Primero se mezclan dos de los subarreglos
+quedando el resultado en un arreglo C. Luego
+se mezcla el arreglo C con el tercer subarreglo.
+• Se mezclan directamente los tres subarreglos.
+Responda:
+1. Plantee las ecuaciones de recurrencia, que
+modelan el n´ umero de comparaciones, en el
+peor de los casos, de Merge3Sort. Una para
+cada forma de realizar la mezcla de los tres
+subarreglos.
+2. Resuelva ambas ecuaciones de recurrencia de
+Merge3Sort.
+3. ¿ Con cu´ al de las dos formas de mezclar los
+tres subarreglos de Merge3Sort se obtiene un
+mejor algoritmo ?
+4. Compare el mejor algoritmo de Merge3Sort
+con MergeSort. ¿ Cu´ al es mejor ?
+Problema 3 Sean dos matrices, A y B, de di-
+mensi´ onn × n. La matriz producto C = A × B
+tambi´ en es una matriz den× n cuyo elemento (i, j)-
+´ esimo se forma multiplicando cada elemento de la
+ﬁla i-´ esima deA por el elemento correspondiente de
+la columna j-´ esima deB y sumando los productos
+parciales:
+Cij =
+n∑
+k=1
+Aik ·Bkj
+1. Algoritmo tradicional . Algoritmo directo,
+de acuerdo a la deﬁnici´ on de multiplicaci´ on de
+matrices.
+2. Algoritmo recursivo (Dividir para
+Reinar). Suponga ahora que n es potencia de
+2; es decir, que existe un entero no negativo k
+tal n = 2 k. (si n no es una potencia de dos
+pueden a˜ nadirse ﬁlas y columnas con ceros
+para que lo sea). Las submatrices A y B
+pueden dividirse en cuatro submatrices de
+dimensi´ on (n/2) × (n/2). Si el producto A × B
+tiene la forma:
+( A11 A12
+A21 A22
+) ( B11 B12
+B21 B22
+)
+=
+( C11 C12
+C21 C22
+)
+1
+entonces:
+C11 = A11 ·B11 + A12 ·B21
+C12 = A11 ·B12 + A12 ·B22
+C21 = A21 ·B11 + A22 ·B21
+C22 = A21 ·B12 + A22 ·B22
+Para n = 2, los elementos de Cij se calculan
+mediante algunas multiplicaciones y sumas de
+n´ umeros, pero paran > 2 las submatrices Cij
+se calculan mediante multiplicaciones (recur-
+sivas) y sumas de submatrices de dimensi´ on
+(n/2) × (n/2).
+3. Algoritmo de Strassen . El algoritmo de
+Strassen calcula las cuatro submatrices Cij
+empleando s´ olo 7 multiplicaciones y 18 sumas
+o restas de matrices. Primero calcula 7 sub-
+matrices auxiliares M, N, O, P, Q, Ry S, cuya
+deﬁnici´ on es:
+M = (A11 + A22) ·(B11 + B22)
+N = (A21 + A22) ·B11
+O = A11 ·(B12 − B22)
+P = A22 ·(B21 − B11)
+Q = (A11 + A12) ·B22
+R = (A21 − A11) ·(B11 + B12)
+S = (A12 − A22) ·(B21 + B22)
+posteriormente se calculan las submatrices Cij:
+C11 = M + P − Q + S
+C12 = O + Q
+C21 = N + P
+C22 = M + O − N + R
+Se pide:
+1. Plantear y resolver las ecuaciones de recur-
+rencia (si corresponde) (n´ umero de multiplica-
+ciones para el peor caso) para cada algoritmo
+(algoritmo tradicional, Dividir para Reinar y
+de Strassen).
+2. Obtener la complejidad de cada algortimo.
+3. De acuerdo a las complejidades de los algorit-
+mos del punto anterior, ¿ Cual result´ o ser el
+mejor?
+4. Obtenga, al menos dos conclusiones respecto
+de la aplicaci´ on de la t´ ecnica de Dividir para
+Reinar para el problema de las multiplcaci´ on
+de matrices.
+2
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: practico52025.pdf ===
+Dise˜ no y an´ alisis de Algoritmos
+Problemas
+Prof. Gilberto Guti´ errez R.
+Primavera 2025
+Problema 1 Resuelva las siguientes ecuaciones de recurrencias y obtenga O y Ω de cada ecuaci´ on.
+1. T (n) = T (n − 1) + 2n, T(0) = 1
+2. T (n) = 3 T (n − 1) + 2, T(0) = 0
+3. f (n) = f (n − 1) + f (n − 2), f(0) = 0 , f(1) = 1
+4. 3 t(n + 1) = 4 t(n), n≥ 1, t(1) = 5
+5. f (n) = 2 f (n − 1) + 2n, f(0) = 1
+Problema 2: Asuma el siguiente algoritmo para ordenar un arreglo de enteros de tama˜ non-
+newSort(A,i,n) { /acute.ts1
+if (i<=n) {
+k = MINIMO(A,i, n) // obtiene la posici´ on k del menor valor de A[i..n]
+intercambia(A,i,k)
+newSort(A,i+1,n)
+}
+}
+Asuma como operaci´ on relavante la comparaci´ on entre n´ umerosenteros.
+1. Plantee la Ec. de recurrencia de newSort
+2. Obtenga la complejidad del algoritmo newSort
+3. ¿ Es mejor newSort que SortBasico (visto en clases) ? ¿ Por qu´ e ?
+Problema 3: Obtener MAX. Este problema es muy sencillo y consiste en obtener el valor m´ aximo de
+una secuencia de enteros almacenados en un arreglo no ordenado. Asuma el algoritmo (ALG1) b´ asico para
+calcular el m´ aximo. Es decir, se toma el primer elemento y se asume e l m´ aximo. Luego se recorre el arreglo
+(una pasada) y se va modiﬁcando convenientemente el m´ aximo con los valores del arreglo. Considere ahora
+el siguiente algoritmo (ALG2)
+1
+int MAX(A, n) {
+if(el tamanho de A == 1) return A[1]
+else {
+sea A1 = A[1...n/2]
+sea A2 = A[n/2+1...n]
+m1 = MAX(A1, n/2)
+m2 = MAX(A2, n/2)
+if(m1 > m2) return m1
+else return m2;
+}
+}
+Asuma como operaci´ on relavante la comparaci´ on entre valores num´ ericos y quen es potencia de 2, es decir,
+n = 2 k, para alg´ unk = 0,1, . . .
+1. Obtenga la complejidad del algoritmo ALG1
+2. Plantee y resuelva la Ec. de recurrencia de ALG2
+3. ¿ Cu´ al de los dos algoritmos es mejor ?
+Problema 3: B´ usqueda del k-´ esimo de un conjunto. Asuma un conjunto de n´ umeros enteros (no
+hay repetidos), el k-´ esimo menor elemento del conjunto corresponde al elemento qu e ocupa la posici´ on k al
+ordenar el conjunto en forma ascendente (de menor a mayor). U na forma obvia de solucionar este problema
+es ordenar los elementos del conjunto y retornar el elemento que est´ a en la posici´ onk. Llamamos A1 a este
+algoritmo. Sin embargo, esta soluci´ on es de complejidad temporal ( peor caso) O(n log 2n) y que corresponde
+al costo de ordenar los elementos. Existe otro algoritmo (dividir par a reinar), que llamamos A2, para
+encontrar el k-´ esimo menor que no necesita ordenar el arreglo. El algoritmo es e l siguiente:
+int k-esimo(S, k) {
+if(k > |S|) return Error
+else {
+separar S en tres conjuntos:
+S1 con los elementos de S < S[k]
+S2 con los elementos de S = S[k]
+S3 con los elementos de S > S[k]
+if(|S1| > k) return k-esimo(S1,k)
+if(|S1 U S2| >= k) return S[k]
+else return k-esimo(S3,k-|S1 U S2|)
+}
+}
+Notar que el algoritmo A2 particiona el conjunto de manera muy parecida a como lo hace el alg oritmo
+QuickSort.
+1. Plantee la ecuaci´ on de recurrencia de A2 para determinar la cantidad de comparaciones (operaci´ on
+relevante) que realiza.
+2. Es mejor A2 que A1. ¿ Por qu´ e ?
+2
+Problema 4 Suponga que sobre el r ´ ıo˜Nuble hay n embarcaderos. En cada uno de ellos se puede arrendar
+un bote que permite ir a cualquier otro embarcadero r ´ ıo abajo (es im posible ir r ´ ıo arriba). Existe una tabla
+T de tarifas que indica el costo del viaje del embarcadero i al j para cualquier embarcadero de partida i y
+cualquier embarcadero de llegada j m´ as abajo en el r ´ ıo (i < j ). Puede suceder que un viaje de i a j sea m´ as
+caro que una sucesi´ on de viajes m´ as cortos, en cuyo caso se tom ar ´ ıa un primer bote hasta un embarcadero
+k y un segundo bote para continuar a partir de k. No hay costo adicional por cambiar de bote. Asumiendo
+una tabla de tarifas T como
+1 2 3 4 5
+1 - 3 5 6 8
+2 - - 4 7 10
+3 - - - 4 5
+4 - - - - 5
+5 - - - - -
+Por ejemplo, para ir directamente de 2 a 5 cuesta 10, pero resulta m /acute.ts1as barato ir de 2 a 3 (costo 4) y
+luego de 3 a 5 (costo 5) con un costo total del viaje igual a 9.
+Una forma directa de calcular recursivamente el costo m ´ ınimo para ir de un embarcadero i a un
+embarcadero j es mediante la siguiente f´ ormula:
+C(i, j) =
+{ 0 si i = j
+mini<k≤ j {T (i, k) + C(k, j)} si i < j
+1. Escriba un algoritmo recursivo para calcular el costo C(i, j).
+2. Determine la complejidad de su algoritmo recursivo.
+3. Dise˜ ne un algoritmo de programaci´ on din´ amica que determine el costo m ´ ınimo para cada par de
+embarcaderos i, j (i < j ). Indicaci´ on:Asuma una matriz C(i, j) para almacenar el costo m ´ ınimo
+para ir del embarcadero i al j. Notar que todas las celdas de la diagonal principal ( i = j) son cero.
+Luego considere ir llenando la matriz (usando la f´ ormula dada para C(i, j)) diagonal por diagonal
+desde la principal hacia la celda [1 , n] (esquina superior derecha de la matriz).
+4. Para el ejemplo de la matriz T , dada arriba, aplique su algoritmo de programaci´ on din´ amica para
+obtener la matriz C.
+Problema 5 Suponga que dos equipos A y B se enfrentan para ver quien es el primero en ganar n > 0
+partidos de b´ esibol y por lo tanto quien gana el encuentro. Supon ga que A y B son igualmente competente,
+de modo que cada uno tiene un 50% de posibilidades de ganar cualquier p artido.
+Sea p(i, j) la probabilidad de que A gane el encuentro, considerando que A necesita i partidos para ganar
+y B necesita j. Entonces: s ´ ıi = 0 y j > 0 entonces A gan´ o el encuentro, es decir, p(i, j) = 1. S ´ ıi > 0 y
+j = 0 entonces B gan´ o encuentroP (i,0) = 0. Si i, j > 0 deber´ a jugarse un partido m´ as y los dos ganan la
+mitad de las veces. Luego, p(i, j) = 1
+2 (p(i − 1, j) + p(i, j− 1)) si i, j > 0. Aqu ´ ıp(i − 1, j) es la probabilidad
+de A gane el encuentro, si gana el siguiente partido y p(i, j− 1) probabilidad de que A gane el encuentro
+aunque pierda el siguiente partido
+1. Escriba un algoritmo recursivo para calcular p(i, j).
+2. Determine la complejidad de este algoritmo. Para determinar la com plejidad del algoritmo asuma
+k = i + j.
+3
+3. Obtenga un algoritmo iterativo (utilizando programaci´ on din´ amica) para calcular p(i, j). Como una
+gu ´ ıa para construir su algoritmo complete la tabla (para n = 4 partidos, es decir el encuentro lo gana
+el equipo que primero gana 4 partidos) que se indica a continuaci´ on e n la que se propone calcular y
+almacenar las soluciones de los problemas peque˜ nos. Por ejemplo si i = j = 1, p(1,1) = 1
+2 .
+i/j 0 1 2 3 4
+0 1 1 1 1 1 1
+1 0 1
+2
+3
+4
+2 0 1
+4
+3 0
+4 0
+4. Obtenga la complejidad de este nuevo algoritmo
+4
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: progDin1.pdf ===
+Programaci´ on Din´ amica
+An´ alisis y Dise˜ no de Algoritmos / Ingenier ´ ıa Civil Inform´ atica
+Departamento Ciencias de la Computaci´ on y
+Tecnolog ´ ıas de la Informaci´ on
+Universidad del B ´ ıo-B ´ ıo
+Profesor: Gilberto Guti´ errez R.
+1 Distancia editada entre dos Strings
+Sean u y v dos cadenas de caracteres. Se desea transformar u en v con el m ´ ınimo n´ umero de
+operaciones b´ asicas del tipo siguiente: eliminar un car´ acter, a˜ nadir un car´ acter y cambiar un car´ acter.
+Por ejemplo, podemos pasar de abbac a abcbc en tres pasos:
+1. abbac → abac (eliminamos b en la posici´ on 3)
+2. ababc (a˜ nadimos b en la posici´ on 4)
+3. abcbc (cambiamos a en la posici´ on 3 por c)
+Sin embargo, esta tranformaci´ on no es ´ optima. Lo que queremosen este caso es dise˜ nar un algoritmo
+que calcule el n´ umero m ´ ınimo de operaciones, de esos tres tipos, n ecesarias para transformar u en
+v y cu´ ales son esas operaciones, estudiando su complejidad en func i´ on de las longitudes de u y v.
+En primer lugar, la transformaci´ on mostrada arriba no es ´ optima y a que podemos pasar de abbac
+a abcbc en s´ olo dos pasos: abbac → abcac (cambiamos b en la posici´ on 3 por c) y luego → abcbc
+(cambiamos a en la posici´ on 4 por b).
+Sea m el tama˜ no deu y n el tama˜ no dev y OB(m, n) es el n´ umero de operaciones b´ asicas para
+transformar u en v. Podemos ﬁjarnos en el ´ ultimo elemento de u y en el ´ ultimo de v.
+OB(m, n) = OB(m − 1, n− 1), si um = vn
+Pero si los ´ ultimos elementos fueran distintos habr ´ ıa que elegir la situaci´ on m´ as beneﬁciosa de entre
+las siguientes:
+1. Considerar la primera cadena tal cual y la segunda sin el ´ ultimo ele mento
+2. Considerar la segunda cadena tal cual y la primera sin el ´ ultimo ele mento
+3. Considerar la primera cadena y la segunda sin el ´ ultimo elemento
+1
+es decir,
+OB(m, n) = 1 + M in{OB(m, n− 1), OB(m − 1, n), OB(m − 1, n− 1)}si u m ̸= vn, m̸= 0, n̸= 0
+Las condiciones de borde son las siguientes:
+OB(0,0) = 0 , OB(m,0) = m, OB(0, n) = n
+Notar que la implementaci´ on recursiva es inmediata a partir de la deﬁn ici´ on. Pero que ocurre con el
+rendimiento de de este algoritmo recursivo. Plantee la ecuaci´ on de r ecurrencia, resu´ elvala y obtenga
+la complejidad del algoritmo.
+Siguiendo la misma estrategia para encontrar un algoritmo eﬁciente ( visto en la clase pasada)
+para el problema del c´ alculo del coeﬁciente binomial, encuentre un algorimto O(m·n) para resolver el
+problema. Le recuerdo que la idea es resolver problemas peque˜ nos , luego combinarlos para resolver
+problemas m´ as grande y que se acerquen al problema original.
+2
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: tarea12025p.pdf ===
+Tarea # 1
+An´ alisis y Dise˜ no de Algoritmos / Ingenier ´ ıa Civil Inform´ atica
+Departamento Ciencias de la Computaci´ on y
+Tecnolog ´ ıas de la Informaci´ on
+Universidad del B ´ ıo-B ´ ıo
+Profs: Gilberto Guti´ errez
+Primavera 2025
+Problema # 1. (1 Punto) Suponga que las funciones indicadas en la primera ﬁla de la Tabla 1, mode lan
+el tiempo consumido por ciertos algoritmos para resolver determina dos problemas en funci´ on del tama˜ no de la
+entrada (n). Calcule los tiempos de ejecuci´ on de cada funci´ on para cada taman˜ no de la entrada (primera columna
+de la Tabla 1). Suponga que las funciones toman f (n) microsegundos ( µs ) para una entrada de tama˜ no n. En
+la Tabla 1 se muestra el tiempo consumido por cada algoritmo para n = 5. Puede usar diferentes unidades de
+tiempo en cada celda (microsegundos, milisegundos, segundos, minu tos, horas, d ´ ıas, meses, a˜ nos y siglos). Si el
+valor en una celda es muy grande, m´ arquela con una X.
+n log2 n 2n + 2 10n log2 n 3n2 + 2n 2n + 3n2 n!
+5 2.32 12.0 116.0 85 107 120
+10
+20
+40
+50
+100
+200
+300
+Table 1: Funciones que modelan los tiempos microsegundos ( µs ) de ciertos algoritmos
+Responda:
+a) Complete la Tabla 1.
+b) A partir de los resultados de la tabla obtenga al menos dos conclus iones respecto del rendimiento de los
+algoritmos modelados por las funciones de la Tabla 1.
+Problema # 2 (1.5 puntos) Suponga tres bloques de programa, B1, B2 y B3. El n´ umero de comparaciones
+(peor caso) para cada bloque est´ a deﬁnido por las siguientes func iones:
+1
+a) bloque B1: t1(n) = n3 + n2 + 3n
+b) bloque B2: t2(n) = n2
+2 − n
+2
+c) bloque B3: t3(n) = n2 log2 n + 3n
+Para cada uno de los siguientes algoritmos determine su complejidad ( n´ umero de comparaciones en el peor caso):
+a) El algoritmo A ejecuta secuencialmente los bloques B1 y B3.
+b) El algoritmo B ejecuta los bloques de la siguiente manera: primero ejecuta B1. Luego n veces el bloque B3
+y ﬁnalmente el bloque B2.
+c) El algoritmo C ejecuta primero t2(n) veces el bloque B3, luego el bloque B3 y ﬁnalmente el bloque B1.
+Problema # 3 (1.5 puntos)) Encuentre la soluci´ on general para cada una de las siguientes ecua ciones de
+recurrencia.
+a) 3 ·a(n + 1) − 4 ·a(n) = 0 , n ≥ 0, a (1) = 5
+b) f (n) = f (n − 1) + f (n − 2), f (0) = 0 , f (1) = 1
+c) a(n) = 5 ·a(n − 1) + 6 ·a(n − 2), n ≥ 2, a (0) = 1 , a (1) = 3
+d) t(n) = 3 ·t( n
+2 ) + 2, t (1) = 1. Indicaci´ on: Supongan potencia de 2 y sustituya n por 2 k
+e) t(n) = 4 ·t( n
+2 ) + n2, t (1) = 0. Indicaci´ on: Supongan potencia de 2 y sustituya n por 2 k
+Problema # 4 (2 puntos) Dado dos conjuntos de puntos A y B en R2, la distancia de Hausdorﬀ
+HausDist (A, B ) mide la similitud de los conjuntos A y B; y se deﬁne de la siguiente manera:
+HausDist(A, B ) = max
+a∈ A
+{min
+b∈ B
+{Dist(a, b )}}. (1)
+Asuma que Dist(a, b ) corresponde a la distancia eucl ´ ıdea entre los puntos a y b, es decir si a(x, y ) y b(x, y )
+entonces Dist(a, b ) =
+√
+(b.x − a.x )2 + (b.y − a.y )2. Notar que si A = B, entonces HausDist (A, B ) = 0. En
+general entre mayor sea HausDist (A, B ), los conjuntos A y B son m´ as disimiles. La distancia de Hausdorﬀ tiene
+muchas aplicaciones tales como procesamiento de im´ agenes o rutas de transportes. Un algoritmo sencillo ( algA)
+para calcular HausDist (A, B ) se obtiene aplicando directamente la deﬁnici´ on dada previamente ( Eq. 1). M´ as
+concretamente, sea maxDist = −∞ ; por cada punto a ∈ A se obtiene el punto b ∈ B tal que Dist(a, b ) es la
+menor de todas las posibles. Luego, con esta distancia se actualiza la variable maxDist.
+a) Implemente el algoritmo algA
+b) Obtenga la complejidad del algoritmo algA
+c) Dise˜ ne un algoritmo algB , que a pesar de tener la misma complejidad que algA, en la pr´ actica funcione
+mucho mejor.
+d) Mediante una serie de experimentos demuestre que en la pr´ actic a algB es mejor (se demora menos) que
+algA. Para ello considere conjuntos de puntos de diferentes tama˜ nos (100KB y 5000KB) generados al azar
+en un espacio prediﬁnido, por ejemplo en el espacio deﬁnido por los pu ntos (0,0) y (10000,10000). Varie
+coordinadamente los tama˜ nos de los conjuntos A y B y mida el tiempo de ejecuci´ on de ambos algoritmos.
+Tabule/graﬁque los resultados y concluya.
+2
+1 Condiciones
+a) M´ aximo tres personas por grupo
+b) Fecha de entrega: 06 de octube de 2025 hasta 23:59
+c) Forma de entrega: Subir a la plataforma (adecca) del curso:
+• Informe (con al menos las siguientes secciones)
+(a) Introduci´ on (de que trata la tarea y los problemas que conside ra)
+(b) Una secci´ on por cada problema con su soluci´ on.
+• Para el problema 4 debe entregar el/los programas fuentes junto a un archivo leeme.tex con las
+instrucciones que permitan compilarlo y ejecutarlo.
+3
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: tarea22025p.pdf ===
+Tarea # 2
+An´ alisis y Dise˜ no de Algoritmos / Ingenier ´ ıa Civil Inform´ atica
+Departamento Ciencias de la Computaci´ on y
+Tecnolog ´ ıas de la Informaci´ on
+Universidad del B ´ ıo-B ´ ıo
+Profs: Gilberto Guti´ errez
+Primavera 2025
+1 Multiplicaci´ on de Matrices ( 2.5 Puntos).
+Sean dos matrices, A y B, de dimensiones n × n. La matriz C = A × B tambi´ en es una matriz de n × n cuyo
+elemento ( i, j) se forma multiplicando cada elemento de la i-´ esima ﬁla deA por el elemento correspondiente de
+la j-´ esima columna deB y sumando los productos parciales:
+Cij =
+n∑
+k=1
+AikBkj
+El c´ alculo de cada elemento Cij requiere de n multiplicaciones. La matriz C tiene n2 elementos, as ´ ı que el
+tiempo total del algoritmo es O(n3). El algoritmo anterior, que llamaremos algoritmo tradicional , se desprende
+directamente de la deﬁnici´ on de la multiplicaci´ on de matrices.
+Como vimos en clases, usando la t´ ecnica Dividir para Reinar es posible o btener algoritmos para la
+multiplicaci´ on de matrices. Los dos algoritmos analizados dividen las ma trices A y B en cuatro submatrices
+(se divide n en 2), es decir,
+( A11 A12
+A21 A22
+) ( B11 B12
+B21 B22
+)
+=
+( C11 C12
+C21 C22
+)
+1) El primer algoritmo, que llamaremos DR1, calcula la matriz C de la siguiente manera:
+C11 = A11 ·B11 + A12 ·B21
+C12 = A11 ·B12 + A12 ·B22
+C21 = A21 ·B11 + A22 ·B21
+C22 = A21 ·B12 + A22 ·B22
+2) El segundo algoritmo (conocido como algoritmo de Strassen), y q ue llamaremos DR2, calcula las cuatro
+submatrices Cij empleando 7 multiplicaciones y 18 sumas o restas de matrices. Las 7 su bmatrices auxiliares
+son:
+M = (A11 + A22)(B11 + B22)
+N = (A21 + A22)B11
+1
+O = A11(B12 − B22)
+P = A22(B21 − B11)
+Q = (A11 + A12)B22
+R = (A21 − A11)(B11 + B12)
+S = (A12 − A22)(B21 + B22)
+Posteriormente se calculan las submatrices Cij: C11 = M + P − Q + S
+C12 = O + Q
+C21 = N + P
+C22 = M + O − N + R
+Se pide:
+1) Implementar en su lenguaje favorito los tres algoritmos ( Algoritmo tradicional, DR1 y DR2).
+2) Generar al azar las matrices A y B (considere matrices de enteros) y completar las siguiente tabla con los
+tiempos de ejecuci´ on1.
+Tiempos
+Algoritmo
+n Tradicional DR1 DR2
+32
+64
+128
+256
+512
+1024
+2048
+4096
+2
+3) Obtenga, al menos dos conclusiones, respecto del rendimiento de los algoritmos.
+2 C´ alculo del costo m ´ ınimo en multiplicaci´ on de escalare s de la
+multiplicaci´ on de una secuencia de matrices. (3.5) Puntos
+Dadas dos matrices Ap× q y Bq× r el producto de AB se deﬁne como sigue
+Cp× r = AB =
+n∑
+k=1
+aikbjk,1 ≤ i ≤ p,1 ≤ j ≤ r
+Algor ´ ıtmicamente se puede expresar de la siguiente forma:
+for (i = 1; i <= p; i++)
+1Elija la unidad de medida de tiempo que mejor se acomode (mili segundos, segundos, minutos, etc.)
+2Si para n ≥ 1024 se excede tiempo razonables (m´ as de una hora) consider e solamente valores de n ≤ 512
+2
+for (j = 1; j <= r; j++) {
+C[i,j]= 0
+for (k = 1; k <= q; k++)
+C[i,j]= C[i,j] + A[i,k] * B[k,j]
+}
+de donde se deduce que se necesitan pqr multiplicaciones de escalares ( me). Supongamos ahora que se desea
+calcular el producto de m´ as de dos matrices. El producto matricia l es asociativo, por lo tanto es posible calcular
+el producto matricial M = M1M2 . . . Mn de muchas maneras diferentes, todas las cuales dar´ an la misma respuesta:
+M = (. . .((M1M2))M3) . . . Mn)
+M = (M1(M2(M3 . . .(Mn− 1Mn) . . .)))
+M = (. . .((M1M2)(M3M4)) . . .)
+y as ´ ı sucesivamente. Recordar que la multiplicaci´ on de matrices no es conmutativa por lo que no es posible
+modiﬁcar el orden las multiplicaciones matriciales.
+La selecci´ on del m´ etodo de c´ alculo puede inﬂuir de manera importante en el tiempo requerido para realizar las
+multiplicaciones de las matrices. A modo de ejemplo suponga que neces ita calcular el producto de las matrices
+ABCD en donde A13× 5, B5× 89, C89× 3 y D3× 34. Para medir la eﬁciencia de cada posible forma de multiplicar
+ABCD usaremos como medida la cantidad de multiplicaci´ on de escalares que s e necesitan hacer en cada caso.
+Un caso es M = ((AB)C)D lo que nos da:
+AB 5.785 multiplicaciones
+(AB)C 3.471 multiplicaciones
+((AB)C)D 1.326 multiplicaciones
+Total 10.582 multiplicaciones
+Hay cinco forma m´ as de calcular de manera diferente el producto d e ABCD . El problema es encontrar la
+forma ´ optima de multiplicar las matrices. Es decir, cual es la forma de multiplicar las matrices de tal manera que
+la cantidad de multiplicaciones de escalares sea la m ´ ınima.
+Una forma sencilla de poder hallar la mejor forma de multiplicar las matric es, ser ´ ıa encontrar todas las maneras
+posibles de poner los par´ entesis en la expresi´ on y contar el n´ umero de multiplicaciones de escalares que es necesario
+realizar.
+Sea T (n) el n´ umero de formas diferentes de poner par´ entesis en un producto de n matrices. Supongamos que
+decidimos hacer el primer corte entre las matrices i-´ esima e (i + 1)-´ esima del producto en la forma siguiente:
+(M1M2 . . . Mi)(Mi+1Mi+2 . . . Mn)
+Ahora hay T (i) formas de poner los par´ entesis en el t´ ermino del lado izquierdo y T (n − i) en el t´ ermino del
+lado derecho. Cualquier forma del primer grupo se puede combinar c on cualquier forma del segundo grupo. De
+esta forma y para este valor concreto de i hay T (i)T (n − i) formas de poner los par´ entesis. Pero dado que i puede
+tomar cualquier valor entre 1 y n − 1 obtenemos ﬁnalmente la recurrencia siguiente:
+T (n) =
+n− 1∑
+i=1
+T (i)T (n − i)
+3
+con T (1) = 1. La tabla siguiente muestra algunos valores de T (n)3
+n 1 2 3 4 5 10 15
+T (n) 1 1 2 5 14 4.862 2.274.440
+T (n) = Ω( 4n
+n2 ) y se necesita tiempo Ω( n) para calcular la cantidad de multiplicaciones escalares por lo tanto
+se requiere tiempo (en el mejor de los casos) Ω( 4n
+n ) lo que evidentemente no es pr´ actico.
+En clases se explic´ o el principio de optimalidad para este problema y qu e consiste en lo siguiente. Asumamos
+que la mejor forma de multiplicar las matrices nos exige hacer el primer corte entre la i-´ esima e (i+1)-´ esima matriz,
+entonces los dos subproductos M1M2 . . . Mi y Mi+1Mi+2Mn tambi´ en deben calcularse de manera ´ optima. Sea
+me(i, j) la cantidad de multiplicaciones de escalares para multiplicar las matrice s Mi . . . Mj y sea s = i− j. Existen
+dos casos bases. El primero cuando tenemos s = 0, en tal caso me(i, i) = 0. El segundo corresponde cuando
+se tienen que multiplicar dos matrices, es decir, cuando s = 1. En este caso me(i, j) se calcula directamente
+usando las dimensiones de las matrices MiMj. El caso general corresponde cuando 1 < s < n y en tal caso
+me(i, j) = mini≤ k<i+s(me(i, k) + me(k + 1, i+ s) + di− 1dkdi+s), es decir se necesitan me(i, k) para el t´ ermino de
+la izquierda (de dimensiones di− 1 × dk), me(k + 1, i+ s) (de dimensiones dkdi+s) y di− 1 × dkdi+s para multiplicar
+las dos matrices resultantes.
+En esta tarea usted debe:
+1) Implementar un algoritmo recursivo (dividir para reinar) para calc ular me(1, n)
+2) Implementar un algoritmo de programaci´ on din´ amica (visto en clases) para calcular me(1, n).
+3) Obtener la complejidad del algoritmo de programaci´ on din´ amica.
+4) Generar secuencias de matrices de tama˜ no 5, 10, 15, 20, 25 y 3 0 v´ alidas4 de multiplicaciones de matrices y
+mida el tiempo en cada caso para cada algoritmo (el de dividir para rein ar y el de programaci´ on din´ amica).
+Si el algoritmo de dividir para reinar toma demasiado tiempo (m´ as de u na hora), anote como respuesta ∞ .
+5) Extienda el algoritmo de programaci´ on din´ amica, de tal manera que este entregue la forma de multiplicar
+las matrices. Por ejemplo, para la multiplicaci´ on de las matrices ABCD entregar (( ABC )D) si esta forma
+es la que minimiza la multiplicaci´ on de escalares.
+3 Condiciones
+1) M´ aximo tres personas por grupo
+2) Fecha de entrega: 02 de noviembre de 2025 hasta 23:59
+3) Forma de entrega: Subir a la plataforma (adecca) del curso:
+• Informe (con al menos las siguientes secciones)
+(a) Introduci´ on (de que trata la tarea y los problemas que conside ra)
+(b) Una secci´ on por cada problema con su soluci´ on.
+• Debe entregar el/los programas fuentes junto a un archivo leeme.tex con las instrucciones que
+permitan compilar y ejecutar cada programa.
+3Los valores de T (n) se llaman n´ umeros de Catalan
+4que se puedan multiplicar de acuerdo a las restricciones de l a multiplicaci´ on de matrices. Por ejemplo, la secuencia A10× 5B8× 20
+no se pueden multiplicar pues las dimensiones de A y B no lo permiten.
+4
+
+
+=== DOCUMENTO OFICIAL CATEDRA ADA: tarea32025p.pdf ===
+Tarea # 3
+An´ alisis y Dise˜ no de Algoritmos / Ingenier ´ ıa Civil Inform´ atica
+Departamento Ciencias de la Computaci´ on y
+Tecnolog ´ ıas de la Informaci´ on
+Universidad del B ´ ıo-B ´ ıo
+Profs: Gilberto Guti´ errez
+Primavera 2025
+1 El juego SUDOKU (3
+Puntos)
+El Sudoku es un juego que consiste en rellenar
+una cuadr ´ ıcula de 9 × 9 celdas dividida en
+subcuadr ´ ıculas de 3× 3 con los d ´ ıgitos del 1 al
+9, con la restricci´ on de que no se debe repetir
+el mismo n´ umero en la misma ﬁla, columna o
+subgrupo de 3 × 3 celdas. Al inicio del juego
+algunas celdas ya contienen n´ umeros como se
+puede ver en la ﬁgura 1 a) y el juego consiste
+en completarlo (ver ﬁgura 1 b) ) de acuerdo a
+las reglas indicadas previamente.
+Se pide:
+1. Dise˜ nar un algoritmo backtracking para
+resolver una instancia del juego sudoku, la
+cual se debe entregar como par´ ametro ala
+algoritmo.
+2. Implemente su algoritmo en JAVA o en su
+lenguaje favorito.
+3. Importante: La evaluaci´ on de este prob-
+lema contempla la interrogaci´ on por parte
+del profesor y/o ayudantes, en la cual usted
+debe explicar claramente las estructuras
+de datos utilizadas, como funcionan y
+el c´ odigo de su implementaci´ on. Si la
+interrogaci´ on es mal evaluada, habr´ a una
+penalizaci´ on de un 60% de la nota obtenida
+en esta pregunta.
+2 Problemas P, N P y N P-C
+(3 Puntos)
+Dado los siguientes problemas, conocidos como:
+1. Ciclo Hamiltoniano
+2. Coloreado de un grafo
+3. 2-SAT (expresiones booleanas satisfactible
+en forma normal conjuntiva en que cada
+cla´ usula tiene como m´ axima dos literales)
+Por cada problema:
+1. Describir formalmente el problema
+1
+a) Sudoku sin resolver
+b) Sudoku resuelto
+Figure 1: Ejemplo juego Sudoku (tomado de
+Wikipedia)
+2. Demostrar si el problema est´ a P, N P ´ o
+N P-C o en otro conjunto.
+3. Si sospecha que el problema es N P-C,
+demostrar que efectivamente lo es.
+3 Condiciones
+1. M´ aximo tres personas por grupo
+2. Fecha de entrega: 04 de 12 de 2025 hasta
+23:59
+3. Forma de entrega: Subir a la plataforma
+(adecca) del curso:
+4. Informe (con al menos las siguientes
+secciones)
+(a) Introduci´ on (de que trata la tarea )
+(b) El problema SUDOKU
+i. Descripci´ on del problema
+ii. Algoritmo
+iii. Detalles de implementaci´ on
+(c) Problemas P, N P y N P-C
+i. Ciclo Hamiltoniano
+A. Descripci´ on
+B. ...
+ii. Coloreado de un grafo
+iii. ...
+2
+

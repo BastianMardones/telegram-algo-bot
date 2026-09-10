@@ -1,0 +1,375 @@
+
+
+=== EVALUACION / CERTAMEN: certamen1.jpeg ===
+Aquí tienes la transcripción exacta y estructurada de la hoja del certamen que se observa en la imagen.
+
+---
+
+# **Certamen #1**
+### **Análisis y Diseño de Algoritmos/ Ingeniería Civil Informática**
+**Departamento Ciencias de la Computación y Tecnologías de la Información**
+
+**Universidad del Bío-Bío**
+
+**Profesor:** Gilberto Gutiérrez R.
+
+**Primavera 2025**
+
+---
+
+### **Problema 1, 2.5 puntos**
+Dado el siguiente algortimo (mysort) para ordenar un arreglo de enteros de tamaño $m$.
+
+```java
+class mySort{
+    public static void main(String[] args) {
+        int  []A = { 6,10,2,25,30,40,1};
+        mysort(A,0);
+        ...
+    }
+
+// Ordena calculando cada vez el mínimo
+public static void mysort(int []A, int n) {
+    if(n < A.length-1){
+        int k = Min(A,n);
+        if( n < k) Intercambia(A,n,k);
+        mysort(A,n+1);
+    }
+}
+
+// Obtiene el menor elemento de A[n..A.length]
+public static int Min(int []A, int n) {
+    int k = n;
+    for (int j= n; j < A.length ; j++)
+        if (A[j] < A[k] ) k=j;
+    return k;
+}
+
+// Función que Intercambia A[i] con A[k]
+public static void Intercambia(int []A, int i, int k) {
+    int t = A[i];
+    A[i] = A[k];
+    A[k] = t;
+```
+
+---
+*Página 1*
+
+---
+
+### **Texto traslúcido / Reverso de la página (Preguntas visibles al reverso)**
+*(Nota: El texto que se trasluce en el lado derecho de la hoja corresponde a las preguntas/continuación del certamen impresas al reverso):*
+
+* **a)** Muestre la traza de ejecución para el arreglo `A` de ejemplo...
+* **b)** Obtenga la función de complejidad $T(m)$ del algoritmo...
+* **c)** Calcule la complejidad del algoritmo...
+* **1.** Diseñe un algoritmo (pseudo-código) de complejidad $O(n \log n)$...
+* **Problema 2** ...
+  * **a)** Demuestre por inducción que...
+  * **b)** Escriba el algoritmo recursivo para...
+  * **c)** Obtenga la complejidad del algoritmo...
+
+
+=== EVALUACION / CERTAMEN: certamen1parte2.jpeg ===
+Aquí tienes la transcripción exacta y estructurada de todo el contenido del certamen/evaluación mostrado en la imagen:
+
+---
+
+```java
+    }
+}// Fin Clase MySort
+```
+
+1. En función del tamaño de la entrada $m$ del arreglo $A$ plantee la ecuación de recurrencia que mida la cantidad de comparaciones que realiza `mysort` en el peor de los casos.
+
+2. Resuelva la ecuación de recurrencia anterior y obtenga la complejidad del `mysort`.
+
+3. Nuevamente en función de $m$, plantee la ecuación de recurrencia que mida la cantidad de intercambios (llamadas a la función `Intercambia()`) que realiza `mysort` en el peor de los casos.
+
+4. Resuelva la ecuación de recurrencia anterior e indique la complejidad de `mysort` considernado los intercambios.
+
+5. Teniendo en cuenta el algoritmo `SortBasico()` visto en clases y que la operación relevante es el intercambio entre dos elementos del arreglo (llamadas a la función `Intercambia()`) ¿Cuàl de los algoritmos es mejor, `SortBasico` o `mysort`?.
+
+---
+
+### **Problema 2, 1.5 puntos**
+
+Asuma dos arreglos de enteros $A$ y $B$ de tamaños $n$ y $m$ respectivamente con $m > n$. Tanto en $A$ como en $B$ no existen elementos repetidos y tampoco se encuentran ordenados. Suponga que desea encontrar el conjunto $C = A - B = \{x \in A \wedge x \notin B\}$. Asuma que la operación relevante en este problema es la comparación entre números enteros. Es claro que es posible calcular $C$ mediante un algoritmo de complejidad $O(n \cdot m)$.
+
+1. Diseño un algoritmo (pseudo-código) de complejidad menor que $O(n \cdot m)$ para encontrar $C$.
+2. Demuestre que la complejidad de este último algoritmo es menor que $O(n \cdot m)$.
+
+---
+
+### **Problema 3, 2 puntos**
+
+Asuma que se necesita computar la siguiente función:
+
+$$F(n, m) = \begin{cases} 
+n, & \text{si } m = 0, \\ 
+m, & \text{si } n = 0, \\ 
+\max\{F(n - 1, m - 1), F(n - 1, m) + F(n, m - 1)\} & \text{si } n, m > 0. 
+\end{cases}$$
+
+Un algoritmo ($Alg1$) recursivo para calcular $F(n, m)$ es directo.
+
+1. Escriba el algoritmo recursivo $Alg1$.
+2. Obtenga la complejidad del algoritmo $Alg1$.
+3. Usando programación dinámica, diseñe un algoritmo $Alg2$ más eficiente que $Alg1$. Debe desmostrar que $Alg2$ es más eficiente que $Alg1$.
+
+---
+
+<div align="center"><b>2</b></div>
+
+
+=== EVALUACION / CERTAMEN: certamen2.jpeg ===
+A continuación se presenta la transcripción exacta y estructurada de todo el contenido del certamen exhibido en la imagen:
+
+---
+
+# **Certamen #2**
+**Análisis y Diseño de Algoritmos / Ingeniería Civil Informática**  
+**Departamento Ciencias de la Computación y Tecnologías de la Información**  
+**Universidad del Bío-Bío**  
+
+**Profesor:** Gilberto Gutiérrez R.  
+**Primavera 2025**
+
+---
+
+### **Problema 1, 2 puntos**
+
+Asuma $M[0..n-1, 0..n-1]$ una matriz binaria (1's y 0's) de $n \times n$ representa un laberinto. La siguiente matriz es un ejemplo de un laberinto.
+
+$$\begin{bmatrix}
+1 & 1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 0 \\
+1 & 0 & 1 & 1 & 1 \\
+1 & 1 & 1 & 0 & 1
+\end{bmatrix}$$
+
+En general partiendo, de un punto dado, podemos pasar a puntos adyacentes de la misma fila o de la misma columna. Si $M[i,j]$ es 1 se puede pasar por la celda $(i,j)$; si $M[i,j]$ es falso no se puede pasar por la celda $(i,j)$. Escriba un algoritmo de Bactracking que verifique si existe un camino desde la celda $(0,0)$ hasta la celda $(n-1, n-1)$.
+
+---
+
+### **Pregunta 2, 1.0 puntos** 
+Responda brevemente (2 líneas):
+
+1. ¿Qué significa que la cota inferior del problema de ordenamiento sea $\Omega(n \log_2 n)$?
+2. Explique por que las cotas juegan un rol esencial en los algoritmos de ramificación y poda.
+
+---
+
+### **Problema 3, 3 puntos**
+
+Dado un grafo no dirigido $G = (V, A)$, con $V$ el conjunto de vértices y $A$ el conjunto de aristas. Un conjunto dominanate $D \subseteq V$ es un conjunto de vertices tal que todo vértice de $V$ es: (i) Un elemento de $D$ o (ii) es adyacente (está conectado por una arista) a al menos un miembro del conjunto $D$ ($v$ tiene un vecino en $D$). . Por ejemplo en el grafo de la Figura 1, $D = \{2, 4\}$ es un conjunto dominante de $G$. Se conoce como el problema del conjunto dominante ($cd$) a: Dado un grafo no dirigido $G$ y un entero $K > 0$ ¿Existe un conjunto dominante $D$ en el grafo $G$ tal que $|D| \le K$?
+
+---
+
+#### **Pregunta 3.1 (1 punto):** 
+Demuestre que el problema del conjunto dominante ($cd$) está en $NP$.
+
+El problema $cd$ es NP-Completo. Para demostrar que lo es usaremos el problema *vertex cover* ($vc$), visto en clases, el cual ya sabemos es NP-Completo. Es decir, demostraremos $vc \le cd$.
+
+---
+*Página 1*
+
+
+=== EVALUACION / CERTAMEN: certamen2parte2.jpeg ===
+A continuación se presenta la transcripción exacta y estructurada de todo el texto, fórmulas, algoritmos y preguntas que aparecen en la fotografía:
+
+---
+
+### **[Figuras y Descripción de Grafos]**
+
+#### **Figura 1**
+* **Grafo $G$:** Grafo no dirigido con 4 vértices: $V = \{1, 2, 3, 4\}$ formando un ciclo (aristas: $(1,2)$, $(2,3)$, $(3,4)$, $(4,1)$).
+* **Leyenda:** 
+  > **Figura 1:** Grafo $G$ no dirigido que tiene un vertex cover
+
+#### **Figura 2**
+* **Grafo $G'$:** Grafo no dirigido obtenido agregando a $G$ los vértices $v_{12}$, $v_{23}$ y $v_{43}$.
+  * $v_{12}$ está conectado a $1$ y $2$.
+  * $v_{23}$ está conectado a $2$ y $3$.
+  * $v_{43}$ está conectado a $4$ y $3$.
+* **Leyenda:** 
+  > **Figura 2:** Grafo no dirigido $G'$ obtenido mediante la trasformación del grafo de la Figura 1 y que tiene un conjunto dominante $\{2, 4\}$
+
+---
+
+### **[Texto Principal / Reducción]**
+
+Asumiendo que el grafo con vertex cover es $G = \langle V, A \rangle$ (por ejemplo el grafo de la Figura 1), la reducción de $vc$ a $cd$ es la siguiente: Sea $G' = \langle V', A' \rangle$ el grafo resultante de la transformación (por ejemplo el grafo de la Figura 2).
+
+1. $V' = V \cup V_v$ donde el conjunto $V_v$ se forma de la siguiente manera: Por cada arista $e = (u,v) \in A$, se crea un nuevo vértice $v_{uv}$.
+
+2. Para las aristas ($A'$) se conservan las aristas de $A$ y se agregan las siguientes: Para cada arista $(u,v) \in A$, añadimos las aristas $(u, v_{uv})$ y $(v, v_{uv})$. Ver grafo de la Figura 2.
+
+La Figura 2 muestra el grafo obtenido a partir de la trasnformación del grafo de la Figura 1.
+
+---
+
+### **[Texto Lateral / Notas]**
+
+...un ejemplo, que si el grafo $G'$ tiene un $cd$, el grafo $G$ tiene un $vc$.
+
+*Notar que los ejemplos previos no son suficiente para demostrar formalmente que $vc \le cd$ y que finalmente $cd$ es NP-Completo. La demostración formal de $w \in vc \iff f(w) \in cd$ es un poco más compleja.*
+
+---
+
+### **[Preguntas y Enunciados]**
+
+**Pregunta 3.2 (1.0 punto):** Demuestre que la transformación de $vc$ en $cd$ se puede realizar en tiempo polinomial.
+
+---
+
+Observe si el grafo $G$ tiene un vertex cover (el conjunto $D = \{2, 4\}$, por ejemplo) entonces el grafo $G'$ tendrá un $cd$ y el grafo de la Figura 2 tiene un conjunto dominante $D' = D$.
+
+---
+
+**Pregunta 3.1 (1.0 punto)** Usando los grafos de la Figura 1 y 2 muestre, mediante
+
+
+=== EVALUACION / CERTAMEN: test2.jpeg ===
+Aquí tienes la transcripción exacta y estructurada del certamen/evaluación:
+
+---
+
+# Test 2
+## Análisis y diseño de Algoritmos
+
+**Gilberto Gutiérrez**  
+**Primavera 2025**
+
+---
+
+### **1. (4 Puntos)**
+Sea $M_{n \times n}$ una matriz cuadrada de dimensión $n = 2^k, k = 1, 2, \dots$. Se define, $M^T_{n \times n}$ la traspuesta de $M$, como $m^T_{ij} = m_{ji}, 1 \le i, j \le n$. El algoritmo tradicional toma tiempo $O(n^2)$. Una forma alternativa de obtener $M^T$ se explica por medio del siguiente ejemplo. Sea
+
+$$M = \begin{pmatrix} 
+1 & 2 & \vdots & 3 & 4 \\ 
+5 & 6 & \vdots & 7 & 8 \\ 
+\dots & \dots & \dots & \dots & \dots \\ 
+9 & 10 & \vdots & 11 & 12 \\ 
+13 & 14 & \vdots & 15 & 16 
+\end{pmatrix}$$
+
+entonces la traspuesta $M'$ de $M$ es la siguiente:
+
+$$M^T = \begin{pmatrix} 
+1 & 5 & \vdots & 9 & 13 \\ 
+2 & 6 & \vdots & 10 & 14 \\ 
+\dots & \dots & \dots & \dots & \dots \\ 
+3 & 7 & \vdots & 11 & 15 \\ 
+4 & 8 & \vdots & 12 & 16 
+\end{pmatrix}$$
+
+Observe que $M^T$ se puede obtener de la siguiente forma:
+
+* **a)** Para cada submatriz de $2 \times 2$ (caso base) intercambiamos los elementos de la diagonal secundaria o no principal.
+* **b)** Para matrices de $n \times n$, $n > 2$ intercambiamos las submatrices de la diagonal no principal.
+
+#### **Responda lo siguiente:**
+
+* **a) (2 puntos)** Basándose en el ejemplo anterior, diseñe un algoritmo de dividir para reinar que permita obtener $M^T$ para cualquier $n$ potencia de 2. En su algoritmo debe explicar claramente el o los casos bases, la fases de división del problema en subproblemas más chicos y la de combinación de las soluciones de los subproblemas para obtener las solución del problema completo. Use pseudo-código para especificar su algoritmo.
+* **b) (1 punto)** Escriba la ecuación de recurrencia de su algoritmo que mida o cuenta la cantidad de intercambios que necesita realizar el algoritmo en el peor de los casos.
+* **c) (1 punto)** Usando el teorema maestro, visto en clases, decida si este nuevo algoritmo para obtener la traspuesta es mejor que el tradicional.
+
+---
+
+### **2. (1 Punto)**
+Usando el algoritmo visto en clase práctica, encuentre la distancia editada de los strings $u = \text{abcab}$ y $v = \text{bbcb}$.
+
+---
+
+### **3. (1 Punto)**
+Indique en que caso aplicar la técnica de diseño “Dividir para Reinar” puede generar un algoritmo ineficiente. Puede explicar mediante un ejemplo.
+
+---
+*Página 1*
+
+
+=== EVALUACION / CERTAMEN: test3.jpeg ===
+Aquí tienes la transcripción exacta y estructurada del certamen/evaluación:
+
+---
+
+# Test # 3
+## Análisis y Diseño de Algoritmos$^*$
+
+**Gilberto Gutiérrez**  
+**Primavera 2025**
+
+---
+
+**Problema 1, 3.5 puntos** Dados un conjunto de entero $A$ de tamaño $n$.
+
+1. **(2 pts)** Escriba un algoritmo (pseudo código o java) backtracking para verificar si existe un conjunto $B \subseteq A$ y $B \neq \emptyset$ tal que la suma de los elementos de $B$ sea igual a $K$.
+
+2. **(1 pto)** Dibuje el árbol implícito que generaría su algoritmo al considerar $A = \{-1, 3, -7, 8, 10\}$ y $M = 4$.
+
+3. **(1 pto)** Escriba ahora un algoritmo (pseudo código o java) backtracking para determinar el tamaño del menor conjunto $B \subseteq A$ y que la suma de sus elementos sea igual $M$.
+
+---
+
+**Problema 2, 1 puntos** Explique en que se parecen y en que se diferencian los algoritmos backtracking y los de ramificación y poda.
+
+---
+
+**Problema 3, 1.5 puntos** Aplique el algoritmo de ramificación y poda (visto en clases) para asignar de manera óptima (asignación con el menor costo para ejecutar las actividades) las actividades $\{1, 2, 3\}$ a los agentes $\{a, b, c\}$ y cuyos costos de ejecución se indican en la matriz siguiente:
+
+| | 1 | 2 | 3 |
+|---|---|---|---|
+| **a** | 3 | 8 | 3 |
+| **b** | 2 | 6 | 1 |
+| **c** | 4 | 7 | 4 |
+
+Indique claramente las cotas (inferiores y superiores) que utiliza el algoritmo.
+
+---
+
+$^*$Universidad del Bío-Bío  
+Departamento de Ciencias de la Computación y TI
+
+<div align="center">1</div>
+
+
+=== EVALUACION / CERTAMEN: parte1.png ===
+Aquí tienes la transcripción exacta y estructurada de todo el texto visible en la imagen:
+
+---
+
+# Test 1 (PAUTA)
+## Análisis y Diseño de algoritmos
+
+**Gilberto Gutiérrez**  
+**Alexander France**
+
+**Primavera 2020**
+
+---
+
+1. (2 punto) Demuestre que la función $t(n) = 2n^2 + 10n + 3$ es $\Theta(n^2)$.
+
+---
+
+2. (4 Puntos). Sea $x$ un entero y $A$ un arreglo de enteros de tamaño $n$ el cual se encuentra ordenado de menor a mayor. El problema de búsqueda consiste en verificar si $x \in A$. En clases, y para este escenario, revisamos la búsqueda binaria ($BB(A, li, ls, x)$, con $li$ y $ls$ el límite inferior y superior respectivamente donde continuar la búsqueda dentro de $A$) para resolver el problema de búsqueda. A grandes rasgos, el algoritmo divide $A$ en dos subarreglos, $A1$ y $A2$ de aproximadamente la misma cantidad de elementos y recursivamente continua la búsqueda por $A1$ o $A2$ si es que $x$ es diferente al elemento (pivote) que se encuentra en la mitad del arreglo $A$. Le recuerdo que, en el peor de los casos, este algoritmo realiza $t(n) = \log_2 n + 1$ comparaciones para decidir si $x \in A$.
+
+---
+
+**Página 1**
+
+
+=== EVALUACION / CERTAMEN: parte 2.png ===
+Aquí tienes la transcripción exacta del texto, problemas, enunciados y fórmulas matemáticas que se observan en la imagen:
+
+***
+
+Asuma un algoritmo que en lugar de dividir en 2 ($A1$ y $A2$) el arreglo lo divida en tres subarreglos ($A1, A2$ y $A3$). Llamemos a este algoritmo $BT(A, li, ls, n)$.
+
+**(a)** Considerando la comparación (al igual que en $BB(A, li, ls, x)$) entre $x$ y elementos de $A$ como la operación relevante, plantee la ecuación de recurrencia para $BT(A, li, ls, n)$ en el peor de los casos. (1 punto).
+
+**(b)** Resuelva la ecuación de recurrencia. (2.0 punto)
+
+**(c)** Considerando el peor caso, ¿Cuál de los algoritmos es mejor $BB(A, li, ls, n)$ o $BT(A, li, ls, n)$?. **Hint.** Cambio a base $c$ de un logaritmo en base $b$: $\log_b a = \frac{\log_c a}{\log_c b}$. Por ejemplo, si tenemos $\log_4 8$ y queremos cambiar a base 2, entonces $\log_4 8 = \frac{\log_2 8}{\log_2 4} = \frac{3}{2}$. (1.0 punto)
