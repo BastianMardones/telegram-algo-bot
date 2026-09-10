@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import io
+import re
 import sys
 import logging
 import threading
@@ -20,7 +21,7 @@ from telegram.ext import (
     filters,
 )
 
-# Compatibilidad con Render Web Service (Free Tier )
+# Compatibilidad con Render Web Service (Free Tier $0)
 class HealthCheckHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -28,7 +29,7 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
         self.wfile.write(b"Bot ADA is running successfully!")
 
     def log_message(self, format, *args):
-        pass  # Silenciar logs http para no ensuciar la terminal
+        pass
 
 def run_health_check_server():
     port = int(os.getenv("PORT", 8080))
@@ -77,23 +78,60 @@ Tus especialidades clave:
 2. Ecuaciones de recurrencia:
    - Teorema Maestro (indicando condiciones, comparación entre n^(log_b(a)) y f(n), y los 3 casos formales).
    - Método del Árbol de Recursión (costos por nivel, profundidad, suma total).
-   - Método de Sustitución e Inducción Matemática.
+   - Método de Sustitución e Inducción Matemática (Hacia Atrás/Backward o Hacia Adelante/Forward).
 3. Paradigmas de diseño:
    - Divide y Vencerás (Divide and Conquer).
-   - Algoritmos Voraces (Greedy) y demostración de la propiedad de elección voraz y subestructura óptima.
+   - Algoritmos Voraces (Greedy) y demostración formal de la propiedad de elección voraz y subestructura óptima.
    - Programación Dinámica: subproblemas superpuestos, ecuación de recurrencia (Bellman), matrices/tablas de memorización vs tabulación y recuperación de la solución óptima.
    - Vuelta Atrás (Backtracking) y Ramificación y Poda (Branch and Bound).
    - Grafos: Dijkstra, Bellman-Ford, Floyd-Warshall, Prim, Kruskal, DFS, BFS.
-   - Demostración de corrección formal mediante Invariantes de Bucle (Inicialización, Mantenimiento, Terminación).
+   - Demostración de corrección formal mediante Invariantes de Bucle.
 
-Pautas de respuesta:
-- Prioriza SIEMPRE la notación, sintaxis de algoritmos y criterios formales de la cátedra de la UBB del profesor Gilberto Gutiérrez.
-- Cuando resuelvas un ejercicio, sé pedagógico y exhaustivo:
-  1) Intuición y explicación conceptual del problema.
-  2) Pseudocódigo claro, estructurado y comentado.
-  3) Demostración del análisis de complejidad temporal y espacial paso a paso.
-- Cuando el estudiante use /practicar o pida certámenes, utiliza los problemas de los certámenes reales para desafiarlo.
+============================================================
+REGLAS OBLIGATORIAS DE FORMATO PARA TELEGRAM (¡MUY IMPORTANTE!):
+Telegram NO soporta LaTeX ni encabezados '#' de Markdown. Si usas LaTeX o '#', el texto se ve feo y roto.
+
+Sigue estas reglas al redactar tus respuestas:
+1. NUNCA uses símbolos de LaTeX como $$, $, \\big, \\frac, \\sum, \\cdot, \\theta, \\in.
+2. Escribe las fórmulas matemáticas con caracteres claros o bloques de código monoespaciado.
+   - En vez de: $$f(n) = 2f(n-1) + 1$$, escribe:
+     `f(n) = 2·f(n-1) + 1` o simplemente f(n) = 2·f(n-1) + 1
+   - Para potencias usa superíndices reales Unicode (², ³, ⁿ, ᵏ) o el circunflejo: 2ⁿ, 2^k, n².
+   - Para complejidades usa: O(n log n), Θ(n²), Ω(2ⁿ).
+3. NUNCA uses encabezados tipo '###' o '####' porque Telegram los muestra como texto plano con numerales.
+   - En su lugar, usa negritas limpias y emojis para estructurar:
+     *📌 Método: Sustitución Hacia Atrás (Backward)*
+     *Paso 1: Aplicar la sustitución de forma iterativa*
+4. Si vas a mostrar una deducción paso a paso o una tabla, colócala dentro de un bloque de código:
+```text
+Paso 1: f(n) = 2*f(n-1) + 1
+Paso 2: f(n) = 2*(2*f(n-2) + 1) + 1 = 4*f(n-2) + 3
+Paso 3: f(n) = 8*f(n-3) + 7
+Paso k: f(n) = 2^k * f(n-k) + (2^k - 1)
+```
+Esto garantiza que la respuesta se lea perfectamente limpia y clara en la app de Telegram móvil y desktop.
+============================================================
 """
+
+def limpiar_formato_telegram(texto: str) -> str:
+    """Limpia automáticamente cualquier residuo de LaTeX o encabezados Markdown que el LLM pudiera generar."""
+    texto = re.sub(r'^[#]+\s*(.+)$', r'*\1*', texto, flags=re.MULTILINE)
+    texto = texto.replace(r'\big(', '(').replace(r'\big)', ')')
+    texto = texto.replace(r'\Big(', '(').replace(r'\Big)', ')')
+    texto = texto.replace(r'\cdot', '·').replace(r'\times', '×')
+    texto = texto.replace(r'\leq', '≤').replace(r'\geq', '≥').replace(r'\neq', '≠')
+    texto = texto.replace(r'\Theta', 'Θ').replace(r'\Omega', 'Ω')
+    texto = texto.replace(r'\sum', 'Σ')
+    
+    # Convertir $$formula$$ en bloques de código o texto limpio
+    def replace_double_dollar(match):
+        expr = match.group(1).strip()
+        return f"\n```\n{expr}\n```\n"
+    texto = re.sub(r'\$\$(.*?)\$\$', replace_double_dollar, texto, flags=re.DOTALL)
+    
+    # Convertir $formula$ en `formula`
+    texto = re.sub(r'\$([^\$\n]+?)\$', r'`\1`', texto)
+    return texto
 
 def obtener_conocimiento():
     if CACHE_FILE.exists():
@@ -123,9 +161,10 @@ def get_or_create_chat(user_id: int):
     return user_chats[user_id]
 
 async def split_and_send(update: Update, text: str):
+    text_limpio = limpiar_formato_telegram(text)
     max_len = 4000
-    for i in range(0, len(text), max_len):
-        chunk = text[i:i + max_len]
+    for i in range(0, len(text_limpio), max_len):
+        chunk = text_limpio[i:i + max_len]
         try:
             await update.message.reply_text(chunk, parse_mode=ParseMode.MARKDOWN)
         except Exception:
@@ -143,10 +182,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• ✅ Prácticas y tareas oficiales (Programación Dinámica, Divide y Vencerás, etc.)\n\n"
         "💡 *¿Cómo puedo ayudarte a estudiar?*\n"
         "• Envíame cualquier ejercicio de la guía o tus dudas teóricas.\n"
-        "• 📷 **¡Fotos!** Mándame fotos de tus apuntes o pizarrones y los analizaré con rigor.\n"
-        "• 🎯 /practicar [tema] - Te pondré un ejercicio de certamen real para que intentes resolverlo.\n"
-        "• 📄 /certamenes - Ver problemas tipo certamen de la cátedra.\n"
-        "• 🔄 /nuevo - Reiniciar conversación para un nuevo tema o ejercicio.\n"
+        "• 📷 *¡Fotos!* Mándame fotos de tus apuntes o pizarrones y los analizaré con rigor.\n"
+        "• 🎯 `/practicar [tema]` - Te pondré un ejercicio de certamen real para que intentes resolverlo.\n"
+        "• 📄 `/certamenes` - Ver problemas tipo certamen de la cátedra.\n"
+        "• 🔄 `/nuevo` - Reiniciar conversación para un nuevo tema o ejercicio.\n"
         "• 📎 Puedes seguir enviando PDFs o fotos por aquí y los incorporaré automáticamente."
     )
     await update.message.reply_text(welcome_text, parse_mode=ParseMode.MARKDOWN)
@@ -239,7 +278,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ext = Path(filename).suffix.lower()
     
     if ext not in valid_exts:
-        await update.message.reply_text(f"⚠️ El archivo {filename} no es compatible (.pdf, .txt o .md).")
+        await update.message.reply_text(f"⚠️ El archivo `{filename}` no es compatible (.pdf, .txt o .md).")
         return
 
     await update.effective_chat.send_action(ChatAction.TYPING)
@@ -262,7 +301,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         user_chats.clear()
         await update.message.reply_text(
-            f"✅ *¡Documento {filename} indexado con éxito!*\n"
+            f"✅ *¡Documento `{filename}` indexado con éxito!*\n"
             "Ya está incorporado en la base de conocimientos del bot para responderte.",
             parse_mode=ParseMode.MARKDOWN
         )
@@ -286,7 +325,7 @@ def main():
     app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
 
-    print("[+] Bot ADA iniciado (con Web Service Free integrado).")
+    print("[+] Bot ADA iniciado con formateo limpio para Telegram.")
     app.run_polling()
 
 if __name__ == "__main__":
