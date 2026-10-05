@@ -14,7 +14,6 @@ from dotenv import load_dotenv
 from PIL import Image
 from pypdf import PdfReader
 import google.generativeai as genai
-from google.api_core.exceptions import ResourceExhausted
 from telegram import Update
 from telegram.constants import ChatAction, ParseMode
 from telegram.ext import (
@@ -25,12 +24,55 @@ from telegram.ext import (
     filters,
 )
 
-# Servidor Web interno para Keep-Alive en Render
+load_dotenv()
+
+# ============================================================
+# GESTIÓN Y LIMPIEZA RIGUROSA DE CLAVES DE ENTORNO
+# ============================================================
+raw_gemini_key = (
+    os.getenv("GEMINI_API_KEY")
+    or os.getenv("GOOGLE_API_KEY")
+    or os.getenv("GEMINI_KEY")
+    or ""
+).strip()
+
+if "=" in raw_gemini_key:
+    raw_gemini_key = raw_gemini_key.split("=", 1)[-1].strip()
+
+GEMINI_API_KEY = (
+    raw_gemini_key.strip('"').strip("'").strip("`").replace("\r", "").replace("\n", "").strip()
+)
+
+raw_tg_token = (os.getenv("TELEGRAM_BOT_TOKEN") or "").strip()
+if "=" in raw_tg_token:
+    raw_tg_token = raw_tg_token.split("=", 1)[-1].strip()
+
+TELEGRAM_BOT_TOKEN = (
+    raw_tg_token.strip('"').strip("'").strip("`").replace("\r", "").replace("\n", "").strip()
+)
+
+# ============================================================
+# SERVIDOR WEB INTERNO PARA KEEP-ALIVE Y DIAGNÓSTICO EN RENDER
+# ============================================================
 class HealthCheckHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
         self.end_headers()
-        self.wfile.write(b"Bot ADA is running successfully!")
+        has_tg = bool(TELEGRAM_BOT_TOKEN)
+        has_gemini = bool(GEMINI_API_KEY)
+        gemini_preview = (
+            f"{GEMINI_API_KEY[:6]}...{GEMINI_API_KEY[-4:]}"
+            if len(GEMINI_API_KEY) > 10
+            else ("Configurada" if has_gemini else "FALTANTE")
+        )
+        msg = (
+            f"=== Bot ADA UBB Status ===\n"
+            f"Telegram Token: {'OK' if has_tg else 'FALTANTE'}\n"
+            f"Gemini API Key: {gemini_preview}\n"
+            f"Estado: En ejecucion\n"
+        )
+        self.wfile.write(msg.encode("utf-8"))
 
     def log_message(self, format, *args):
         pass
@@ -49,17 +91,10 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-load_dotenv()
-
 BASE_DIR = Path(__file__).resolve().parent
 DOCS_DIR = BASE_DIR / "documentos"
 CACHE_FILE = BASE_DIR / "documentos_cache.txt"
 DOCS_DIR.mkdir(exist_ok=True)
-
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-FALLBACK_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-flash-latest"]
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -67,8 +102,26 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Configuración de Gemini con transporte REST para evitar fallos gRPC
 if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+    try:
+        genai.configure(api_key=GEMINI_API_KEY, transport="rest")
+        logger.info("Google Generative AI configurado exitosamente con transporte REST.")
+    except Exception as e:
+        logger.warning(f"No se pudo usar transporte REST ({e}), intentando configuración estándar.")
+        genai.configure(api_key=GEMINI_API_KEY)
+else:
+    logger.warning("ADVERTENCIA: GEMINI_API_KEY no detectada.")
+
+# Modelos en orden de prioridad y compatibilidad
+FALLBACK_MODELS = [
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+    "gemini-3.6-flash",
+    "gemini-3.5-flash",
+    "gemini-2.5-pro",
+]
 
 BASE_SYSTEM_INSTRUCTION = """Eres el tutor experto de 'Análisis y Diseño de Algoritmos' (ADA) de la Universidad del Bío-Bío (UBB) - Departamento de Ciencias de la Computación, cátedra del profesor Gilberto Gutiérrez R.
 Tu objetivo es que el estudiante domine la materia con máximo rigor y resuelva sus certámenes con la máxima calificación (nota 7.0).
@@ -97,10 +150,10 @@ REGLAS DE FORMATO Y PRESENTACIÓN (OPTIMIZADO PARA SMARTWATCH Y MÓVIL):
 1. CERO SALUDOS NI INTRODUCCIONES LARGAS:
    - Ve directo al grano del ejercicio o pregunta.
 2. FICHA RÁPIDA INICIAL:
-   - Al inicio de cada problema, coloca en 3 líneas:
-     * 📌 Recurrencia / Ecuación
-     * ⚖️ Teorema Maestro / Técnica usada
-     * 🎯 Complejidad final
+   - Comienza siempre con un resumen en 3 líneas:
+     • Técnica: [Divide y Vencerás / Prog. Dinámica / Voraz / etc.]
+     • Complejidad Temporal: [ej: Θ(n²)]
+     • Complejidad Espacial: [ej: O(log n) o O(n)]
 3. PSEUDOCÓDIGO LIMPIO Y SIN COMENTARIOS:
    - TODO pseudocódigo DEBE ir dentro de ```java o ```text.
    - NUNCA pongas comentarios (// ...) dentro del código.
@@ -109,16 +162,15 @@ REGLAS DE FORMATO Y PRESENTACIÓN (OPTIMIZADO PARA SMARTWATCH Y MÓVIL):
 4. ÁRBOLES DE RECURSIÓN VERTICALES:
    - SIEMPRE de forma vertical con caracteres de lista (├─, └─, │) o agrupados por niveles. Nunca diagonales (/ \\).
 5. NOTACIÓN MATEMÁTICA CON UNICODE:
-   - Usa siempre símbolos Unicode limpios: Θ(n²), O(n log n), Ω(√n), n², T(n) = a·T(n/b) + f(n), log₂.
-============================================================
+   - Usa siempre símbolos Unicode limpios: Θ(n²), O(n log n), O(√n), n², T(n) = a·T(n/b) + f(n), log₂.
+6. TABLAS DE PROGRAMACIÓN DINÁMICA:
+   - SIEMPRE dentro de un bloque ```text para evitar desbordes en pantallas estrechas.
 """
 
 def limpiar_latex_a_unicode(texto: str) -> str:
-    """Convierte comandos típicos de LaTeX a símbolos Unicode limpios para Telegram."""
     reemplazos = [
         (r'\\Theta', 'Θ'),
         (r'\\Omega', 'Ω'),
-        (r'\\mathcal\{O\}', 'O'),
         (r'\\le(?:q)?', '≤'),
         (r'\\ge(?:q)?', '≥'),
         (r'\\neq', '≠'),
@@ -126,129 +178,143 @@ def limpiar_latex_a_unicode(texto: str) -> str:
         (r'\\times', '×'),
         (r'\\approx', '≈'),
         (r'\\infty', '∞'),
-        (r'\\dots', '...'),
         (r'\\log_2', 'log₂'),
-        (r'\\log_b', 'log_b'),
         (r'\\sqrt\{([^}]+)\}', r'√(\1)'),
-        (r'\\frac\{([^}]+)\}\{([^}]+)\}', r'(\1)/(\2)'),
-        (r'\\left\(', '('),
-        (r'\\right\)', ')'),
-        (r'\\left\[', '['),
-        (r'\\right\]', ']'),
-        (r'\\text\{([^}]+)\}', r'\1'),
+        (r'\^2', '²'),
+        (r'\^3', '³'),
+        (r'\^n', 'ⁿ'),
+        (r'\^k', 'ᵏ'),
+        (r'_1', '₁'),
+        (r'_2', '₂'),
+        (r'_i', 'ᵢ'),
+        (r'_j', 'ⱼ'),
+        (r'_n', 'ₙ'),
     ]
-    for patron, rep in reemplazos:
-        texto = re.sub(patron, rep, texto)
+    for patron, sub in reemplazos:
+        texto = re.sub(patron, sub, texto)
+    texto = re.sub(r'\$([^\$]+)\$', r'\1', texto)
     return texto
 
 def formatear_para_telegram(texto: str) -> str:
     texto = limpiar_latex_a_unicode(texto)
+    
+    lineas = texto.split("\n")
+    en_bloque = False
+    en_tabla = False
+    nuevas_lineas = []
+    
+    for l in lineas:
+        if l.strip().startswith("```"):
+            en_bloque = not en_bloque
+            if en_tabla:
+                nuevas_lineas.append("```")
+                en_tabla = False
+            nuevas_lineas.append(l)
+            continue
+            
+        if not en_bloque:
+            if "|" in l and "-|-" in l:
+                if not en_tabla:
+                    nuevas_lineas.insert(len(nuevas_lineas)-1, "```text")
+                    en_tabla = True
+                nuevas_lineas.append(l)
+                continue
+            elif en_tabla and "|" not in l:
+                nuevas_lineas.append("```")
+                en_tabla = False
+        nuevas_lineas.append(l)
+        
+    if en_tabla:
+        nuevas_lineas.append("```")
+    texto = "\n".join(nuevas_lineas)
 
-    # 1. Proteger tablas Markdown para que se vean alineadas en un bloque monoespaciado
-    def guardar_tabla(m):
-        contenido = html.escape(m.group(0).strip())
-        return f"\n<pre>{contenido}</pre>\n"
-    texto = re.sub(r'(\|[^\n]+\|\n\|[-:| ]+\|\n(?:\|[^\n]+\|\n?)+)', guardar_tabla, texto)
+    bloques_codigo = []
+    def proteger_bloque(match):
+        bloques_codigo.append(match.group(0))
+        return f"__BLOQUE_CODIGO_{len(bloques_codigo)-1}__"
+    
+    texto = re.sub(r'```[\s\S]*?```', proteger_bloque, texto)
 
-    # 2. Proteger bloques de código ```
-    bloques = []
-    def guardar_bloque(m):
-        lang = m.group(1) or ""
-        contenido = html.escape(m.group(2).strip())
-        if lang:
-            bloques.append(f'<pre><code class="language-{lang}">{contenido}</code></pre>')
-        else:
-            bloques.append(f'<pre>{contenido}</pre>')
-        return f"___BLOQUE_{len(bloques)-1}___"
+    lineas_codigo = []
+    def proteger_linea(match):
+        lineas_codigo.append(match.group(1))
+        return f"__LINEA_CODIGO_{len(lineas_codigo)-1}__"
+    
+    texto = re.sub(r'`([^`\n]+)`', proteger_linea, texto)
 
-    texto = re.sub(r'```([a-zA-Z0-9_-]+)?\n?(.*?)```', guardar_bloque, texto, flags=re.DOTALL)
-
-    # 3. Proteger inlines `codigo` y formulas $...$
-    inlines = []
-    def guardar_inline(m):
-        c = html.escape(m.group(1).strip())
-        inlines.append(f"<code>{c}</code>")
-        return f"___INLINE_{len(inlines)-1}___"
-
-    texto = re.sub(r'`([^`\n]+)`', guardar_inline, texto)
-    texto = re.sub(r'\$\$(.*?)\$\$', guardar_inline, texto, flags=re.DOTALL)
-    texto = re.sub(r'\$([^\$\n]+?)\$', guardar_inline, texto)
-
-    # 4. Escapar texto plano
     texto = html.escape(texto)
 
-    # 5. Formatear títulos y negritas
-    texto = re.sub(r'^[#]+\s*(.+)$', r'<b>\1</b>', texto, flags=re.MULTILINE)
+    texto = re.sub(r'^(#{1,3})\s*(.+)$', r'<b>\2</b>', texto, flags=re.MULTILINE)
     texto = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', texto)
-    # Cursivas solo para palabras aisladas (evita romper variables con guion bajo como f_i o c_i)
-    texto = re.sub(r'(?<!\w)_([^_]+?)_(?!\w)', r'<i>\1</i>', texto)
+    texto = re.sub(r'\*(.+?)\*', r'<i>\1</i>', texto)
 
-    # 6. Restaurar bloques protegidos
-    for i, cod in enumerate(inlines):
-        texto = texto.replace(f"___INLINE_{i}___", cod)
-    for i, blk in enumerate(bloques):
-        texto = texto.replace(f"___BLOQUE_{i}___", blk)
+    for i, cod in enumerate(lineas_codigo):
+        cod_esc = html.escape(cod)
+        texto = texto.replace(f"__LINEA_CODIGO_{i}__", f"<code>{cod_esc}</code>")
+
+    for i, b in enumerate(bloques_codigo):
+        m = re.match(r'```([a-zA-Z0-9_-]*)\n?([\s\S]*?)```', b)
+        if m:
+            cod_bloque = m.group(2)
+            cod_esc = html.escape(cod_bloque)
+            texto = texto.replace(f"__BLOQUE_CODIGO_{i}__", f"<pre><code>{cod_esc}</code></pre>")
+        else:
+            texto = texto.replace(f"__BLOQUE_CODIGO_{i}__", f"<pre><code>{html.escape(b)}</code></pre>")
 
     return texto
 
-def dividir_en_chunks_markdown(text: str, max_len: int = 3500) -> list:
-    """Divide un texto Markdown largo en fragmentos que respetan bloques de código."""
-    if len(text) <= max_len:
-        return [text]
+def dividir_en_chunks_markdown(texto: str, max_len: int = 3500) -> list[str]:
+    if len(texto) <= max_len:
+        return [texto]
 
-    lineas = text.split("\n")
     chunks = []
+    lineas = texto.split("\n")
     chunk_actual = []
-    longitud_actual = 0
-    en_bloque_codigo = False
+    len_actual = 0
+    en_codigo = False
     lenguaje_codigo = ""
 
     for linea in lineas:
-        if linea.strip().startswith("```"):
-            if not en_bloque_codigo:
-                en_bloque_codigo = True
-                lenguaje_codigo = linea.strip().replace("```", "")
+        l_strip = linea.strip()
+        if l_strip.startswith("```"):
+            if not en_codigo:
+                en_codigo = True
+                lenguaje_codigo = l_strip[3:].strip()
             else:
-                en_bloque_codigo = False
+                en_codigo = False
                 lenguaje_codigo = ""
 
-        # ¿Se supera el tamaño máximo por mensaje?
-        if longitud_actual + len(linea) + 1 > max_len and chunk_actual:
-            if en_bloque_codigo:
-                # Cerrar limpiamente el bloque en este chunk y reabrirlo en el siguiente
+        if len_actual + len(linea) + 1 > max_len and chunk_actual:
+            if en_codigo:
                 chunk_actual.append("```")
-                chunks.append("\n".join(chunk_actual).strip())
+                chunks.append("\n".join(chunk_actual))
                 chunk_actual = [f"```{lenguaje_codigo}", linea]
-                longitud_actual = len(chunk_actual[0]) + len(linea) + 1
+                len_actual = len(chunk_actual[0]) + len(linea) + 1
             else:
-                chunks.append("\n".join(chunk_actual).strip())
+                chunks.append("\n".join(chunk_actual))
                 chunk_actual = [linea]
-                longitud_actual = len(linea)
+                len_actual = len(linea) + 1
         else:
             chunk_actual.append(linea)
-            longitud_actual += len(linea) + 1
+            len_actual += len(linea) + 1
 
     if chunk_actual:
-        if en_bloque_codigo:
+        if en_codigo:
             chunk_actual.append("```")
-        chunks.append("\n".join(chunk_actual).strip())
+        chunks.append("\n".join(chunk_actual))
 
     return chunks
 
-def obtener_conocimiento():
+def construir_system_prompt() -> str:
     if CACHE_FILE.exists():
         try:
             with open(CACHE_FILE, "r", encoding="utf-8", errors="ignore") as f:
-                # Limitar a máximo 40KB para no saturar los límites de tokens por minuto (TPM)
-                return f.read()[:40000]
+                docs_text = f.read()
+            if len(docs_text) > 40000:
+                docs_text = docs_text[:40000] + "\n...[Apuntes sintetizados para rendimiento]..."
+            return f"{BASE_SYSTEM_INSTRUCTION}\n\n--- MATERIAL OFICIAL DE ESTUDIO, CERTÁMENES Y APUNTES DE LA CÁTEDRA ---\n{docs_text}\n--- FIN DE APUNTES ---"
         except Exception as e:
-            logger.error(f"Error leyendo cache: {e}")
-    return ""
-
-def construir_system_prompt():
-    docs_text = obtener_conocimiento()
-    if docs_text:
-        return f"{BASE_SYSTEM_INSTRUCTION}\n\n--- MATERIAL OFICIAL DE ESTUDIO, CERTÁMENES Y APUNTES DE LA CÁTEDRA ---\n{docs_text}\n--- FIN DE APUNTES ---"
+            logger.error(f"Error leyendo cache de documentos: {e}")
     return BASE_SYSTEM_INSTRUCTION
 
 user_histories = {}
@@ -258,7 +324,6 @@ def send_with_fallback(user_id: int, message_text: str) -> str:
     if user_id not in user_histories:
         user_histories[user_id] = []
 
-    # Mantener como máximo los últimos 4 mensajes para optimizar tokens y velocidad
     if len(user_histories[user_id]) > 4:
         user_histories[user_id] = user_histories[user_id][-4:]
 
@@ -279,20 +344,18 @@ def send_with_fallback(user_id: int, message_text: str) -> str:
             logger.warning(f"Modelo {model_name} fallo: {exc}")
             last_error = exc
             if "429" in str(exc) or "quota" in str(exc).lower():
-                time.sleep(3)
+                time.sleep(2)
             continue
 
     if last_error:
         raise last_error
-    raise RuntimeError("No se pudo obtener respuesta de ningún modelo.")
+    raise RuntimeError("No se pudo obtener respuesta de ningún modelo de IA.")
 
 def generate_photo_with_fallback(user_id: int, photo_bytes: bytearray, caption: str) -> str:
-    # Para fotos, usar directamente BASE_SYSTEM_INSTRUCTION para un procesamiento ultrarrápido y liviano
     system_instruction = BASE_SYSTEM_INSTRUCTION
     if user_id not in user_histories:
         user_histories[user_id] = []
 
-    # Cargar y asegurar formato RGB para compatibilidad total con Gemini
     image = Image.open(io.BytesIO(photo_bytes))
     if image.mode != "RGB":
         image = image.convert("RGB")
@@ -324,7 +387,7 @@ def generate_photo_with_fallback(user_id: int, photo_bytes: bytearray, caption: 
             logger.warning(f"Modelo {model_name} fallo en foto: {e}")
             last_error = e
             if "429" in str(e) or "quota" in str(e).lower():
-                time.sleep(3)
+                time.sleep(2)
             continue
 
     if last_error:
@@ -332,17 +395,14 @@ def generate_photo_with_fallback(user_id: int, photo_bytes: bytearray, caption: 
     raise RuntimeError("Error al procesar la foto con los modelos disponibles.")
 
 async def split_and_send(update: Update, text: str):
-    # Dividir primero a nivel Markdown para que ningún bloque quede abierto entre mensajes
     chunks = dividir_en_chunks_markdown(text, max_len=3500)
 
     for chunk in chunks:
-        # Formatear cada fragmento como HTML completo e independiente
         chunk_html = formatear_para_telegram(chunk)
         try:
             await update.message.reply_text(chunk_html, parse_mode=ParseMode.HTML)
         except Exception as e:
             logger.warning(f"Error enviando HTML ({e}), enviando en texto plano limpio.")
-            # Fallback seguro: limpia etiquetas y decodifica entidades (&gt; -> >, &quot; -> ")
             texto_plano = html.unescape(re.sub(r'<[^>]+>', '', chunk_html))
             await update.message.reply_text(texto_plano)
 
@@ -351,18 +411,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_histories.pop(user_id, None)
     
     welcome_text = (
-        "👋 ¡Hola! Soy tu tutor para el curso de <b>Análisis y Diseño de Algoritmos (ADA)</b> de la <b>Universidad del Bío-Bío</b>.\n\n"
+        "🤖 <b>¡Hola! Soy tu tutor para el curso de Análisis y Diseño de Algoritmos (ADA) de la Universidad del Bío-Bío.</b>\n\n"
         "📚 <b>Material de cátedra cargado:</b>\n"
-        "• ✅ Diapositivas oficiales del curso (<code>ada2.pdf</code>)\n"
-        "• ✅ Certámenes anteriores transcritos (Certamen 1, Certamen 2, Tests)\n"
-        "• ✅ Prácticas y tareas oficiales (Programación Dinámica, Divide y Vencerás, etc.)\n\n"
+        "  • Diapositivas oficiales del curso (<code>ada2.pdf</code>)\n"
+        "  • Certámenes anteriores transcritos (Certamen 1, Certamen 2, Tests)\n"
+        "  • Prácticas y tareas oficiales (Programación Dinámica, Divide y Vencerás, etc.)\n\n"
         "💡 <b>¿Cómo puedo ayudarte a estudiar?</b>\n"
-        "• Envíame cualquier ejercicio de la guía o tus dudas teóricas.\n"
-        "• 📷 <b>¡Fotos!</b> Mándame fotos de tus apuntes o pizarrones y los analizaré con rigor.\n"
-        "• 🎯 <code>/practicar [tema]</code> - Te pondré un ejercicio de certamen real para que intentes resolverlo.\n"
-        "• 📄 <code>/certamenes</code> - Ver problemas tipo certamen de la cátedra.\n"
-        "• 🔄 <code>/nuevo</code> - Reiniciar conversación para un nuevo tema o ejercicio.\n"
-        "• 📎 Puedes seguir enviando PDFs o fotos por aquí y los incorporaré automáticamente."
+        "  • Envíame cualquier ejercicio de la guía o tus dudas teóricas.\n"
+        "  • 📸 <b>¡Fotos!</b> Mándame fotos de tus apuntes o pizarrones y los analizaré con rigor.\n"
+        "  • <code>/practicar [tema]</code> - Te pondré un ejercicio de certamen real para que intentes resolverlo.\n"
+        "  • <code>/certamenes</code> - Ver problemas tipo certamen de la cátedra.\n"
+        "  • <code>/nuevo</code> - Reiniciar conversación para un nuevo tema o ejercicio.\n"
+        "  • Puedes seguir enviando PDFs o fotos por aquí y los incorporaré automáticamente."
     )
     await update.message.reply_text(welcome_text, parse_mode=ParseMode.HTML)
 
@@ -384,7 +444,7 @@ async def certamenes(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error en /certamenes: {e}")
-        await update.message.reply_text(f"⏳ {e}")
+        await update.message.reply_text(f"❌ {e}")
 
 async def practicar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -401,7 +461,7 @@ async def practicar(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error en /practicar: {e}")
-        await update.message.reply_text(f"⏳ {e}")
+        await update.message.reply_text(f"❌ {e}")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -417,7 +477,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if "429" in err_str or "quota" in err_str.lower():
             await update.message.reply_text(
                 "⏳ <b>Límite temporal por minuto alcanzado</b>.\n\n"
-                "Google AI Studio impone un límite en la cuenta gratuita. Por favor espera 30 segundos y vuelve a enviar.",
+                "Google AI Studio impone un límite en la cuenta gratuita. Por favor espera unos 30 segundos y vuelve a enviar.",
                 parse_mode=ParseMode.HTML
             )
         else:
@@ -491,7 +551,11 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def main():
     if not TELEGRAM_BOT_TOKEN or not GEMINI_API_KEY:
-        print("[ERROR] Faltan claves en .env")
+        logger.error(
+            f"[ERROR] Faltan variables de entorno:\n"
+            f"  - TELEGRAM_BOT_TOKEN: {'PRESENTE' if TELEGRAM_BOT_TOKEN else 'FALTA'}\n"
+            f"  - GEMINI_API_KEY / GOOGLE_API_KEY: {'PRESENTE' if GEMINI_API_KEY else 'FALTA'}"
+        )
         return
 
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
