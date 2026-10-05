@@ -275,30 +275,27 @@ def send_with_fallback(user_id: int, message_text: str) -> str:
             response = chat.send_message(message_text)
             user_histories[user_id] = chat.history
             return response.text
-        except ResourceExhausted as rexc:
-            logger.warning(f"Modelo {model_name} con 429. Esperando 3s antes del siguiente intento...")
-            time.sleep(3)
-            last_error = rexc
-            continue
         except Exception as exc:
+            logger.warning(f"Modelo {model_name} fallo: {exc}")
+            last_error = exc
             if "429" in str(exc) or "quota" in str(exc).lower():
-                logger.warning(f"Modelo {model_name} saturado (429). Esperando 3s...")
                 time.sleep(3)
-                last_error = exc
-                continue
-            raise exc
+            continue
 
     if last_error:
-        raise ResourceExhausted("Se alcanzó el límite temporal por minuto de la API. Espera unos 30 segundos.")
+        raise last_error
+    raise RuntimeError("No se pudo obtener respuesta de ningún modelo.")
 
-def generate_photo_with_fallback(user_id: int, image: Image, caption: str) -> str:
+def generate_photo_with_fallback(user_id: int, photo_bytes: bytearray, caption: str) -> str:
     # Para fotos, usar directamente BASE_SYSTEM_INSTRUCTION para un procesamiento ultrarrápido y liviano
     system_instruction = BASE_SYSTEM_INSTRUCTION
     if user_id not in user_histories:
         user_histories[user_id] = []
 
-    # Redimensionar imagen para optimizar tiempo de transferencia y evitar saturar cuotas
-    image = image.copy()
+    # Cargar y asegurar formato RGB para compatibilidad total con Gemini
+    image = Image.open(io.BytesIO(photo_bytes))
+    if image.mode != "RGB":
+        image = image.convert("RGB")
     image.thumbnail((1024, 1024))
 
     prompt = [
@@ -323,22 +320,16 @@ def generate_photo_with_fallback(user_id: int, image: Image, caption: str) -> st
             except Exception:
                 pass
             return res.text
-        except ResourceExhausted as rexc:
-            logger.warning(f"Modelo {model_name} con 429 en foto. Esperando 3s...")
-            time.sleep(3)
-            last_error = rexc
-            continue
         except Exception as e:
+            logger.warning(f"Modelo {model_name} fallo en foto: {e}")
+            last_error = e
             if "429" in str(e) or "quota" in str(e).lower():
-                logger.warning(f"Modelo {model_name} agotó cuota en foto. Esperando 3s...")
                 time.sleep(3)
-                last_error = e
-                continue
-            raise e
+            continue
 
     if last_error:
-        raise ResourceExhausted("Límite temporal alcanzado en fotos. Espera unos segundos y vuelve a enviarla.")
-    raise ResourceExhausted("Error al procesar la foto con los modelos disponibles.")
+        raise last_error
+    raise RuntimeError("Error al procesar la foto con los modelos disponibles.")
 
 async def split_and_send(update: Update, text: str):
     # Dividir primero a nivel Markdown para que ningún bloque quede abierto entre mensajes
@@ -422,12 +413,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error procesando mensaje: {e}")
-        await update.message.reply_text(
-            f"⏳ <b>Límite temporal por minuto alcanzado</b>.\n\n"
-            "Google AI Studio impone un límite de peticiones continuas en la cuenta gratuita. "
-            "Por favor espera unos <b>30 segundos</b> y vuelve a enviar tu pregunta.",
-            parse_mode=ParseMode.HTML
-        )
+        err_str = str(e)
+        if "429" in err_str or "quota" in err_str.lower():
+            await update.message.reply_text(
+                "⏳ <b>Límite temporal por minuto alcanzado</b>.\n\n"
+                "Google AI Studio impone un límite en la cuenta gratuita. Por favor espera 30 segundos y vuelve a enviar.",
+                parse_mode=ParseMode.HTML
+            )
+        else:
+            await update.message.reply_text(
+                f"❌ <b>Error al procesar:</b>\n<code>{html.escape(err_str[:300])}</code>",
+                parse_mode=ParseMode.HTML
+            )
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -438,15 +435,21 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         photo_file = await photos[-1].get_file()
         photo_bytes = await photo_file.download_as_bytearray()
-        image = Image.open(io.BytesIO(photo_bytes))
-        reply = await asyncio.to_thread(generate_photo_with_fallback, user_id, image, caption)
+        reply = await asyncio.to_thread(generate_photo_with_fallback, user_id, photo_bytes, caption)
         await split_and_send(update, reply)
     except Exception as e:
-        logger.error(f"Error procesando foto: {e}")
-        await update.message.reply_text(
-            "⏳ <b>Límite temporal alcanzado</b> al procesar la imagen. Espera 30 segundos y vuelve a enviarla.",
-            parse_mode=ParseMode.HTML
-        )
+        logger.error(f"Error procesando foto: {e}", exc_info=True)
+        err_str = str(e)
+        if "429" in err_str or "quota" in err_str.lower():
+            await update.message.reply_text(
+                "⏳ <b>Límite temporal alcanzado en fotos</b>.\n\nEspera unos 30 segundos y vuelve a enviarla.",
+                parse_mode=ParseMode.HTML
+            )
+        else:
+            await update.message.reply_text(
+                f"❌ <b>Detalle del error en foto:</b>\n<code>{html.escape(err_str[:300])}</code>",
+                parse_mode=ParseMode.HTML
+            )
 
 async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
     doc = update.message.document
