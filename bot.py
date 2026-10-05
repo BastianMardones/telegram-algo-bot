@@ -113,7 +113,7 @@ if GEMINI_API_KEY:
 else:
     logger.warning("ADVERTENCIA: GEMINI_API_KEY no detectada.")
 
-# Modelos modernos en orden de prioridad y compatibilidad activa en Google AI Studio
+# Modelos en orden de prioridad y compatibilidad activa en Google AI Studio
 FALLBACK_MODELS = [
     "gemini-3.5-flash-lite",
     "gemini-3.6-flash",
@@ -154,11 +154,18 @@ REGLAS DE FORMATO Y PRESENTACIÓN (OPTIMIZADO PARA SMARTWATCH Y MÓVIL):
      • Técnica: [Divide y Vencerás / Prog. Dinámica / Voraz / etc.]
      • Complejidad Temporal: [ej: Θ(n²)]
      • Complejidad Espacial: [ej: O(log n) o O(n)]
-3. PSEUDOCÓDIGO LIMPIO Y SIN COMENTARIOS:
-   - TODO pseudocódigo DEBE ir dentro de ```java o ```text.
+3. PSEUDOCÓDIGO EN JAVA ESTRICTO (NUNCA C++, NUNCA PYTHON):
+   - TODO algoritmo o pseudocódigo DEBE escribirse estrictamente con sintaxis de Java y estar dentro de ```java.
+   - NUNCA uses C++ (prohibido punteros *, referencias &, vector<>, cout, std::, etc.).
    - NUNCA pongas comentarios (// ...) dentro del código.
-   - Ancho máximo de línea: 25 a 30 caracteres (dividir parámetros verticalmente).
-   - Sangría de 2 espacios.
+   - Tipos de datos Java estándar: void, int, int[], int[][], boolean, etc.
+   - Formato natural y continuo: NUNCA rompas una sola instrucción en múltiples renglones.
+   - Prohibido partir corchetes M[i][j], cabeceras de for, ni asignaciones simples.
+   - Escribe asignaciones completas en una sola línea (ej: int temp = M[r][c + 1];).
+   - Escribe bucles for en una sola línea (ej: for (int i = 0; i < m; i++) {).
+   - Escribe llamadas recursivas en una sola línea (ej: transponer(M, m, r, c);).
+   - Usa nombres cortos y limpios de variables (M, n, r, c, m, temp).
+   - Sangría estándar de 2 espacios.
 4. ÁRBOLES DE RECURSIÓN VERTICALES:
    - SIEMPRE de forma vertical con caracteres de lista (├─, └─, │) o agrupados por niveles. Nunca diagonales (/ \\).
 5. NOTACIÓN MATEMÁTICA CON UNICODE:
@@ -263,45 +270,45 @@ def formatear_para_telegram(texto: str) -> str:
 
     return texto
 
-def dividir_en_chunks_markdown(texto: str, max_len: int = 3500) -> list[str]:
+def dividir_en_chunks_markdown(texto: str, max_len: int = 3800) -> list[str]:
+    """Divide un texto Markdown largo en fragmentos que respetan párrafos y bloques de código."""
     if len(texto) <= max_len:
         return [texto]
 
+    parrafos = texto.split("\n\n")
     chunks = []
-    lineas = texto.split("\n")
     chunk_actual = []
     len_actual = 0
     en_codigo = False
-    lenguaje_codigo = ""
+    lang = "java"
 
-    for linea in lineas:
-        l_strip = linea.strip()
-        if l_strip.startswith("```"):
-            if not en_codigo:
-                en_codigo = True
-                lenguaje_codigo = l_strip[3:].strip()
-            else:
-                en_codigo = False
-                lenguaje_codigo = ""
+    for p in parrafos:
+        ticks = p.count("```")
+        if ticks % 2 != 0:
+            en_codigo = not en_codigo
+            if en_codigo:
+                for l in p.split("\n"):
+                    if l.strip().startswith("```") and len(l.strip()) > 3:
+                        lang = l.strip()[3:].strip()
 
-        if len_actual + len(linea) + 1 > max_len and chunk_actual:
+        if len_actual + len(p) + 2 > max_len and chunk_actual:
             if en_codigo:
                 chunk_actual.append("```")
-                chunks.append("\n".join(chunk_actual))
-                chunk_actual = [f"```{lenguaje_codigo}", linea]
-                len_actual = len(chunk_actual[0]) + len(linea) + 1
+                chunks.append("\n\n".join(chunk_actual))
+                chunk_actual = [f"```{lang}\n{p}"]
+                len_actual = len(chunk_actual[0])
             else:
-                chunks.append("\n".join(chunk_actual))
-                chunk_actual = [linea]
-                len_actual = len(linea) + 1
+                chunks.append("\n\n".join(chunk_actual))
+                chunk_actual = [p]
+                len_actual = len(p)
         else:
-            chunk_actual.append(linea)
-            len_actual += len(linea) + 1
+            chunk_actual.append(p)
+            len_actual += len(p) + 2
 
     if chunk_actual:
         if en_codigo:
             chunk_actual.append("```")
-        chunks.append("\n".join(chunk_actual))
+        chunks.append("\n\n".join(chunk_actual))
 
     return chunks
 
@@ -395,7 +402,7 @@ def generate_photo_with_fallback(user_id: int, photo_bytes: bytearray, caption: 
     raise RuntimeError("Error al procesar la foto con los modelos disponibles.")
 
 async def split_and_send(update: Update, text: str):
-    chunks = dividir_en_chunks_markdown(text, max_len=3500)
+    chunks = dividir_en_chunks_markdown(text, max_len=3800)
 
     for chunk in chunks:
         chunk_html = formatear_para_telegram(chunk)
