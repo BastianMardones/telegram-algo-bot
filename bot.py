@@ -6,6 +6,7 @@ import html
 import sys
 import logging
 import threading
+import asyncio
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 from dotenv import load_dotenv
@@ -23,6 +24,7 @@ from telegram.ext import (
     filters,
 )
 
+# Servidor Web interno para Keep-Alive en Render
 class HealthCheckHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -90,54 +92,89 @@ Tus especialidades clave:
    - Demostración de corrección formal mediante Invariantes de Bucle.
 
 ============================================================
-REGLAS ESTRICTAS DE FORMATO Y PRESENTACIÓN MATEMÁTICA:
-1. NO USES sintaxis LaTeX ($$, $, \\frac, \\big, \\cdot, \\epsilon).
-2. NO USES etiquetas HTML directamente (no escribas <b> ni <code> ni <pre>).
-3. Usa Markdown estándar limpio:
-   - Usa **negrita** para títulos y pasos destacados: **Paso 1: Identificar los parámetros**, **Resultado:**.
-   - Usa comillas invertidas `codigo` para variables, valores y fórmulas: `a = 8`, `b = 2`, `T(n) = 8·T(n/2) + √n`.
-   - Usa bloques de código ``` para desarrollos matemáticos o pseudocódigo.
-   - Usa viñetas con guión o asterisco: * elemento o - elemento.
-4. NOTACIÓN MATEMÁTICA CLARA Y DIRECTA:
-   - Cuando apliques el Teorema Maestro, calcula el valor numérico del exponente de inmediato en vez de dejar fórmulas abstractas con letras como n^(log_b(a)).
-   - Ejemplo claro:
-     * Exponente de las hojas: log₂(8) = 3  =>  n³
-     * Comparación: Como f(n) = √n = n^0.5 y las hojas son n³, 8 > 2^0.5, las hojas dominan el costo.
-     * Complejidad final: Θ(n³)
-   - No compliques innecesariamente con épsilons abstractos 'n^(3 - ε)' a menos que te lo pidan explícitamente. Ve a la explicación conceptual y al grano que busca el profesor en la corrección.
+REGLAS ESTRICTAS DE FORMATO Y PRESENTACIÓN:
+1. PSEUDOCÓDIGO Y ALGORITMOS:
+   - TODO algoritmo, función, método o bloque de pseudocódigo DEBE ir OBLIGATORIAMENTE dentro de un bloque de código Markdown con triple acento grave indicando el lenguaje (ej: ```java o ```python o ```text). NUNCA escribas pseudocódigo en párrafos de texto plano.
+2. NOTACIÓN MATEMÁTICA LIMPIA (SIN SINTAXIS LATEX CRUDA):
+   - NO USES comandos LaTeX con barras invertidas (no escribas \\frac, \\Theta, \\Omega, \\cdot, \\le, \\ge).
+   - Usa caracteres matemáticos Unicode legibles y limpios:
+     * Complejidades: Θ(n²), O(n log n), Ω(√n), Θ(1).
+     * Superíndices y exponentes: n², n³, n⁴, nᵏ, 2ⁿ, n^d.
+     * Subíndices: T₁, T₂, M₁₁, f_i, c_i.
+     * Operadores: ·, ≤, ≥, ≠, √n, log₂.
+     * Fracciones: n/2, (n - 1)/2, n/b.
+     * Ecuaciones: T(n) = a·T(n/b) + f(n).
+3. FORMATO TEXTO:
+   - Usa **negrita** para títulos o conclusiones.
+   - Usa variables y expresiones breves entre comillas invertidas `codigo`.
 ============================================================
 """
 
+def limpiar_latex_a_unicode(texto: str) -> str:
+    """Convierte comandos típicos de LaTeX a símbolos Unicode limpios para Telegram."""
+    reemplazos = [
+        (r'\\Theta', 'Θ'),
+        (r'\\Omega', 'Ω'),
+        (r'\\mathcal\{O\}', 'O'),
+        (r'\\le(?:q)?', '≤'),
+        (r'\\ge(?:q)?', '≥'),
+        (r'\\neq', '≠'),
+        (r'\\cdot', '·'),
+        (r'\\times', '×'),
+        (r'\\approx', '≈'),
+        (r'\\infty', '∞'),
+        (r'\\dots', '...'),
+        (r'\\log_2', 'log₂'),
+        (r'\\log_b', 'log_b'),
+        (r'\\sqrt\{([^}]+)\}', r'√(\1)'),
+        (r'\\frac\{([^}]+)\}\{([^}]+)\}', r'(\1)/(\2)'),
+        (r'\\left\(', '('),
+        (r'\\right\)', ')'),
+        (r'\\left\[', '['),
+        (r'\\right\]', ']'),
+        (r'\\text\{([^}]+)\}', r'\1'),
+    ]
+    for patron, rep in reemplazos:
+        texto = re.sub(patron, rep, texto)
+    return texto
+
 def formatear_para_telegram(texto: str) -> str:
+    texto = limpiar_latex_a_unicode(texto)
+
+    # 1. Proteger bloques de código ```
     bloques = []
     def guardar_bloque(m):
-        contenido = m.group(1).strip()
-        bloques.append(f"<pre>{html.escape(contenido)}</pre>")
+        lang = m.group(1) or ""
+        contenido = html.escape(m.group(2).strip())
+        if lang:
+            bloques.append(f'<pre><code class="language-{lang}">{contenido}</code></pre>')
+        else:
+            bloques.append(f'<pre>{contenido}</pre>')
         return f"___BLOQUE_{len(bloques)-1}___"
-    texto = re.sub(r'```(?:[a-zA-Z0-9_-]+)?\n?(.*?)```', guardar_bloque, texto, flags=re.DOTALL)
 
+    texto = re.sub(r'```([a-zA-Z0-9_-]+)?\n?(.*?)```', guardar_bloque, texto, flags=re.DOTALL)
+
+    # 2. Proteger inlines `codigo` y formulas $...$
     inlines = []
     def guardar_inline(m):
-        c = m.group(1).strip()
-        inlines.append(f"<code>{html.escape(c)}</code>")
+        c = html.escape(m.group(1).strip())
+        inlines.append(f"<code>{c}</code>")
         return f"___INLINE_{len(inlines)-1}___"
+
     texto = re.sub(r'`([^`\n]+)`', guardar_inline, texto)
+    texto = re.sub(r'\$\$(.*?)\$\$', guardar_inline, texto, flags=re.DOTALL)
+    texto = re.sub(r'\$([^\$\n]+?)\$', guardar_inline, texto)
 
-    texto = re.sub(r'\$\$(.*?)\$\$', lambda m: f"<code>{m.group(1).strip()}</code>", texto, flags=re.DOTALL)
-    texto = re.sub(r'\$([^\$\n]+?)\$', lambda m: f"<code>{m.group(1).strip()}</code>", texto)
-
+    # 3. Escapar texto plano
     texto = html.escape(texto)
 
-    texto = texto.replace("&lt;b&gt;", "<b>").replace("&lt;/b&gt;", "</b>")
-    texto = texto.replace("&lt;i&gt;", "<i>").replace("&lt;/i&gt;", "</i>")
-    texto = texto.replace("&lt;code&gt;", "<code>").replace("&lt;/code&gt;", "</code>")
-    texto = texto.replace("&lt;pre&gt;", "<pre>").replace("&lt;/pre&gt;", "</pre>")
-
+    # 4. Formatear títulos y negritas
     texto = re.sub(r'^[#]+\s*(.+)$', r'<b>\1</b>', texto, flags=re.MULTILINE)
     texto = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', texto)
-    texto = re.sub(r'^[*-]\s+', r'• ', texto, flags=re.MULTILINE)
-    texto = re.sub(r'(?<![\*\w])\*([^\*\n]+?)\*(?![\*\w])', r'<b>\1</b>', texto)
+    # Cursivas solo para palabras aisladas (evita romper variables con guion bajo como f_i o c_i)
+    texto = re.sub(r'(?<!\w)_([^_]+?)_(?!\w)', r'<i>\1</i>', texto)
 
+    # 5. Restaurar bloques protegidos
     for i, cod in enumerate(inlines):
         texto = texto.replace(f"___INLINE_{i}___", cod)
     for i, blk in enumerate(bloques):
@@ -160,13 +197,16 @@ def construir_system_prompt():
         return f"{BASE_SYSTEM_INSTRUCTION}\n\n--- MATERIAL OFICIAL DE ESTUDIO, CERTÁMENES Y APUNTES DE LA CÁTEDRA ---\n{docs_text}\n--- FIN DE APUNTES ---"
     return BASE_SYSTEM_INSTRUCTION
 
-# Almacen de memoria conversacional: user_id -> lista de mensajes
 user_histories = {}
 
 def send_with_fallback(user_id: int, message_text: str) -> str:
     system_instruction = construir_system_prompt()
     if user_id not in user_histories:
         user_histories[user_id] = []
+
+    # Mantener como máximo los últimos 6 mensajes para evitar lentitud
+    if len(user_histories[user_id]) > 6:
+        user_histories[user_id] = user_histories[user_id][-6:]
 
     history = user_histories[user_id]
     last_error = None
@@ -200,11 +240,16 @@ def generate_photo_with_fallback(user_id: int, image: Image, caption: str) -> st
     if user_id not in user_histories:
         user_histories[user_id] = []
 
+    # Optimización: Redimensionar imagen para acelerar el procesamiento de Gemini
+    image = image.copy()
+    image.thumbnail((1024, 1024), Image.Resampling.LANCZOS)
+
     prompt = [
         f"El estudiante envió esta foto de un apunte o ejercicio con la indicación: '{caption}'. "
         "Resuélvelo con máximo detalle pedagógico siguiendo los criterios y notación del curso ADA de la UBB.",
         image
     ]
+
     for model_name in FALLBACK_MODELS:
         try:
             model = genai.GenerativeModel(
@@ -212,12 +257,11 @@ def generate_photo_with_fallback(user_id: int, image: Image, caption: str) -> st
                 system_instruction=system_instruction
             )
             res = model.generate_content(prompt)
-            # Guardar en el historial la indicación y la respuesta para que la conversación tenga contexto
-            chat = model.start_chat(history=user_histories[user_id])
-            # Registrar en memoria conversacional
             try:
                 user_histories[user_id].append({"role": "user", "parts": [f"[Foto de ejercicio enviada]: {caption}"]})
                 user_histories[user_id].append({"role": "model", "parts": [res.text]})
+                if len(user_histories[user_id]) > 6:
+                    user_histories[user_id] = user_histories[user_id][-6:]
             except Exception:
                 pass
             return res.text
@@ -229,13 +273,30 @@ def generate_photo_with_fallback(user_id: int, image: Image, caption: str) -> st
 
 async def split_and_send(update: Update, text: str):
     text_html = formatear_para_telegram(text)
-    max_len = 4000
-    for i in range(0, len(text_html), max_len):
-        chunk = text_html[i:i + max_len]
+    
+    # Corte inteligente por saltos de línea para evitar romper etiquetas
+    chunks = []
+    max_len = 3500
+    if len(text_html) <= max_len:
+        chunks = [text_html]
+    else:
+        partes = text_html.split("\n\n")
+        actual = ""
+        for p in partes:
+            if len(actual) + len(p) + 2 > max_len:
+                if actual:
+                    chunks.append(actual.strip())
+                actual = p
+            else:
+                actual = (actual + "\n\n" + p) if actual else p
+        if actual:
+            chunks.append(actual.strip())
+
+    for chunk in chunks:
         try:
             await update.message.reply_text(chunk, parse_mode=ParseMode.HTML)
         except Exception as e:
-            logger.warning(f"Envio HTML con error ({e}), enviando texto plano.")
+            logger.warning(f"Error enviando HTML ({e}), enviando en texto plano.")
             texto_plano = re.sub(r'<[^>]+>', '', chunk)
             await update.message.reply_text(texto_plano)
 
@@ -273,7 +334,7 @@ async def certamenes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.effective_chat.send_action(ChatAction.TYPING)
     try:
-        reply = send_with_fallback(user_id, prompt)
+        reply = await asyncio.to_thread(send_with_fallback, user_id, prompt)
         await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error en /certamenes: {e}")
@@ -290,7 +351,7 @@ async def practicar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.effective_chat.send_action(ChatAction.TYPING)
     try:
-        reply = send_with_fallback(user_id, prompt)
+        reply = await asyncio.to_thread(send_with_fallback, user_id, prompt)
         await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error en /practicar: {e}")
@@ -302,7 +363,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.effective_chat.send_action(ChatAction.TYPING)
     try:
-        reply = send_with_fallback(user_id, user_text)
+        reply = await asyncio.to_thread(send_with_fallback, user_id, user_text)
         await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error procesando mensaje: {e}")
@@ -323,7 +384,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         photo_file = await photos[-1].get_file()
         photo_bytes = await photo_file.download_as_bytearray()
         image = Image.open(io.BytesIO(photo_bytes))
-        reply = generate_photo_with_fallback(user_id, image, caption)
+        reply = await asyncio.to_thread(generate_photo_with_fallback, user_id, image, caption)
         await split_and_send(update, reply)
     except Exception as e:
         logger.error(f"Error procesando foto: {e}")
@@ -386,7 +447,7 @@ def main():
     app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
 
-    print("[+] Bot ADA iniciado con memoria contextual completa y fallback.")
+    print("[+] Bot ADA iniciado con optimización de formato y rendimiento.")
     app.run_polling()
 
 if __name__ == "__main__":
