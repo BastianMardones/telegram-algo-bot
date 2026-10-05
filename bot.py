@@ -92,10 +92,12 @@ Tus especialidades clave:
    - Demostración de corrección formal mediante Invariantes de Bucle.
 
 ============================================================
-REGLAS ESTRICTAS DE FORMATO Y PRESENTACIÓN:
+REGLAS ESTRICTAS DE FORMATO Y PRESENTACIÓN PARA TELEGRAM:
 1. PSEUDOCÓDIGO Y ALGORITMOS:
    - TODO algoritmo, función, método o bloque de pseudocódigo DEBE ir OBLIGATORIAMENTE dentro de un bloque de código Markdown con triple acento grave indicando el lenguaje (ej: ```java o ```python o ```text). NUNCA escribas pseudocódigo en párrafos de texto plano.
-2. NOTACIÓN MATEMÁTICA LIMPIA (SIN SINTAXIS LATEX CRUDA):
+2. TABLAS Y MATRICES (PROGRAMACIÓN DINÁMICA / DISTANCIA EDITADA):
+   - Cualquier matriz o tabla de valores colócala SIEMPRE dentro de un bloque de código ```text para que las columnas queden perfectamente alineadas.
+3. NOTACIÓN MATEMÁTICA LIMPIA (SIN SINTAXIS LATEX CRUDA):
    - NO USES comandos LaTeX con barras invertidas (no escribas \\frac, \\Theta, \\Omega, \\cdot, \\le, \\ge).
    - Usa caracteres matemáticos Unicode legibles y limpios:
      * Complejidades: Θ(n²), O(n log n), Ω(√n), Θ(1).
@@ -104,7 +106,7 @@ REGLAS ESTRICTAS DE FORMATO Y PRESENTACIÓN:
      * Operadores: ·, ≤, ≥, ≠, √n, log₂.
      * Fracciones: n/2, (n - 1)/2, n/b.
      * Ecuaciones: T(n) = a·T(n/b) + f(n).
-3. FORMATO TEXTO:
+4. FORMATO TEXTO:
    - Usa **negrita** para títulos o conclusiones.
    - Usa variables y expresiones breves entre comillas invertidas `codigo`.
 ============================================================
@@ -141,7 +143,13 @@ def limpiar_latex_a_unicode(texto: str) -> str:
 def formatear_para_telegram(texto: str) -> str:
     texto = limpiar_latex_a_unicode(texto)
 
-    # 1. Proteger bloques de código ```
+    # 1. Proteger tablas Markdown para que se vean alineadas en un bloque monoespaciado
+    def guardar_tabla(m):
+        contenido = html.escape(m.group(0).strip())
+        return f"\n<pre>{contenido}</pre>\n"
+    texto = re.sub(r'(\|[^\n]+\|\n\|[-:| ]+\|\n(?:\|[^\n]+\|\n?)+)', guardar_tabla, texto)
+
+    # 2. Proteger bloques de código ```
     bloques = []
     def guardar_bloque(m):
         lang = m.group(1) or ""
@@ -154,7 +162,7 @@ def formatear_para_telegram(texto: str) -> str:
 
     texto = re.sub(r'```([a-zA-Z0-9_-]+)?\n?(.*?)```', guardar_bloque, texto, flags=re.DOTALL)
 
-    # 2. Proteger inlines `codigo` y formulas $...$
+    # 3. Proteger inlines `codigo` y formulas $...$
     inlines = []
     def guardar_inline(m):
         c = html.escape(m.group(1).strip())
@@ -165,22 +173,66 @@ def formatear_para_telegram(texto: str) -> str:
     texto = re.sub(r'\$\$(.*?)\$\$', guardar_inline, texto, flags=re.DOTALL)
     texto = re.sub(r'\$([^\$\n]+?)\$', guardar_inline, texto)
 
-    # 3. Escapar texto plano
+    # 4. Escapar texto plano
     texto = html.escape(texto)
 
-    # 4. Formatear títulos y negritas
+    # 5. Formatear títulos y negritas
     texto = re.sub(r'^[#]+\s*(.+)$', r'<b>\1</b>', texto, flags=re.MULTILINE)
     texto = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', texto)
     # Cursivas solo para palabras aisladas (evita romper variables con guion bajo como f_i o c_i)
     texto = re.sub(r'(?<!\w)_([^_]+?)_(?!\w)', r'<i>\1</i>', texto)
 
-    # 5. Restaurar bloques protegidos
+    # 6. Restaurar bloques protegidos
     for i, cod in enumerate(inlines):
         texto = texto.replace(f"___INLINE_{i}___", cod)
     for i, blk in enumerate(bloques):
         texto = texto.replace(f"___BLOQUE_{i}___", blk)
 
     return texto
+
+def dividir_en_chunks_markdown(text: str, max_len: int = 3500) -> list:
+    """Divide un texto Markdown largo en fragmentos que respetan bloques de código."""
+    if len(text) <= max_len:
+        return [text]
+
+    lineas = text.split("\n")
+    chunks = []
+    chunk_actual = []
+    longitud_actual = 0
+    en_bloque_codigo = False
+    lenguaje_codigo = ""
+
+    for linea in lineas:
+        if linea.strip().startswith("```"):
+            if not en_bloque_codigo:
+                en_bloque_codigo = True
+                lenguaje_codigo = linea.strip().replace("```", "")
+            else:
+                en_bloque_codigo = False
+                lenguaje_codigo = ""
+
+        # ¿Se supera el tamaño máximo por mensaje?
+        if longitud_actual + len(linea) + 1 > max_len and chunk_actual:
+            if en_bloque_codigo:
+                # Cerrar limpiamente el bloque en este chunk y reabrirlo en el siguiente
+                chunk_actual.append("```")
+                chunks.append("\n".join(chunk_actual).strip())
+                chunk_actual = [f"```{lenguaje_codigo}", linea]
+                longitud_actual = len(chunk_actual[0]) + len(linea) + 1
+            else:
+                chunks.append("\n".join(chunk_actual).strip())
+                chunk_actual = [linea]
+                longitud_actual = len(linea)
+        else:
+            chunk_actual.append(linea)
+            longitud_actual += len(linea) + 1
+
+    if chunk_actual:
+        if en_bloque_codigo:
+            chunk_actual.append("```")
+        chunks.append("\n".join(chunk_actual).strip())
+
+    return chunks
 
 def obtener_conocimiento():
     if CACHE_FILE.exists():
@@ -272,32 +324,18 @@ def generate_photo_with_fallback(user_id: int, image: Image, caption: str) -> st
     raise ResourceExhausted("Límite temporal alcanzado en fotos. Espera 30 segundos.")
 
 async def split_and_send(update: Update, text: str):
-    text_html = formatear_para_telegram(text)
-    
-    # Corte inteligente por saltos de línea para evitar romper etiquetas
-    chunks = []
-    max_len = 3500
-    if len(text_html) <= max_len:
-        chunks = [text_html]
-    else:
-        partes = text_html.split("\n\n")
-        actual = ""
-        for p in partes:
-            if len(actual) + len(p) + 2 > max_len:
-                if actual:
-                    chunks.append(actual.strip())
-                actual = p
-            else:
-                actual = (actual + "\n\n" + p) if actual else p
-        if actual:
-            chunks.append(actual.strip())
+    # Dividir primero a nivel Markdown para que ningún bloque quede abierto entre mensajes
+    chunks = dividir_en_chunks_markdown(text, max_len=3500)
 
     for chunk in chunks:
+        # Formatear cada fragmento como HTML completo e independiente
+        chunk_html = formatear_para_telegram(chunk)
         try:
-            await update.message.reply_text(chunk, parse_mode=ParseMode.HTML)
+            await update.message.reply_text(chunk_html, parse_mode=ParseMode.HTML)
         except Exception as e:
-            logger.warning(f"Error enviando HTML ({e}), enviando en texto plano.")
-            texto_plano = re.sub(r'<[^>]+>', '', chunk)
+            logger.warning(f"Error enviando HTML ({e}), enviando en texto plano limpio.")
+            # Fallback seguro: limpia etiquetas y decodifica entidades (&gt; -> >, &quot; -> ")
+            texto_plano = html.unescape(re.sub(r'<[^>]+>', '', chunk_html))
             await update.message.reply_text(texto_plano)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
