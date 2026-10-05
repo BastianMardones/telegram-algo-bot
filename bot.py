@@ -4,6 +4,7 @@ import io
 import re
 import html
 import sys
+import time
 import logging
 import threading
 import asyncio
@@ -238,7 +239,8 @@ def obtener_conocimiento():
     if CACHE_FILE.exists():
         try:
             with open(CACHE_FILE, "r", encoding="utf-8", errors="ignore") as f:
-                return f.read()
+                # Limitar a máximo 40KB para no saturar los límites de tokens por minuto (TPM)
+                return f.read()[:40000]
         except Exception as e:
             logger.error(f"Error leyendo cache: {e}")
     return ""
@@ -256,9 +258,9 @@ def send_with_fallback(user_id: int, message_text: str) -> str:
     if user_id not in user_histories:
         user_histories[user_id] = []
 
-    # Mantener como máximo los últimos 6 mensajes para evitar lentitud
-    if len(user_histories[user_id]) > 6:
-        user_histories[user_id] = user_histories[user_id][-6:]
+    # Mantener como máximo los últimos 4 mensajes para optimizar tokens y velocidad
+    if len(user_histories[user_id]) > 4:
+        user_histories[user_id] = user_histories[user_id][-4:]
 
     history = user_histories[user_id]
     last_error = None
@@ -274,12 +276,14 @@ def send_with_fallback(user_id: int, message_text: str) -> str:
             user_histories[user_id] = chat.history
             return response.text
         except ResourceExhausted as rexc:
-            logger.warning(f"Modelo {model_name} agoto cuota. Intentando fallback...")
+            logger.warning(f"Modelo {model_name} con 429. Esperando 3s antes del siguiente intento...")
+            time.sleep(3)
             last_error = rexc
             continue
         except Exception as exc:
             if "429" in str(exc) or "quota" in str(exc).lower():
-                logger.warning(f"Modelo {model_name} retorno 429. Probando siguiente...")
+                logger.warning(f"Modelo {model_name} saturado (429). Esperando 3s...")
+                time.sleep(3)
                 last_error = exc
                 continue
             raise exc
@@ -288,20 +292,22 @@ def send_with_fallback(user_id: int, message_text: str) -> str:
         raise ResourceExhausted("Se alcanzó el límite temporal por minuto de la API. Espera unos 30 segundos.")
 
 def generate_photo_with_fallback(user_id: int, image: Image, caption: str) -> str:
-    system_instruction = construir_system_prompt()
+    # Para fotos, usar directamente BASE_SYSTEM_INSTRUCTION para un procesamiento ultrarrápido y liviano
+    system_instruction = BASE_SYSTEM_INSTRUCTION
     if user_id not in user_histories:
         user_histories[user_id] = []
 
-    # Optimización: Redimensionar imagen para acelerar el procesamiento de Gemini
+    # Redimensionar imagen para optimizar tiempo de transferencia y evitar saturar cuotas
     image = image.copy()
-    image.thumbnail((1024, 1024), Image.Resampling.LANCZOS)
+    image.thumbnail((1024, 1024))
 
     prompt = [
         f"El estudiante envió esta foto de un apunte o ejercicio con la indicación: '{caption}'. "
-        "Resuélvelo con máximo detalle pedagógico siguiendo los criterios y notación del curso ADA de la UBB.",
+        "Resuélvelo con máximo rigor pedagógico siguiendo estrictamente los criterios de la cátedra de ADA de la UBB.",
         image
     ]
 
+    last_error = None
     for model_name in FALLBACK_MODELS:
         try:
             model = genai.GenerativeModel(
@@ -312,16 +318,27 @@ def generate_photo_with_fallback(user_id: int, image: Image, caption: str) -> st
             try:
                 user_histories[user_id].append({"role": "user", "parts": [f"[Foto de ejercicio enviada]: {caption}"]})
                 user_histories[user_id].append({"role": "model", "parts": [res.text]})
-                if len(user_histories[user_id]) > 6:
-                    user_histories[user_id] = user_histories[user_id][-6:]
+                if len(user_histories[user_id]) > 4:
+                    user_histories[user_id] = user_histories[user_id][-4:]
             except Exception:
                 pass
             return res.text
+        except ResourceExhausted as rexc:
+            logger.warning(f"Modelo {model_name} con 429 en foto. Esperando 3s...")
+            time.sleep(3)
+            last_error = rexc
+            continue
         except Exception as e:
             if "429" in str(e) or "quota" in str(e).lower():
+                logger.warning(f"Modelo {model_name} agotó cuota en foto. Esperando 3s...")
+                time.sleep(3)
+                last_error = e
                 continue
             raise e
-    raise ResourceExhausted("Límite temporal alcanzado en fotos. Espera 30 segundos.")
+
+    if last_error:
+        raise ResourceExhausted("Límite temporal alcanzado en fotos. Espera unos segundos y vuelve a enviarla.")
+    raise ResourceExhausted("Error al procesar la foto con los modelos disponibles.")
 
 async def split_and_send(update: Update, text: str):
     # Dividir primero a nivel Markdown para que ningún bloque quede abierto entre mensajes
