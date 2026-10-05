@@ -113,14 +113,14 @@ if GEMINI_API_KEY:
 else:
     logger.warning("ADVERTENCIA: GEMINI_API_KEY no detectada.")
 
-# Modelos en orden de prioridad y compatibilidad
+# Modelos modernos en orden de prioridad y compatibilidad activa en Google AI Studio
 FALLBACK_MODELS = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
+    "gemini-3.5-flash-lite",
     "gemini-3.6-flash",
+    "gemini-3.8-flash",
     "gemini-3.5-flash",
-    "gemini-2.5-pro",
+    "gemini-flash-lite-latest",
+    "gemini-3.1-pro-preview",
 ]
 
 BASE_SYSTEM_INSTRUCTION = """Eres el tutor experto de 'Análisis y Diseño de Algoritmos' (ADA) de la Universidad del Bío-Bío (UBB) - Departamento de Ciencias de la Computación, cátedra del profesor Gilberto Gutiérrez R.
@@ -344,7 +344,7 @@ def send_with_fallback(user_id: int, message_text: str) -> str:
             logger.warning(f"Modelo {model_name} fallo: {exc}")
             last_error = exc
             if "429" in str(exc) or "quota" in str(exc).lower():
-                time.sleep(2)
+                time.sleep(1)
             continue
 
     if last_error:
@@ -387,7 +387,7 @@ def generate_photo_with_fallback(user_id: int, photo_bytes: bytearray, caption: 
             logger.warning(f"Modelo {model_name} fallo en foto: {e}")
             last_error = e
             if "429" in str(e) or "quota" in str(e).lower():
-                time.sleep(2)
+                time.sleep(1)
             continue
 
     if last_error:
